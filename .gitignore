@@ -1,0 +1,30 @@
+# Dependencies and builds
+node_modules/
+dist/
+build/
+.vite/
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environment and secrets (never commit API keys)
+.env
+.env.*
+!.env.example
+
+# Local data
+data/uploads/
+data/chroma/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/

@@ -1,0 +1,929 @@
+<!doctype html>
+<html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="utf-8">
+<title>The Charter Globe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  color-scheme: dark;
+  --ink:#1f1d1b;            /* header / deep charcoal */
+  --ink-2:#2d2a27;
+  --space:#16222b;          /* behind the globe */
+  --paper:#fbf8f3;          /* cards */
+  --paper-2:#f1ece4;
+  --text:#23201d;
+  --muted:#6f675f;
+  --line:#e2dbd0;
+  --gold:#C9A86A;
+  --red:#E64626;
+  --orange:#F68B1F;
+  --green:#64A70B;
+  --urban:#4a4a4a;
+  --verify:#1d8cf0;
+  --serif:"Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --sans:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+html,body{height:100%}
+body{margin:0;background:var(--space);color:var(--text);font-family:var(--sans);overflow:hidden}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+
+/* ---------- header ---------- */
+.top{height:56px;background:var(--ink);display:flex;align-items:center;gap:24px;padding-inline:20px;position:relative;z-index:30}
+.logo{display:flex;flex-direction:column;line-height:1;color:#f3efe8;text-decoration:none;flex-shrink:0}
+.logo b{font-family:var(--serif);font-weight:600;font-size:22px;letter-spacing:.14em}
+.logo small{font-family:var(--serif);font-size:9px;letter-spacing:.2em;color:var(--orange);margin-top:3px;text-align:center}
+.nav{display:flex;gap:4px;margin-left:auto;margin-right:auto}
+.nav a{color:var(--gold);text-decoration:none;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:8px 12px;border-bottom:2px solid transparent}
+.nav a[aria-current]{color:#fff;border-bottom-color:var(--red)}
+.user{background:var(--red);color:#fff;border:0;border-radius:4px;padding:7px 14px;font-size:12px;font-weight:700;letter-spacing:.1em}
+
+/* ---------- map stage ---------- */
+.stage{position:absolute;inset:56px 0 0 0;overflow:hidden;
+  background:radial-gradient(1200px 800px at 60% 45%, #22384a 0%, #16222b 55%, #0f171d 100%)}
+#globe{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}
+#globe:active{cursor:grabbing}
+#pins{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.pin{pointer-events:auto;cursor:pointer;transition:opacity .2s}
+.pin .body{transition:transform .15s}
+.pin:hover .body,.pin.active .body,.pin:focus-visible .body{transform:scale(1.18)}
+.pin:focus{outline:none}
+.pin:focus-visible .ring{stroke:#fff;stroke-width:2}
+.pin text{font-family:var(--sans);font-weight:700;font-size:9px;pointer-events:none}
+
+/* ---------- floating panels ---------- */
+.panel{position:absolute;top:16px;left:16px;bottom:16px;width:300px;background:var(--paper);border-radius:10px;
+  box-shadow:0 12px 40px rgba(0,0,0,.35);display:flex;flex-direction:column;z-index:10;transition:transform .3s ease}
+.panel.closed{transform:translateX(calc(-100% - 20px))}
+.panel-head{padding:18px 18px 12px;border-bottom:1px solid var(--line)}
+.panel-head h1{font-family:var(--serif);font-weight:600;font-size:26px;line-height:1.05;margin:0 0 6px;text-wrap:balance}
+.panel-head p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+.panel-body{overflow-y:auto;padding:14px 18px 18px;display:flex;flex-direction:column;gap:18px}
+.sec h2{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;font-weight:700}
+.search{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:#fff}
+.search input{border:0;outline:0;flex:1;font:inherit;font-size:14px;background:transparent;color:var(--text);min-width:0}
+.cats{display:flex;flex-direction:column;gap:2px}
+.cat{display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:6px;border:0;background:transparent;text-align:left;font-size:14px;color:var(--text)}
+.cat:hover{background:var(--paper-2)}
+.cat .dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;color:#fff;font-size:10px;font-weight:700;box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)}
+.cat .n{margin-left:auto;color:var(--muted);font-variant-numeric:tabular-nums;font-size:12px}
+.cat[aria-pressed="false"]{opacity:.42}
+.cat[aria-pressed="false"] .dot{background:#bbb!important}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:600;color:var(--text)}
+.chip[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.years{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+.years select{font:inherit;font-size:13px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--text)}
+.reset{align-self:flex-start;border:0;background:none;color:var(--red);font-weight:600;font-size:13px;padding:0}
+.legend{display:flex;flex-direction:column;gap:7px;font-size:12.5px;color:var(--muted)}
+.legend div{display:flex;align-items:center;gap:8px}
+.swatch{width:14px;height:14px;border-radius:3px;background:rgba(230,70,38,.35);border:1.5px dashed var(--red)}
+
+.panel-toggle{position:absolute;top:16px;left:16px;z-index:9;background:var(--paper);border:0;border-radius:8px;padding:10px 14px;
+  font-weight:700;font-size:13px;box-shadow:0 6px 20px rgba(0,0,0,.3);display:flex;gap:8px;align-items:center;color:var(--text)}
+.panel-close{position:absolute;top:12px;right:10px;border:0;background:none;color:var(--muted);font-size:20px;line-height:1;padding:4px 8px}
+
+/* ---------- right tools ---------- */
+.tools{position:absolute;top:16px;right:16px;display:flex;flex-direction:column;gap:10px;z-index:8;align-items:flex-end}
+.tool-group{background:var(--paper);border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.3);display:flex;flex-direction:column;overflow:hidden}
+.tool-group button{border:0;background:transparent;width:40px;height:40px;display:grid;place-items:center;color:var(--text)}
+.tool-group button+button{border-top:1px solid var(--line)}
+.tool-group button:hover{background:var(--paper-2)}
+.tool-group button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.tool-group svg{width:20px;height:20px}
+.proj{display:flex;background:var(--paper);border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.3);padding:3px}
+.proj button{border:0;background:transparent;font-size:12px;font-weight:600;padding:7px 10px;border-radius:6px;color:var(--text)}
+.proj button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.mode{border:0;border-radius:8px;padding:10px 14px;font-weight:700;font-size:13px;letter-spacing:.04em;color:#fff;background:#111;
+  box-shadow:0 6px 20px rgba(0,0,0,.3);display:flex;align-items:center;gap:8px;transition:background .2s}
+.mode[aria-pressed="true"]{background:var(--orange)}
+.results-btn{border:0;border-radius:8px;padding:10px 14px;font-weight:700;font-size:13px;background:var(--paper);color:var(--text);box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.results-btn span{background:var(--red);color:#fff;border-radius:999px;padding:1px 7px;margin-left:6px;font-size:11px}
+
+.hint{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.72);font-size:12px;letter-spacing:.04em;
+  background:rgba(0,0,0,.28);padding:6px 12px;border-radius:999px;z-index:5;white-space:nowrap;pointer-events:none}
+.newsnote{position:absolute;bottom:16px;right:16px;z-index:5;background:rgba(230,70,38,.92);color:#fff;font-size:12px;padding:7px 12px;border-radius:6px;max-width:260px;line-height:1.35}
+
+/* ---------- preview card ---------- */
+.card{position:absolute;z-index:12;width:280px;background:var(--paper);border-radius:10px;overflow:hidden;
+  box-shadow:0 16px 44px rgba(0,0,0,.45);transform:translate(-50%,calc(-100% - 44px));animation:pop .22s ease}
+.card::after{content:"";position:absolute;left:50%;bottom:-7px;width:14px;height:14px;background:var(--paper);transform:translateX(-50%) rotate(45deg)}
+@keyframes pop{from{opacity:0;transform:translate(-50%,calc(-100% - 34px))}}
+.card .ph{height:clamp(90px,18vh,140px);background:#222 center/cover no-repeat;position:relative}
+.card .ph .tag{position:absolute;left:10px;top:10px;color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:4px}
+.card .x{position:absolute;right:8px;top:8px;width:28px;height:28px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:16px;line-height:1;z-index:2}
+.card .bd{padding:11px 13px 13px;display:flex;flex-direction:column;gap:7px;position:relative;z-index:1;background:var(--paper)}
+.who{display:flex;align-items:center;gap:9px}
+.av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:700;flex-shrink:0}
+.who-t{display:flex;flex-direction:column;min-width:0;gap:3px}
+.name{font-size:13px;font-weight:700;display:flex;align-items:center;gap:5px}
+.name .check{width:15px;height:15px;flex-shrink:0}
+.aff{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:var(--muted)}
+.aff b{background:var(--ink);color:var(--gold);font-size:9.5px;letter-spacing:.06em;padding:2px 5px;border-radius:3px}
+.card h3{font-family:var(--serif);font-size:19px;line-height:1.12;margin:2px 0 0;font-weight:700;text-wrap:balance}
+.meta{font-size:12px;color:var(--muted)}
+.open{margin-top:3px;border:0;background:var(--red);color:#fff;border-radius:6px;padding:9px;font-weight:700;font-size:13px;letter-spacing:.03em}
+.open:hover{background:#cf3a1c}
+.pending{font-size:11px;color:var(--muted);font-style:italic}
+
+/* ---------- results drawer ---------- */
+.drawer{position:absolute;top:0;right:0;bottom:0;width:340px;max-width:100%;background:var(--paper);z-index:20;box-shadow:-12px 0 40px rgba(0,0,0,.35);
+  transform:translateX(105%);transition:transform .3s ease;display:flex;flex-direction:column}
+.drawer.open{transform:none}
+.drawer header{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}
+.drawer header h2{font-family:var(--serif);font-size:24px;margin:0;font-weight:600}
+.drawer header button{border:0;background:none;font-size:22px;color:var(--muted)}
+.list{overflow-y:auto;padding:8px}
+.item{display:flex;gap:12px;width:100%;border:0;background:transparent;text-align:left;padding:10px;border-radius:8px;color:var(--text)}
+.item:hover{background:var(--paper-2)}
+.item .th{width:64px;height:64px;border-radius:6px;background:#ccc center/cover;flex-shrink:0;display:grid;place-items:center;color:#fff;font-weight:700}
+.item h4{margin:0 0 3px;font-size:14px;line-height:1.25}
+.item p{margin:0;font-size:12px;color:var(--muted)}
+.empty{padding:24px 18px;color:var(--muted);font-size:14px}
+
+/* ---------- story view (full project) ---------- */
+.story{position:fixed;inset:0;z-index:50;background:#141210;color:#efe9e0;overflow-y:auto;animation:fade .25s ease}
+@keyframes fade{from{opacity:0}}
+.story-bar{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:rgba(20,18,16,.9);backdrop-filter:blur(6px);z-index:2}
+.story-bar button{border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;border-radius:6px;padding:8px 14px;font-weight:600;font-size:13px}
+.hero{height:min(62vh,560px);background:#000 center/cover no-repeat;position:relative}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,#141210 100%)}
+.story-in{max-width:760px;margin:-120px auto 0;position:relative;z-index:1;padding:0 20px 64px}
+.story-in .tag{display:inline-block;color:#fff;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:4px 9px;border-radius:4px}
+.story-in h2{font-family:var(--serif);font-size:clamp(32px,5vw,52px);line-height:1.02;margin:14px 0 18px;font-weight:600;text-wrap:balance}
+.story-who{display:flex;align-items:center;gap:12px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.14)}
+.story-who .av{width:44px;height:44px;font-size:14px}
+.story-who .name{font-size:15px}
+.story-who .aff{color:#b7ad9f}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;padding:20px 0;border-bottom:1px solid rgba(255,255,255,.14)}
+.facts dt{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#9d9387;margin-bottom:4px}
+.facts dd{margin:0;font-size:14px}
+.lede{font-family:var(--serif);font-size:22px;line-height:1.4;margin:26px 0;max-width:65ch}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:8px 0 28px}
+.grid img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;display:block}
+.story h5{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#9d9387;margin:24px 0 10px}
+.kws{display:flex;flex-wrap:wrap;gap:6px}
+.kws span{border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:4px 10px;font-size:12px}
+.sdg{background:#fff;color:#141210;font-weight:700}
+.links a{color:var(--gold)}
+
+
+/* light surfaces keep light native controls */
+.panel,.card,.drawer,.admin{color-scheme:light}
+/* ---------- AI placeholder badge ---------- */
+.ai{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:#6b3fd1;background:#efe9ff;border:1px dashed #b9a2f5;border-radius:4px;padding:2px 6px;white-space:nowrap}
+.ai svg{width:11px;height:11px}
+/* search by meaning */
+.smode{display:flex;background:var(--paper-2);border-radius:6px;padding:3px;margin-top:8px}
+.smode button{flex:1;border:0;background:transparent;border-radius:4px;padding:6px 4px;font-size:12px;font-weight:600;color:var(--muted)}
+.smode button[aria-pressed="true"]{background:#fff;color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.examples{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.examples button{border:0;background:none;color:#6b3fd1;font-size:12px;padding:2px 0;text-decoration:underline;text-underline-offset:2px;margin-right:8px}
+.qstatus{font-size:12px;color:var(--muted);margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.why{color:#6b3fd1 !important;font-weight:600}
+.upload-btn{border:1px solid var(--orange);background:transparent;color:var(--orange);border-radius:4px;padding:6px 12px;font-size:12px;font-weight:700;letter-spacing:.06em}
+.upload-btn:hover{background:var(--orange);color:#fff}
+
+/* ---------- admin upload ---------- */
+.admin{position:fixed;inset:0;z-index:60;background:#f4f0e9;overflow-y:auto;color:var(--text)}
+.admin-bar{position:sticky;top:0;z-index:3;background:var(--ink);color:#f3efe8;display:flex;align-items:center;gap:16px;padding:10px 20px}
+.admin-bar h1{font-family:var(--serif);font-weight:600;font-size:22px;margin:0;letter-spacing:.02em}
+.admin-bar .sp{margin-left:auto}
+.admin-bar button{border:1px solid rgba(255,255,255,.3);background:transparent;color:#fff;border-radius:6px;padding:8px 14px;font-weight:600;font-size:13px}
+.admin-in{max-width:1100px;margin:0 auto;padding-block:24px 80px;padding-inline:20px;display:flex;flex-direction:column;gap:18px}
+.step{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.step>header{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.step>header h2{font-size:16px;margin:0;font-weight:700}
+.step>header .num{width:24px;height:24px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:700}
+.step>header .right{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:#fff;color:var(--text);border-radius:6px;padding:8px 14px;font-weight:600;font-size:13px}
+.btn.primary{background:var(--red);border-color:var(--red);color:#fff}
+.btn.violet{background:#6b3fd1;border-color:#6b3fd1;color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.drop{border:2px dashed #cfc5b6;border-radius:10px;padding:22px;text-align:center;color:var(--muted);font-size:14px;background:#fff;transition:background .15s,border-color .15s}
+.drop.over{background:#fff6ec;border-color:var(--orange)}
+.drop label{color:var(--red);font-weight:700;cursor:pointer;text-decoration:underline}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.thumbs img{width:96px;height:72px;object-fit:cover;border-radius:6px}
+.meta-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.fld{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:600;color:var(--muted)}
+.fld input,.fld textarea{font:inherit;font-size:14px;font-weight:400;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:#fff;resize:vertical}
+.fld textarea{min-height:44px}
+.fld textarea.tall{min-height:150px;line-height:1.45}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.pair .fld textarea.en{background:#fbfaff;border-color:#d9ccfb}
+.lang{display:inline-flex;gap:6px;align-items:center;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.lang b{background:var(--ink);color:#fff;border-radius:3px;padding:1px 5px;font-size:10px}
+.gloss{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--muted);margin-bottom:14px}
+.gloss span.term{background:#fff;border:1px solid var(--line);border-radius:999px;padding:2px 9px;color:var(--text);font-style:italic}
+.spin{width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite;display:inline-block;vertical-align:-2px;margin-right:6px}
+@keyframes rot{to{transform:rotate(360deg)}}
+.sugs{display:flex;flex-direction:column;gap:10px}
+.sug{display:grid;grid-template-columns:150px 1fr auto;gap:14px;align-items:start;padding:12px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.sug.accepted{border-color:#9fcf7a;background:#f6fbf1}
+.sug.rejected{opacity:.55;background:#faf7f3}
+.sug .k{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding-top:3px}
+.sug .v{font-size:14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.sug .conf{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.sug .acts{display:flex;gap:6px}
+.sug .acts button{border:1px solid var(--line);background:#fff;color:var(--text);border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600}
+.sug.accepted .acts .ok{background:#4e8a1f;border-color:#4e8a1f;color:#fff}
+.sug.rejected .acts .no{background:#8a8178;border-color:#8a8178;color:#fff}
+.tchips{display:flex;flex-wrap:wrap;gap:6px}
+.tchips button{border:1px solid var(--line);background:var(--paper-2);border-radius:999px;padding:3px 10px;font-size:12px;color:var(--text)}
+.tchips button[aria-pressed="false"]{text-decoration:line-through;opacity:.5}
+.placeholder-note{font-size:13px;color:var(--muted);background:#fff;border:1px dashed var(--line);border-radius:8px;padding:14px}
+.done{background:#f6fbf1;border:1px solid #9fcf7a;border-radius:10px;padding:18px 20px;display:flex;flex-direction:column;gap:10px}
+.done h3{margin:0;font-size:17px}
+.done p{margin:0;font-size:14px;color:var(--muted);line-height:1.5}
+@media (max-width:760px){
+  .pair{grid-template-columns:1fr}
+  .sug{grid-template-columns:1fr}
+  .upload-btn{padding:6px 8px;font-size:11px}
+}
+@media (max-width:760px){
+  .nav{display:none}
+  .top{justify-content:space-between}
+  .panel{width:auto;right:16px;top:auto;bottom:16px;max-height:62%}
+  .panel.closed{transform:translateY(calc(100% + 20px))}
+  .panel-toggle{top:auto;bottom:16px}
+  .proj button{padding:7px 8px;font-size:11px}
+  .hint{display:none}
+  .newsnote{bottom:70px;left:16px;right:auto}
+  .grid{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<header class="top">
+  <a class="logo" href="#" aria-label="The Charter home"><b>THE CHARTER</b><small>MAPPING THE NEW WORLD</small></a>
+  <nav class="nav" aria-label="Sections">
+    <a href="#" aria-current="page">Map</a><a href="#">Projects</a><a href="#">Community</a><a href="#">New entries</a><a href="#">Sponsors</a><a href="#">Events</a>
+  </nav>
+  <div style="display:flex;gap:10px;align-items:center"><button class="upload-btn" id="adminOpen" type="button">+ Upload project</button><button class="user" type="button">DIANA</button></div>
+</header>
+
+<main class="stage" id="stage">
+  <canvas id="globe" aria-label="Interactive globe of projects. Drag to rotate, scroll or pinch to zoom."></canvas>
+  <svg id="pins" aria-hidden="false"></svg>
+
+  <button class="panel-toggle" id="panelOpen" type="button" hidden>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></svg>Filters
+  </button>
+  <aside class="panel" id="panel" aria-label="Filters">
+    <button class="panel-close" id="panelClose" type="button" aria-label="Hide filters">&times;</button>
+    <div class="panel-head">
+      <h1>Verified work, mapped.</h1>
+      <p>Curated photojournalism and field research. Click a pin to preview a project.</p>
+    </div>
+    <div class="panel-body">
+      <div class="sec">
+        <label class="search" for="q">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8a8178" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+          <input id="q" type="search" placeholder="Try: grief rituals">
+        </label>
+        <div class="smode" role="group" aria-label="Search type">
+          <button type="button" data-smode="meaning" aria-pressed="true">By meaning</button>
+          <button type="button" data-smode="keywords" aria-pressed="false">Exact keywords</button>
+        </div>
+        <div class="examples" id="examples"></div>
+        <div class="qstatus" id="qstatus"></div>
+      </div>
+      <div class="sec"><h2>Study category</h2><div class="cats" id="cats"></div></div>
+      <div class="sec"><h2>UN Sustainable Development Goals</h2><div class="chips" id="sdgs"></div></div>
+      <div class="sec"><h2>Year</h2>
+        <div class="years"><select id="y0" aria-label="From year"></select> to <select id="y1" aria-label="To year"></select></div>
+      </div>
+      <button class="reset" id="reset" type="button">Clear all filters</button>
+      <div class="sec"><h2>Legend</h2>
+        <div class="legend">
+          <div><svg class="check" width="16" height="16" viewBox="0 0 24 24"><path fill="#1d8cf0" d="M12 1.5l2.6 1.9 3.2-.2 1 3 2.7 1.8-1 3 1 3-2.7 1.8-1 3-3.2-.2L12 22.5l-2.6-1.9-3.2.2-1-3L2.5 16l1-3-1-3 2.7-1.8 1-3 3.2.2z"/><path d="m7.8 12.2 2.8 2.8 5.6-5.8" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Curated, information checked</div>
+          <div><span class="swatch"></span>News layer: regions set by admin</div>
+          <div><span style="width:12px;height:12px;border-radius:50%;background:#111"></span>Academic <span style="width:12px;height:12px;border-radius:50%;background:var(--orange);margin-left:8px"></span>Journalist</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="tools">
+    <div class="proj" role="group" aria-label="Map projection">
+      <button type="button" data-proj="globe" aria-pressed="true">Globe</button>
+      <button type="button" data-proj="mercator" aria-pressed="false">Mercator</button>
+      <button type="button" data-proj="equal" aria-pressed="false">True size</button>
+    </div>
+    <button class="mode" id="mode" type="button" aria-pressed="false">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/></svg>
+      <span id="modeLabel">Researchers</span>
+    </button>
+    <button class="results-btn" id="resultsBtn" type="button">Results<span id="count">0</span></button>
+    <div class="tool-group">
+      <button type="button" id="zin" aria-label="Zoom in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></button>
+      <button type="button" id="zout" aria-label="Zoom out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14"/></svg></button>
+    </div>
+    <div class="tool-group">
+      <button type="button" id="borders" aria-pressed="false" title="Highlight country borders" aria-label="Highlight country borders">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l5-2 6 2 5-2v14l-5 2-6-2-5 2z"/><path d="M9 4v14M15 6v14" stroke-dasharray="2 2"/></svg></button>
+      <button type="button" id="news" aria-pressed="true" title="News layer" aria-label="News layer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" stroke-dasharray="3 3"/></svg></button>
+    </div>
+  </div>
+
+  <div class="newsnote" id="newsnote">News layer on. Shaded regions are set by an admin. An AI model can suggest them later.</div>
+  <div class="hint">Drag to spin · scroll or pinch to zoom · click a pin</div>
+
+  <div id="card" hidden></div>
+
+  <aside class="drawer" id="drawer" aria-label="Results">
+    <header><h2 id="drawerTitle">Results</h2><button type="button" id="drawerClose" aria-label="Close results">&times;</button></header>
+    <div class="list" id="list"></div>
+  </aside>
+</main>
+
+<div class="story" id="story" hidden></div>
+
+<div class="admin" id="admin" hidden>
+  <div class="admin-bar"><h1>Upload a project</h1><span class="ai">Admin · mockup</span><span class="sp"></span>
+    <button type="button" id="adminClose">Back to map</button></div>
+  <div class="admin-in">
+    <div class="placeholder-note">The AI steps on this page are placeholders. They return prepared example output so you can see the flow. No model is connected yet and nothing is saved.
+      <div style="margin-top:10px"><button class="btn" type="button" id="loadSample">Load a Spanish example</button></div></div>
+
+    <section class="step">
+      <header><span class="num">1</span><h2>Photographs</h2></header>
+      <div class="drop" id="drop">Drag high-resolution photos here, or <label for="files">choose files</label>
+        <input id="files" type="file" accept="image/*" multiple hidden></div>
+      <div class="thumbs" id="thumbs"></div>
+    </section>
+
+    <section class="step">
+      <header><span class="num">2</span><h2>Author</h2></header>
+      <div class="meta-row">
+        <label class="fld" for="aName">Name<input id="aName" type="text"></label>
+        <label class="fld" for="aAff">Affiliation<input id="aAff" type="text"></label>
+        <label class="fld" for="aWeb">Website<input id="aWeb" type="url" placeholder="https://"></label>
+        <label class="fld" for="aScholar">Google Scholar / ResearchGate / Academia<input id="aScholar" type="url" placeholder="https://"></label>
+      </div>
+    </section>
+
+    <section class="step">
+      <header><span class="num">3</span><h2>Text and translation</h2>
+        <div class="right"><span class="lang" id="detected">Language: waiting for text</span>
+          <button class="btn violet" type="button" id="translate">Translate to English</button><span class="ai">AI · placeholder</span></div></header>
+      <div class="gloss" id="gloss" hidden></div>
+      <div class="pair">
+        <label class="fld" for="tEs"><span class="lang"><b>ES</b> Title, original</span><textarea id="tEs"></textarea></label>
+        <label class="fld" for="tEn"><span class="lang"><b>EN</b> Title, AI translation, editable</span><textarea id="tEn" class="en"></textarea></label>
+      </div>
+      <div class="pair">
+        <label class="fld" for="dEs"><span class="lang"><b>ES</b> Description, original</span><textarea id="dEs" class="tall"></textarea></label>
+        <label class="fld" for="dEn"><span class="lang"><b>EN</b> Description, AI translation, editable</span><textarea id="dEn" class="tall en"></textarea></label>
+      </div>
+      <div class="pair">
+        <label class="fld" for="cEs"><span class="lang"><b>ES</b> Caption, photo 1</span><textarea id="cEs"></textarea></label>
+        <label class="fld" for="cEn"><span class="lang"><b>EN</b> Caption, photo 1</span><textarea id="cEn" class="en"></textarea></label>
+      </div>
+    </section>
+
+    <section class="step">
+      <header><span class="num">4</span><h2>Suggestions to review</h2><div class="right"><span class="ai">AI · placeholder</span></div></header>
+      <div id="sugs"><p class="placeholder-note">Suggestions appear after translation: category, SDGs, keywords, map location and a preview summary.</p></div>
+    </section>
+
+    <section class="step">
+      <header><span class="num">5</span><h2>Publish</h2></header>
+      <div id="publishArea">
+        <p style="margin:0 0 12px;font-size:14px;color:var(--muted)">Both languages are stored. The project is labelled “Translated by AI, reviewed by Diana” and goes to a curator for the blue verified mark.</p>
+        <button class="btn primary" type="button" id="publish" disabled>Approve and publish</button>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script>
+const PROJECTS = [{"id": "17", "title": "Toxo'o o tsui' kiee'n: Day of the Death in the Mazatecan Highlands in Oaxaca", "author": "Cinthia Karina Baños Paredes", "prof": "Ethnologist", "aff": "National School of Anthropology and History (ENAH)", "cat": "anthropology", "loc": "Sierra Mazateca, Oaxaca, Mexico", "lat": 18.1333, "lng": -96.8333, "date": "2022-10-27", "year": 2022, "desc": "The Day of the Dead celebration in the Sierra Mazateca territory is known as ·Tsui' kiee'n· or ·The Festival of the Sun·", "kw": ["Day of the Dead", "Mazatec", "Oaxaca", "Huehuentones", "ritual", "Naxinandá", "indigenous traditions", "anthropology"], "sdgs": ["SDG10", "SDG11", "SDG16"], "imgs": 4, "web": "https://cinthiabanosphotography.com", "verified": true}, {"id": "26", "title": "The Two Walls", "author": "Alejandro Cegarra", "prof": "Documentary Photographer & Visual Journalist - The New York Times/Bloomberg", "aff": "Universidad Central de Venezuela", "cat": "news", "loc": "US-Mexico Border, Tijuana & Ciudad Juárez", "lat": 32.5349, "lng": -117.0382, "date": "2024-09-15", "year": 2024, "desc": "Since 2019, Mexico's immigration policies have undergone a significant shift, transforming from a nation historically open to migrants and asylum seekers at its southern border to a country that enforces stringent immigration policies.", "kw": ["migration", "US-Mexico border", "asylum seekers", "Title 42", "Title 8", "Venezuela", "human rights", "displacement"], "sdgs": ["SDG10", "SDG16", "SDG1", "SDG3"], "imgs": 4, "web": "https://alejandrocegarra.com", "verified": true}, {"id": "23", "title": "The Lake Has Fallen Silent", "author": "Jean-Baptiste Munyankindi", "prof": "Environmental Photojournalist & Ecologist", "aff": "University of Rwanda", "cat": "wildlife", "loc": "Lake Kivu, Rwanda/DRC", "lat": -1.7167, "lng": 29.2333, "date": "2024-08-10", "year": 2024, "desc": "Lake Kivu, a majestic body of water at the border between Rwanda and the Democratic Republic of Congo, is a place where stories intertwine and destinies converge. Beneath the placid beauty lies turbulence and uncertainty.", "kw": ["Lake Kivu", "Rwanda", "DRC", "climate change", "fishing communities", "displacement", "environmental degradation", "methane extraction"], "sdgs": ["SDG13", "SDG14", "SDG1", "SDG2", "SDG8", "SDG11"], "imgs": 4, "web": "https://jbmunyankindi.photography", "verified": true}, {"id": "25", "title": "Occupy Parliament: Kenya's Finance Bill Protests", "author": "Wanjiru Kimathi", "prof": "Political Scientist", "aff": "University of Nairobi", "cat": "news", "loc": "Nairobi, Kenya", "lat": -1.2864, "lng": 36.8172, "date": "2024-06-25", "year": 2024, "desc": "Documenting the nationwide protests against the Finance Bill 2024 in Kenya, where a generation of young activists took to the streets demanding accountability and rejecting punitive taxation.", "kw": ["Kenya", "protests", "Finance Bill 2024", "Nairobi", "activism", "taxation", "civil disobedience", "OccupyParliament"], "sdgs": ["SDG10", "SDG16", "SDG11"], "imgs": 4, "web": "https://wanjirukimathi.photography", "verified": true}, {"id": "27", "title": "The Darién Gap: The World's Most Dangerous Migration Route", "author": "Santiago Ramírez", "prof": "Documentary Photographer", "aff": "Universidad de los Andes", "cat": "news", "loc": "Darién Gap, Colombia-Panama Border", "lat": 8.0, "lng": -77.5, "date": "2024-11-15", "year": 2024, "desc": "Documentación visual de una de las rutas migratorias más peligrosas del mundo: el Tapón del Darién, un paso de 100 kilómetros de selva densa que conecta Colombia y Panamá.", "kw": ["migration", "Darién Gap", "refugees", "humanitarian crisis", "Venezuela", "Latin America", "human rights", "border crossing"], "sdgs": ["SDG1", "SDG3", "SDG10", "SDG16"], "imgs": 4, "web": "https://santiagoramirezphoto.com", "verified": true}, {"id": "28", "title": "Cool Burning: Indigenous Fire Management in West Arnhem Land", "author": "Matthew Abbott", "prof": "Geographer & Documentary Photographer", "aff": "University of Sydney", "cat": "wildlife", "loc": "West Arnhem Land, Northern Territory, Australia", "lat": -12.4, "lng": 133.8, "date": "2024-08-20", "year": 2024, "desc": "Indigenous Australians have strategically burned land to protect their environment for tens of thousands of years. In a practice known as cool burning, fires move slowly, burn only the undergrowth, and remove the build-up of fuel that feeds bigger blazes.", "kw": ["Indigenous fire management", "cool burning", "climate change", "carbon credits", "Australia", "traditional knowledge", "wildfire prevention", "environmental conservation"], "sdgs": ["SDG13", "SDG15", "SDG11", "SDG10"], "imgs": 4, "web": "https://matthewabbott.com.au", "verified": true}, {"id": "18", "title": "Two Chinas on Rails", "author": "Gilles Sabrie", "prof": "Documentary Photographer & Sociologist", "aff": "Sciences Po Paris", "cat": "urban", "loc": "China", "lat": 35.8617, "lng": 104.1954, "date": "2024-03-15", "year": 2024, "desc": "A photographic exploration of China's dual railway system, where gleaming high-speed trains and aging slow trains run in parallel, revealing the stark class divisions and inequalities within the world's largest rail network.", "kw": ["China", "railway", "high-speed train", "inequality", "migration", "infrastructure", "transportation", "urbanization"], "sdgs": ["SDG9", "SDG10", "SDG11"], "imgs": 4, "web": "https://gillessabrie.com", "verified": false}];
+
+const CATS = {
+  wildlife:     {label:"Wildlife & human interaction", color:"#64A70B", g:"W"},
+  anthropology: {label:"Anthropology",                 color:"#C9A86A", g:"A"},
+  urban:        {label:"Urban life",                   color:"#4a4a4a", g:"U"},
+  border:       {label:"Cross-border interactions",    color:"#F68B1F", g:"B"},
+  news:         {label:"News",                         color:"#E64626", g:"N"},
+};
+// News layer: regions an admin has switched on (lng, lat, radius in degrees)
+const HOTSPOTS = [
+  {name:"Gaza", c:[34.4,31.4], r:1.6},
+  {name:"Sudan", c:[30,14.5], r:5.5},
+  {name:"Eastern DRC", c:[28.8,-1.2], r:2.6},
+  {name:"Haiti", c:[-72.6,18.9], r:1.6},
+  {name:"Eastern Ukraine", c:[37.5,48.3], r:3.2},
+];
+const CHECK = '<svg class="check" viewBox="0 0 24 24" aria-label="Curated"><path fill="#1d8cf0" d="M12 1.5l2.6 1.9 3.2-.2 1 3 2.7 1.8-1 3 1 3-2.7 1.8-1 3-3.2-.2L12 22.5l-2.6-1.9-3.2.2-1-3L2.5 16l1-3-1-3 2.7-1.8 1-3 3.2.2z"/><path d="m7.8 12.2 2.8 2.8 5.6-5.8" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+// Placeholder for semantic search. The real version embeds the query and ranks projects by vector similarity (ChromaDB).
+const CONCEPTS = [
+  {label:"death and ritual", words:["grief","mourn","death","dead","dying","funeral","ancest","ritual","ceremon","spirit","festival","mask","sacred","religio","muert"], ids:["17"]},
+  {label:"Indigenous knowledge", words:["indigen","native","tradition","first nations","aborigin","ancestral"], ids:["17","28"]},
+  {label:"migration", words:["migra","refugee","asylum","border","displac","leave home","forced to leave","exodus","exile","crossing","frontera"], ids:["26","27"]},
+  {label:"environment and livelihoods", words:["climate","environment","fish","lake","pollut","fire","nature","ecolog","wildlife","drought","livelihood","clima"], ids:["23","28"]},
+  {label:"protest and politics", words:["protest","youth","young","student","activis","tax","democra","government","parliament","uprising","gen z"], ids:["25"]},
+  {label:"cities and infrastructure", words:["train","rail","transport","infrastructure","moderni","city","cities","urban","development"], ids:["18"]},
+  {label:"danger and survival", words:["danger","violence","jungle","survival","risk"], ids:["27","26"]},
+];
+function meaningHits(q){
+  const hits={};
+  for (const c of CONCEPTS) if (c.words.some(w=>q.includes(w))) for (const id of c.ids) (hits[id] ??= []).push(c.label);
+  return hits;
+}
+const EXAMPLES=["grief rituals","people forced to leave home","young people protesting","climate and livelihoods"];
+
+const esc = s => String(s ?? "").replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const initials = n => n.replace(/^(Dr\.?)\s+/,"").split(/\s+/).filter(Boolean).map(w=>w[0]).slice(0,2).join("").toUpperCase();
+const affCode = a => { const m = a.match(/\(([^)]+)\)/); if (m) return m[1];
+  return a.split(/\s+/).filter(w=>/^[A-Z]/.test(w) && !["of","de","the"].includes(w)).map(w=>w[0]).join("").slice(0,4); };
+const img = (p,i=0) => p.imgs ? `img/p${p.id}_${Math.min(i,p.imgs-1)}.jpg` : "";
+
+// ---------- state ----------
+const years = [...new Set(PROJECTS.map(p=>p.year))].sort();
+const sdgList = [...new Set(PROJECTS.flatMap(p=>p.sdgs))].sort((a,b)=>+a.slice(3)-+b.slice(3));
+const state = {
+  q:"", semantic:true, cats:new Set(Object.keys(CATS)), sdgs:new Set(), y0:years[0], y1:years.at(-1),
+  proj:"globe", researchers:false, borders:false, news:true, selected:null,
+  rot:[70,-10], k:1, panY:0, auto:true,
+};
+
+function visibleItems(){
+  const q = state.q.trim().toLowerCase();
+  const hits = q && state.semantic ? meaningHits(q) : {};
+  const why = {};
+  const list = PROJECTS.filter(p => {
+    if (!(state.cats.has(p.cat) && p.year>=state.y0 && p.year<=state.y1 &&
+      (!state.sdgs.size || p.sdgs.some(s=>state.sdgs.has(s))))) return false;
+    if (!q) return true;
+    if ([p.title,p.author,p.loc,p.aff,p.desc,...p.kw].join(" ").toLowerCase().includes(q)) return true;
+    if (hits[p.id]) { why[p.id]="Related by meaning: "+hits[p.id].join(", "); return true; }
+    return false;
+  });
+  lastWhy = why;
+  if (!state.researchers) return list.map(p=>({kind:"project", id:"p"+p.id, p, lng:p.lng, lat:p.lat, why:why[p.id]}));
+  // researcher mode: same filters, show the people behind the work
+  return list.map(p=>({kind:"person", id:"r"+p.id, p, lng:p.lng+0.8, lat:p.lat+0.6,
+    journalist:/journalist|photographer|reporter/i.test(p.prof)}));
+}
+
+let lastWhy = {};
+// ---------- filter UI ----------
+document.getElementById("examples").innerHTML = EXAMPLES.map(e=>`<button type="button">${e}</button>`).join("");
+document.getElementById("examples").addEventListener("click", e => { const b=e.target.closest("button"); if(!b) return;
+  const q=document.getElementById("q"); q.value=b.textContent; state.q=b.textContent; setSmode(true); refresh();
+  document.getElementById("drawer").classList.add("open"); });
+function setSmode(on){ state.semantic=on;
+  document.querySelectorAll(".smode button").forEach(b=>b.setAttribute("aria-pressed", (b.dataset.smode==="meaning")===on)); }
+document.querySelectorAll(".smode button").forEach(b=>b.onclick=()=>{ setSmode(b.dataset.smode==="meaning"); refresh(); });
+function renderQStatus(){
+  const el=document.getElementById("qstatus");
+  if (!state.q.trim()) { el.innerHTML = state.semantic ? '<span class="ai">AI · placeholder</span> Describe a topic in your own words.' : ""; return; }
+  const byMeaning=Object.keys(lastWhy).length, total=items.length;
+  el.innerHTML = state.semantic
+    ? `<span class="ai">AI · placeholder</span> ${total} result${total===1?"":"s"}, ${byMeaning} found by meaning`
+    : `${total} exact match${total===1?"":"es"}`;
+}
+const catsEl = document.getElementById("cats");
+catsEl.innerHTML = Object.entries(CATS).map(([k,c]) => {
+  const n = PROJECTS.filter(p=>p.cat===k).length;
+  return `<button class="cat" type="button" data-cat="${k}" aria-pressed="true"><span class="dot" style="background:${c.color}">${c.g}</span>${c.label}<span class="n">${n}</span></button>`;
+}).join("");
+catsEl.addEventListener("click", e => { const b=e.target.closest(".cat"); if(!b) return;
+  const k=b.dataset.cat; state.cats.has(k)?state.cats.delete(k):state.cats.add(k);
+  b.setAttribute("aria-pressed", state.cats.has(k)); refresh(); });
+const sdgEl = document.getElementById("sdgs");
+sdgEl.innerHTML = sdgList.map(s=>`<button class="chip" type="button" data-sdg="${s}" aria-pressed="false">SDG ${s.slice(3)}</button>`).join("");
+sdgEl.addEventListener("click", e => { const b=e.target.closest(".chip"); if(!b) return;
+  const s=b.dataset.sdg; state.sdgs.has(s)?state.sdgs.delete(s):state.sdgs.add(s);
+  b.setAttribute("aria-pressed", state.sdgs.has(s)); refresh(); });
+for (const id of ["y0","y1"]) {
+  const sel=document.getElementById(id);
+  sel.innerHTML = years.map(y=>`<option ${y===state[id]?"selected":""}>${y}</option>`).join("");
+  sel.addEventListener("change", ()=>{ state[id]=+sel.value; refresh(); });
+}
+document.getElementById("q").addEventListener("input", e=>{ state.q=e.target.value; refresh(); });
+document.getElementById("reset").addEventListener("click", ()=>{
+  state.q=""; document.getElementById("q").value="";
+  state.cats=new Set(Object.keys(CATS)); state.sdgs.clear(); state.y0=years[0]; state.y1=years.at(-1);
+  document.querySelectorAll(".cat").forEach(b=>b.setAttribute("aria-pressed","true"));
+  document.querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed","false"));
+  document.getElementById("y0").value=state.y0; document.getElementById("y1").value=state.y1; refresh();
+});
+
+const panel=document.getElementById("panel"), panelOpen=document.getElementById("panelOpen");
+function setPanel(open){ panel.classList.toggle("closed",!open); panelOpen.hidden=open; draw(); }
+document.getElementById("panelClose").onclick=()=>setPanel(false);
+panelOpen.onclick=()=>setPanel(true);
+
+// ---------- tools ----------
+document.querySelectorAll(".proj button").forEach(b=>b.onclick=()=>{
+  state.proj=b.dataset.proj; state.panY=0;
+  document.querySelectorAll(".proj button").forEach(x=>x.setAttribute("aria-pressed", x===b));
+  if (state.proj!=="globe") state.rot[1]=0;
+  draw();
+});
+const modeBtn=document.getElementById("mode");
+modeBtn.onclick=()=>{ state.researchers=!state.researchers; modeBtn.setAttribute("aria-pressed",state.researchers);
+  document.getElementById("modeLabel").textContent = state.researchers ? "Showing researchers" : "Researchers";
+  closeCard(); refresh(); };
+const tog=(id,key,after)=>{ const b=document.getElementById(id); b.onclick=()=>{ state[key]=!state[key]; b.setAttribute("aria-pressed",state[key]); after&&after(); draw(); }; };
+tog("borders","borders"); tog("news","news",()=>document.getElementById("newsnote").hidden=!state.news);
+
+const drawer=document.getElementById("drawer");
+document.getElementById("resultsBtn").onclick=()=>{ drawer.classList.add("open"); };
+document.getElementById("drawerClose").onclick=()=>drawer.classList.remove("open");
+
+// ---------- globe ----------
+const stage=document.getElementById("stage"), canvas=document.getElementById("globe"), ctx=canvas.getContext("2d");
+const svg=d3.select("#pins");
+let W=0,H=0,DPR=1, countries=null, borders=null, land=null, projection=d3.geoOrthographic(), path;
+const graticule=d3.geoGraticule10();
+const LAND=["#F3CD8E","#EDB877","#E6A765","#F6DBA6","#DDB47C","#BFCB73","#A9BC62","#E9C27F"];
+const hash = s => { let h=0; for (const c of String(s)) h=(h*31+c.charCodeAt(0))|0; return Math.abs(h); };
+
+function resize(){
+  const r=stage.getBoundingClientRect(); W=r.width; H=r.height; DPR=Math.min(2,devicePixelRatio||1);
+  canvas.width=W*DPR; canvas.height=H*DPR; draw();
+}
+function center(){
+  const off = (!panel.classList.contains("closed") && W>900) ? 170 : 0;
+  return [W/2+off, H/2];
+}
+function setupProjection(){
+  const [cx,cy]=center();
+  if (state.proj==="globe"){
+    projection=d3.geoOrthographic().clipAngle(90).rotate(state.rot)
+      .scale(Math.min(W,H)*0.42*state.k).translate([cx,cy]).precision(0.4);
+  } else if (state.proj==="mercator"){
+    const s=Math.max(W/(2*Math.PI), H/(2*Math.PI*0.72))*state.k*0.9;
+    projection=d3.geoMercator().rotate([state.rot[0],0]).scale(s).translate([cx,cy+state.panY]);
+  } else {
+    const s=Math.min(W/5.6, H/2.8)*state.k;
+    projection=d3.geoEqualEarth().rotate([state.rot[0],0]).scale(s).translate([cx,cy+state.panY]);
+  }
+  path=d3.geoPath(projection, ctx);
+}
+
+let t0=performance.now();
+function draw(){
+  if (!W) return;
+  setupProjection();
+  const t=(performance.now()-t0)/1000;
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.clearRect(0,0,W,H);
+  const globe = state.proj==="globe";
+  const [cx,cy]=projection.translate(), r=projection.scale();
+
+  // atmosphere
+  if (globe){
+    const g=ctx.createRadialGradient(cx,cy,r*0.96,cx,cy,r*1.16);
+    g.addColorStop(0,"rgba(140,210,240,.45)"); g.addColorStop(1,"rgba(140,210,240,0)");
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,r*1.16,0,7); ctx.fill();
+  }
+  // ocean
+  ctx.beginPath(); path({type:"Sphere"});
+  if (globe){
+    const g=ctx.createRadialGradient(cx-r*.35,cy-r*.4,r*.05,cx,cy,r);
+    g.addColorStop(0,"#4aa7b8"); g.addColorStop(.55,"#23677f"); g.addColorStop(1,"#143f56");
+    ctx.fillStyle=g;
+  } else ctx.fillStyle="#1f5f77";
+  ctx.fill();
+  ctx.save(); ctx.beginPath(); path({type:"Sphere"}); ctx.clip();
+
+  ctx.beginPath(); path(graticule); ctx.strokeStyle="rgba(255,255,255,.08)"; ctx.lineWidth=.7; ctx.stroke();
+  if (land){
+    // shallow-water halo around coasts
+    ctx.beginPath(); path(land); ctx.strokeStyle="rgba(150,222,214,.45)"; ctx.lineWidth=Math.max(4,5*Math.sqrt(state.k)); ctx.lineJoin="round"; ctx.stroke();
+    for (const f of countries){ ctx.beginPath(); path(f); ctx.fillStyle=LAND[hash(f.id||f.properties.name)%LAND.length]; ctx.fill(); }
+    ctx.beginPath(); path(land); ctx.strokeStyle="rgba(120,80,40,.35)"; ctx.lineWidth=.8; ctx.stroke();
+    ctx.beginPath(); path(borders);
+    if (state.borders){ ctx.strokeStyle="#2b1d12"; ctx.lineWidth=1.4; ctx.setLineDash([]); }
+    else { ctx.strokeStyle="rgba(255,255,255,.45)"; ctx.lineWidth=.5; }
+    ctx.stroke();
+  }
+  // news caps
+  if (state.news){
+    const pulse=.3+.08*Math.sin(t*2.4);
+    for (const h of HOTSPOTS){
+      const c=d3.geoCircle().center(h.c).radius(h.r)();
+      ctx.beginPath(); path(c); ctx.fillStyle=`rgba(230,70,38,${pulse})`; ctx.fill();
+      ctx.setLineDash([4,3]); ctx.strokeStyle="rgba(214,52,24,.9)"; ctx.lineWidth=1.3; ctx.stroke(); ctx.setLineDash([]);
+    }
+  }
+  ctx.restore();
+  // limb shading + highlight for a 3D feel
+  if (globe){
+    let g=ctx.createRadialGradient(cx-r*.3,cy-r*.35,r*.1,cx,cy,r);
+    g.addColorStop(0,"rgba(255,255,255,.14)"); g.addColorStop(.6,"rgba(255,255,255,0)"); g.addColorStop(1,"rgba(5,20,35,.42)");
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,r,0,7); ctx.fill();
+  }
+  // hotspot labels
+  if (state.news){
+    ctx.font="600 11px Figtree, system-ui, sans-serif"; ctx.textAlign="center";
+    for (const h of HOTSPOTS){
+      if (!isVisible(h.c)) continue;
+      const [x,y]=projection(h.c);
+      ctx.fillStyle="rgba(20,10,8,.75)"; const w=ctx.measureText(h.name).width+10;
+      ctx.fillRect(x-w/2,y-8,w,16); ctx.fillStyle="#fff"; ctx.fillText(h.name,x,y+4);
+    }
+  }
+  placePins();
+}
+function isVisible(c){
+  if (state.proj==="globe"){ const rot=projection.rotate(); return d3.geoDistance(c,[-rot[0],-rot[1]])<Math.PI/2-0.03; }
+  const p=projection(c); return p && p[0]>-20 && p[0]<W+20 && p[1]>-20 && p[1]<H+20;
+}
+
+// ---------- pins ----------
+let items=[];
+const PIN="M0,0 C-3,-7 -12,-12 -12,-22 A12,12 0 1 1 12,-22 C12,-12 3,-7 0,0Z";
+function renderPins(){
+  const sel=svg.selectAll("g.pin").data(items, d=>d.id);
+  sel.exit().remove();
+  const g=sel.enter().append("g").attr("class","pin").attr("tabindex",0).attr("role","button")
+    .attr("aria-label",d=>d.kind==="project" ? `${d.p.title}, ${d.p.loc}` : `${d.p.author}, ${d.journalist?"journalist":"academic"}`)
+    .on("click",(e,d)=>{ e.stopPropagation(); select(d); })
+    .on("keydown",(e,d)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); select(d);} });
+  const b=g.append("g").attr("class","body");
+  b.append("ellipse").attr("rx",6).attr("ry",2.2).attr("fill","rgba(0,0,0,.35)");
+  b.append("path").attr("class","ring").attr("d",PIN).attr("stroke","#fff").attr("stroke-width",1.6)
+    .attr("fill",d=> d.kind==="project" ? CATS[d.p.cat].color : (d.journalist?"#F68B1F":"#111"));
+  b.append("circle").attr("cy",-22).attr("r",7.5).attr("fill","#fff");
+  b.append("text").attr("y",-18.8).attr("text-anchor","middle")
+    .attr("fill",d=> d.kind==="project" ? CATS[d.p.cat].color : (d.journalist?"#F68B1F":"#111"))
+    .text(d=> d.kind==="project" ? CATS[d.p.cat].g : initials(d.p.author));
+  placePins();
+}
+function placePins(){
+  svg.selectAll("g.pin").each(function(d){
+    const vis=isVisible([d.lng,d.lat]); const p=projection([d.lng,d.lat]);
+    this.style.display = vis ? "" : "none";
+    if (vis) this.setAttribute("transform",`translate(${p[0]},${p[1]})`);
+    this.classList.toggle("active", state.selected===d.id);
+  });
+  positionCard();
+}
+
+// ---------- card ----------
+const card=document.getElementById("card");
+function select(d){
+  state.selected=d.id; state.auto=false;
+  flyTo([d.lng,d.lat]);
+  const p=d.p;
+  if (d.kind==="project"){
+    const c=CATS[p.cat];
+    card.innerHTML=`<div class="card" role="dialog" aria-label="Project preview">
+      <button class="x" type="button" aria-label="Close preview">&times;</button>
+      <div class="ph" style="background-image:url('${img(p)}')"><span class="tag" style="background:${c.color}">${esc(c.label)}</span></div>
+      <div class="bd">
+        <div class="who"><span class="av" style="background:${c.color}">${esc(initials(p.author))}</span>
+          <div class="who-t"><span class="name">${esc(p.author)} ${p.verified?CHECK:""}</span>
+          <span class="aff"><b>${esc(affCode(p.aff))}</b>${esc(p.aff)}</span></div></div>
+        <h3>${esc(p.title)}</h3>
+        <div class="meta">${esc(p.loc)} · ${p.year}</div>
+        ${p.verified?"":'<div class="pending">Curation pending. Details not yet checked.</div>'}
+        <button class="open" type="button">Open project</button>
+      </div></div>`;
+    card.querySelector(".open").onclick=()=>openStory(p);
+  } else {
+    const col=d.journalist?"#F68B1F":"#111";
+    card.innerHTML=`<div class="card" role="dialog" aria-label="Researcher preview">
+      <button class="x" type="button" aria-label="Close preview" style="background:rgba(0,0,0,.2);color:#333">&times;</button>
+      <div class="bd" style="padding-top:16px">
+        <div class="who"><span class="av" style="background:${col};width:48px;height:48px;font-size:16px">${esc(initials(p.author))}</span>
+          <div class="who-t"><span class="name" style="font-size:15px">${esc(p.author)} ${CHECK}</span>
+          <span class="aff"><b>${esc(affCode(p.aff))}</b>${esc(p.aff)}</span></div></div>
+        <div class="meta"><strong style="color:${col}">${d.journalist?"Journalist":"Academic"}</strong> · ${esc(p.prof)}</div>
+        <div class="meta">Works in ${esc(p.loc)}. Location shown at region level.</div>
+        <button class="open" type="button">See their project</button>
+      </div></div>`;
+    card.querySelector(".open").onclick=()=>openStory(p);
+  }
+  card.querySelector(".x").onclick=closeCard;
+  card.hidden=false; card._d=d; placePins();
+}
+function closeCard(){ card.hidden=true; card._d=null; state.selected=null; placePins(); }
+function positionCard(){
+  const d=card._d; if (!d || card.hidden) return;
+  const el=card.firstElementChild;
+  if (!isVisible([d.lng,d.lat])) { el.style.visibility="hidden"; return; }
+  el.style.visibility="";
+  const [x,y]=projection([d.lng,d.lat]);
+  el.style.left=Math.max(156,Math.min(W-156,x))+"px";
+  el.style.top=Math.max(el.offsetHeight+54,y)+"px";
+}
+function flyTo([lng,lat]){
+  const from=state.rot.slice(), to=[-lng, state.proj==="globe" ? -lat+12 : 0];
+  if (to[0]-from[0]>180) to[0]-=360; if (from[0]-to[0]>180) to[0]+=360;
+  const kFrom=state.k, kTo=Math.max(state.k, state.proj==="globe"?1.35:1.6);
+  const i=d3.interpolate(from,to), dur=matchMedia("(prefers-reduced-motion: reduce)").matches?0:900;
+  d3.transition().duration(dur).ease(d3.easeCubicInOut).tween("fly",()=>tt=>{
+    state.rot=i(tt); state.k=kFrom+(kTo-kFrom)*tt; syncZoom(); draw(); });
+}
+
+// ---------- results drawer ----------
+function renderList(){
+  document.getElementById("count").textContent=items.length;
+  document.getElementById("drawerTitle").textContent = state.researchers ? `Researchers (${items.length})` : `Projects (${items.length})`;
+  const list=document.getElementById("list");
+  if (!items.length){ list.innerHTML = state.q.trim() && !state.semantic
+      ? '<p class="empty">No exact matches. Switch to “By meaning” to find related projects.</p>'
+      : '<p class="empty">Nothing matches these filters. Clear a filter to see more.</p>'; return; }
+  list.innerHTML=items.map((d,i)=>{ const p=d.p;
+    const th = d.kind==="project" ? `<span class="th" style="background-image:url('${img(p)}')"></span>`
+      : `<span class="th" style="background:${d.journalist?"#F68B1F":"#111"}">${esc(initials(p.author))}</span>`;
+    return `<button class="item" type="button" data-i="${i}">${th}<span><h4>${esc(d.kind==="project"?p.title:p.author)}</h4>
+      <p>${esc(d.kind==="project"?p.author+" · "+p.year:(d.journalist?"Journalist":"Academic")+" · "+p.aff)}</p><p>${esc(p.loc)}</p>${d.why?`<p class="why">${esc(d.why)}</p>`:""}</span></button>`;}).join("");
+}
+document.getElementById("list").addEventListener("click",e=>{ const b=e.target.closest(".item"); if(!b) return;
+  if (innerWidth<760) drawer.classList.remove("open"); select(items[+b.dataset.i]); });
+
+function refresh(){
+  items=visibleItems();
+  if (card._d && !items.some(d=>d.id===card._d.id)) closeCard();
+  renderPins(); renderList(); renderQStatus(); draw();
+}
+
+// ---------- story view ----------
+const story=document.getElementById("story");
+function openStory(p){
+  const c=CATS[p.cat];
+  const pics=Array.from({length:Math.min(p.imgs,4)},(_,i)=>`<img src="${img(p,i)}" alt="Photograph ${i+1} from ${esc(p.title)}" loading="lazy">`).join("");
+  story.innerHTML=`<div class="story-bar"><div class="logo"><b style="font-size:17px">THE CHARTER</b></div>
+      <button type="button" id="storyClose">Back to map</button></div>
+    <div class="hero" style="background-image:url('${img(p)}')"></div>
+    <article class="story-in">
+      <span class="tag" style="background:${c.color}">${esc(c.label)}</span>
+      <h2>${esc(p.title)}</h2>
+      <div class="story-who"><span class="av" style="background:${c.color}">${esc(initials(p.author))}</span>
+        <div class="who-t"><span class="name">${esc(p.author)} ${p.verified?CHECK:""}</span>
+        <span class="aff"><b>${esc(affCode(p.aff))}</b>${esc(p.prof)} · ${esc(p.aff)}</span></div></div>
+      <dl class="facts">
+        <div><dt>Location</dt><dd>${esc(p.loc)}</dd></div>
+        <div><dt>Date</dt><dd>${new Date(p.date).toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"})}</dd></div>
+        <div><dt>Status</dt><dd>${p.verified?"Curated and checked":"Curation pending"}</dd></div>
+      </dl>
+      <p class="lede">${esc(p.desc)}</p>
+      <div class="grid">${pics}</div>
+      <h5>UN Sustainable Development Goals</h5><div class="kws">${p.sdgs.map(s=>`<span class="sdg">SDG ${s.slice(3)}</span>`).join("")}</div>
+      <h5>Keywords</h5><div class="kws">${p.kw.map(k=>`<span>${esc(k)}</span>`).join("")}</div>
+      ${p.web?`<h5>Author</h5><p class="links"><a href="${esc(p.web)}" target="_blank" rel="noopener">Photographer website ↗</a></p>`:""}
+      <p style="color:#8d8377;font-size:12px;margin-top:32px">Photographs remain the property of their author. Mockup, sample data.</p>
+    </article>`;
+  story.hidden=false; story.scrollTop=0;
+  document.getElementById("storyClose").onclick=closeStory;
+  document.getElementById("storyClose").focus();
+}
+function closeStory(){ story.hidden=true; }
+addEventListener("keydown",e=>{ if(e.key==="Escape"){ if(!adminEl.hidden) adminEl.hidden=true; else if(!story.hidden) closeStory(); else if(drawer.classList.contains("open")) drawer.classList.remove("open"); else closeCard(); }});
+
+// ---------- admin upload (AI steps are placeholders) ----------
+const adminEl=document.getElementById("admin");
+const SAMPLE = {
+  photos:["img/p17_0.jpg","img/p17_1.jpg","img/p17_2.jpg","img/p17_3.jpg"],
+  author:"Cinthia Karina Baños Paredes", aff:"National School of Anthropology and History (ENAH)", web:"https://cinthiabanosphotography.com",
+  es:{
+    t:"Toxo'o o tsui' kiee'n: Día de Muertos en la Sierra Mazateca de Oaxaca",
+    d:"La celebración de Día de Muertos en el territorio de la Sierra Mazateca se conoce como ·Tsui' kiee'n· o ·La Fiesta del Sol·. Es la celebración más importante de la cultura mazateca y representa ·Naxinandá·, que en su cosmogonía significa \"comunidad\". Las personas que migraron regresan para reencontrarse con sus familiares vivos y difuntos; las almas de sus ancestros están representadas en el ·Toxo'o· por los ·Huehuentones o chaxo o'·, que son los hombres y mujeres del ombligo de la tierra.",
+    c:"La vigilia en el panteón: el mar de luz",
+  },
+  en:{
+    t:"Toxo'o o tsui' kiee'n: Day of the Dead in the Mazatec Highlands of Oaxaca",
+    d:"The Day of the Dead celebration in the Sierra Mazateca territory is known as ·Tsui' kiee'n· or ·The Festival of the Sun·. It is the most significant celebration in Mazatec culture, representing ·Naxinandá·, which in their cosmogony means \"community.\" People who migrated return to reunite with their living and deceased relatives; the souls of their ancestors are represented in the ·Toxo'o· by the ·Huehuentones or chaxo o'·, who are the men and women of the earth's navel.",
+    c:"The Cemetery Vigil: The Sea of Light",
+  },
+  glossary:["Tsui' kiee'n","Naxinandá","Toxo'o","Huehuentones","chaxo o'","Sierra Mazateca"],
+  sugs:[
+    {k:"Category", type:"one", v:"Anthropology", conf:"0.93 (next: News 0.04)"},
+    {k:"UN SDGs", type:"chips", v:["SDG 11 Sustainable cities and communities","SDG 10 Reduced inequalities","SDG 16 Peace, justice and strong institutions"], conf:"0.81 · 0.64 · 0.52"},
+    {k:"Keywords", type:"chips", v:["Day of the Dead","Mazatec","Oaxaca","Huehuentones","ritual","Indigenous traditions","migration","community"], conf:"Extracted from the description"},
+    {k:"Map location", type:"one", v:"Sierra Mazateca, Oaxaca, Mexico · 18.13° N, 96.83° W", conf:"Place name found in the text: “Sierra Mazateca”, then geocoded"},
+    {k:"Preview summary", type:"text", v:"Mazatec families in Oaxaca's highlands honour their dead during Tsui' kiee'n, when masked Huehuentones carry ancestral spirits through town.", conf:"Short blurb for the map card"},
+  ],
+};
+const $=id=>document.getElementById(id);
+let adminState={sample:false, translated:false};
+$("adminOpen").onclick=()=>{ adminEl.hidden=false; adminEl.scrollTop=0; $("loadSample").focus(); };
+$("adminClose").onclick=()=>{ adminEl.hidden=true; };
+
+function addThumbs(srcs){ $("thumbs").insertAdjacentHTML("beforeend", srcs.map(s=>`<img src="${s}" alt="Uploaded photo">`).join("")); }
+function readFiles(files){ for (const f of files){ if(!f.type.startsWith("image/")) continue;
+  const r=new FileReader(); r.onload=()=>addThumbs([r.result]); r.readAsDataURL(f); } }
+$("files").onchange=e=>readFiles(e.target.files);
+const drop=$("drop");
+["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.add("over"); }));
+["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop",e=>readFiles(e.dataTransfer.files));
+
+$("loadSample").onclick=()=>{
+  $("thumbs").innerHTML=""; addThumbs(SAMPLE.photos);
+  $("aName").value=SAMPLE.author; $("aAff").value=SAMPLE.aff; $("aWeb").value=SAMPLE.web;
+  $("tEs").value=SAMPLE.es.t; $("dEs").value=SAMPLE.es.d; $("cEs").value=SAMPLE.es.c;
+  ["tEn","dEn","cEn"].forEach(id=>$(id).value="");
+  adminState={sample:true, translated:false}; detectLang(); resetSugs();
+};
+function detectLang(){
+  const txt=($("tEs").value+" "+$("dEs").value).toLowerCase();
+  const es=(txt.match(/\b(el|la|los|las|de|del|que|y|en|por|para|una|con)\b/g)||[]).length;
+  $("detected").innerHTML = txt.trim() ? `Detected: <b>${es>=3?"ES":"?"}</b> ${es>=3?"Spanish":"unclear"}` : "Language: waiting for text";
+}
+["tEs","dEs","cEs"].forEach(id=>$(id).addEventListener("input",()=>{ adminState.sample=false; detectLang(); }));
+function resetSugs(){ $("sugs").innerHTML='<p class="placeholder-note">Suggestions appear after translation: category, SDGs, keywords, map location and a preview summary.</p>'; $("publish").disabled=true; $("gloss").hidden=true; }
+
+$("translate").onclick=()=>{
+  if (!$("tEs").value.trim() && !$("dEs").value.trim()) { $("detected").textContent="Add a Spanish title or description first"; return; }
+  const b=$("translate"); b.disabled=true; b.innerHTML='<span class="spin"></span>Translating';
+  setTimeout(()=>{
+    b.disabled=false; b.textContent="Translate again";
+    if (adminState.sample){
+      $("tEn").value=SAMPLE.en.t; $("dEn").value=SAMPLE.en.d; $("cEn").value=SAMPLE.en.c;
+      $("gloss").innerHTML="Kept untranslated (glossary): "+SAMPLE.glossary.map(g=>`<span class="term">${esc(g)}</span>`).join("");
+      $("gloss").hidden=false;
+      renderSugs(SAMPLE.sugs);
+    } else {
+      const ph="[Placeholder. No model connected, so this is the original text] ";
+      $("tEn").value=ph+$("tEs").value; $("dEn").value=ph+$("dEs").value; $("cEn").value=$("cEs").value?ph+$("cEs").value:"";
+      $("gloss").hidden=true;
+      $("sugs").innerHTML='<p class="placeholder-note">Custom text needs the real tagging model to produce suggestions. Load the Spanish example to see what this step will look like.</p>';
+    }
+    adminState.translated=true; $("publish").disabled=false;
+  }, 1300);
+};
+function renderSugs(list){
+  $("sugs").innerHTML='<div class="sugs">'+list.map((s,i)=>{
+    const v = s.type==="chips" ? `<div class="tchips">${s.v.map(x=>`<button type="button" aria-pressed="true" title="Click to remove">${esc(x)}</button>`).join("")}</div>`
+      : s.type==="text" ? `<textarea aria-label="${s.k}" style="color:var(--text);background:#fff;font:inherit;font-size:14px;border:1px solid var(--line);border-radius:6px;padding:8px;min-height:60px">${esc(s.v)}</textarea>`
+      : `<strong>${esc(s.v)}</strong>`;
+    return `<div class="sug" data-i="${i}"><span class="k">${s.k}</span><div class="v">${v}<span class="conf">Example score: ${esc(s.conf)}</span></div>
+      <div class="acts"><button type="button" class="ok">Accept</button><button type="button" class="no">Reject</button></div></div>`;}).join("")+'</div>';
+}
+$("sugs").addEventListener("click",e=>{
+  const chip=e.target.closest(".tchips button"); if (chip){ chip.setAttribute("aria-pressed", chip.getAttribute("aria-pressed")!=="true"); return; }
+  const row=e.target.closest(".sug"); if(!row) return;
+  if (e.target.closest(".ok")) { row.classList.add("accepted"); row.classList.remove("rejected"); }
+  if (e.target.closest(".no")) { row.classList.add("rejected"); row.classList.remove("accepted"); }
+});
+$("publish").onclick=()=>{
+  const pending=[...document.querySelectorAll(".sug:not(.accepted):not(.rejected)")].length;
+  $("publishArea").innerHTML=`<div class="done"><h3>Approved (mockup)</h3>
+    <p>In the real system this saves the project in Spanish and English, logs your edits to the translation and tags as training data, and sends it to a curator for the blue mark. Nothing was saved here.${pending?` ${pending} suggestion${pending>1?"s were":" was"} left unreviewed.`:""}</p>
+    <div><button class="btn primary" type="button" id="toPin">${adminState.sample?"See it on the map":"Back to map"}</button></div></div>`;
+  $("toPin").onclick=()=>{ adminEl.hidden=true;
+    if (adminState.sample){ const d=items.find(x=>x.p.id==="17"); if(d) select(d); } };
+};
+
+// ---------- interaction: drag = rotate, wheel/pinch = zoom ----------
+let last={x:0,y:0,k:1}, syncing=false;
+const zoom=d3.zoom().scaleExtent([0.7,8]).clickDistance(4)
+  .on("start",()=>{ state.auto=false; })
+  .on("zoom",e=>{
+    if (syncing) return;
+    const t=e.transform;
+    if (Math.abs(t.k-last.k)>1e-6){ state.k=t.k; }
+    else {
+      const dx=t.x-last.x, dy=t.y-last.y, s=0.28/state.k;
+      state.rot[0]+=dx*s;
+      if (state.proj==="globe") state.rot[1]=Math.max(-85,Math.min(85,state.rot[1]-dy*s));
+      else state.panY=Math.max(-H*state.k*0.6,Math.min(H*state.k*0.6,state.panY+dy));
+    }
+    last={x:t.x,y:t.y,k:t.k}; draw();
+  });
+const csel=d3.select(canvas).call(zoom).on("dblclick.zoom",null);
+function syncZoom(){ syncing=true; const t=d3.zoomIdentity.translate(last.x,last.y).scale(state.k); csel.call(zoom.transform,t); last={x:t.x,y:t.y,k:t.k}; syncing=false; }
+canvas.addEventListener("click",()=>closeCard());
+document.getElementById("zin").onclick=()=>zoomBy(1.5);
+document.getElementById("zout").onclick=()=>zoomBy(1/1.5);
+function zoomBy(f){ const a=state.k, b=Math.max(0.7,Math.min(8,a*f));
+  d3.transition().duration(300).tween("z",()=>tt=>{ state.k=a+(b-a)*tt; syncZoom(); draw(); }); }
+
+// ---------- loop ----------
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+let prev=performance.now();
+function loop(now){
+  const dt=now-prev; prev=now;
+  if (state.auto && !reduce && state.proj==="globe" && story.hidden && adminEl.hidden){ state.rot[0]+=dt*0.006; draw(); }
+  else if (state.news && !reduce) draw();
+  requestAnimationFrame(loop);
+}
+
+// ---------- boot ----------
+fetch("countries-110m.json").then(r=>r.json()).then(world=>{
+  countries=topojson.feature(world,world.objects.countries).features;
+  land=topojson.feature(world,world.objects.land);
+  borders=topojson.mesh(world,world.objects.countries,(a,b)=>a!==b);
+  draw();
+}).catch(()=>{ document.querySelector(".hint").textContent="Country shapes failed to load. Pins still work."; });
+addEventListener("resize",resize);
+if (innerWidth<760) setPanel(false);
+resize(); refresh(); requestAnimationFrame(loop);
+</script>
