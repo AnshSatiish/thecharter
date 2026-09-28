@@ -427,12 +427,12 @@ function EditField({ id, label, value, onChange, wide }: { id: string; label: st
 function Guilloche() {
   return (
     <svg className="pointer-events-none absolute inset-0 w-full h-full" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" aria-hidden>
-      <g fill="none" stroke="#b79a5b" strokeOpacity="0.14" strokeWidth="0.7" transform="translate(360 330)">
+      <g fill="none" stroke="#b79a5b" strokeOpacity="0.14" strokeWidth="0.7" transform="translate(470 470)">
         {Array.from({ length: 36 }, (_, i) => (
           <ellipse key={i} rx="170" ry="16" transform={`rotate(${i * 5})`} />
         ))}
       </g>
-      <g fill="none" stroke="#1f3b44" strokeOpacity="0.06" strokeWidth="0.6" transform="translate(20 20)">
+      <g fill="none" stroke="#1f3b44" strokeOpacity="0.06" strokeWidth="0.6" transform="translate(-40 -40)">
         {Array.from({ length: 24 }, (_, i) => (
           <ellipse key={i} rx="110" ry="9" transform={`rotate(${i * 7.5})`} />
         ))}

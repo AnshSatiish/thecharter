@@ -5,7 +5,7 @@
 <title>The Charter Globe</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Homemade+Apple&display=swap">
 <style>
 :root{
   color-scheme: dark;
@@ -26,6 +26,7 @@
   --serif:"Cormorant Garamond", "Iowan Old Style", Georgia, serif;
   --sans:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
+[hidden]{display:none!important}
 html,body{height:100%}
 body{margin:0;background:var(--space);color:var(--text);font-family:var(--sans);overflow:hidden}
 button{font:inherit;cursor:pointer}
@@ -245,6 +246,66 @@ button{font:inherit;cursor:pointer}
   .sug{grid-template-columns:1fr}
   .upload-btn{padding:6px 8px;font-size:11px}
 }
+/* ---------- profile: field passport ---------- */
+.pp{position:fixed;inset:0;z-index:55;background:#efe9dd;overflow-y:auto;color:var(--text);color-scheme:light;animation:fade .25s ease}
+.pp-bar{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:12px;padding:10px 20px;background:var(--ink);color:#f3efe8}
+.pp-bar h1{font-family:var(--serif);font-weight:600;font-size:22px;margin:0}
+.pp-bar .sp{margin-left:auto}
+.pp-bar button{border:1px solid rgba(255,255,255,.3);background:transparent;color:#fff;border-radius:6px;padding:8px 14px;font-weight:600;font-size:13px}
+.pp-in{max-width:1080px;margin:0 auto;padding-block:24px 64px;padding-inline:16px;display:flex;flex-direction:column;gap:16px}
+.cover{background:#1f3b44;border-radius:20px;padding:12px;box-shadow:0 24px 60px -20px rgba(31,59,68,.55)}
+.spread{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border-radius:12px;overflow:hidden}
+.pg{position:relative;padding:24px 26px;min-width:0}
+.pg.data{background:#f4efe3;border-right:1px solid #d8ccb3}
+.pg.entries{background:#f7f3e9}
+.pg.entries::before{content:"";position:absolute;inset:0 auto 0 0;width:22px;background:linear-gradient(90deg,rgba(0,0,0,.09),transparent);pointer-events:none}
+.rosette{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.pp-top{position:relative;display:flex;justify-content:space-between;gap:12px}
+.pp-brand{font-family:var(--serif);font-size:20px;letter-spacing:.18em;color:#1f3b44}
+.pp-sub{font-size:9.5px;letter-spacing:.16em;color:#8a7f6f;margin-top:2px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+.pp-no{font-size:10px;color:#8a7f6f;text-align:right}
+.pp-no b{color:var(--text);font-weight:500}
+.pp-id{position:relative;display:flex;gap:18px;margin-top:18px}
+.photo{width:112px;height:144px;flex-shrink:0;background:#d8ccb3;border:1px solid #c4b594;border-radius:2px;display:grid;place-items:center;font-family:var(--serif);font-size:46px;color:rgba(31,59,68,.7);position:relative}
+.photo .seal{position:absolute;right:-12px;bottom:-12px;width:50px;height:50px;border-radius:50%;border:2px solid rgba(154,122,60,.7);background:rgba(244,239,227,.7);display:grid;place-items:center;transform:rotate(-12deg)}
+.kv{display:grid;gap:8px;font-size:14px;min-width:0}
+.kv dt{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a7f6f}
+.kv dd{margin:0;line-height:1.3}
+.kv2{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-top:14px;font-size:14px}
+.bio{position:relative;font-size:13px;line-height:1.55;color:#4a443d;margin:14px 0 8px}
+.tags{position:relative;display:flex;flex-wrap:wrap;gap:6px}
+.tags span{border:1px solid #c4b594;border-radius:999px;padding:2px 10px;font-size:11.5px;color:#4a443d}
+.sig{position:relative;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-top:14px}
+.sig p{margin:0}
+.sig .hand{font-family:"Homemade Apple",cursive;font-size:21px;color:#1f3b44;transform:rotate(-2deg);white-space:nowrap}
+.mrz{position:relative;margin:16px -26px -24px;padding:12px 26px;background:#ebe4d3;overflow-x:auto}
+.mrz p{margin:0;font-size:13px;letter-spacing:.12em;white-space:pre}
+.ent-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.ent-h h2{font-family:var(--serif);font-size:26px;margin:0;color:#1f3b44;font-weight:600}
+.stamps{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-top:14px}
+.stamp{border:0;background:none;padding:0;display:block;width:100%;max-width:200px;margin:0 auto;border-radius:50%}
+.stamp svg{width:100%;height:auto;mix-blend-mode:multiply;transition:transform .2s}
+.stamp:hover svg,.stamp:focus-visible svg{transform:scale(1.06)}
+.stamp-next{display:grid;place-items:center}
+.stamp-next div{width:100%;max-width:180px;aspect-ratio:4/3;border:2px dashed #c4b594;border-radius:50%;display:grid;place-items:center;text-align:center;font-size:11px;color:#8a7f6f;line-height:1.4}
+.pp-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.pp-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#d9cfbd;border:1px solid #d9cfbd;border-radius:10px;overflow:hidden}
+.pp-stats div{background:#fbf8f1;padding:12px 16px}
+.pp-stats dt{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a7f6f}
+.pp-stats dd{margin:2px 0 0;font-family:var(--serif);font-weight:700;font-size:26px;color:#1f3b44;font-variant-numeric:lining-nums tabular-nums}
+.routechip{position:absolute;top:16px;left:50%;transform:translateX(-50%);z-index:9;background:#1f3b44;color:#fff;border-radius:999px;padding:7px 8px 7px 14px;display:flex;gap:10px;align-items:center;font-size:12.5px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.routechip button{border:0;border-radius:999px;background:#fff;color:#1f3b44;padding:5px 11px;font-weight:700;font-size:12px}
+@media (max-width:760px){
+  .spread{grid-template-columns:minmax(0,1fr)}
+  .pg.data{border-right:0}
+  .pg{padding:20px}
+  .mrz{margin:16px -20px -20px;padding:12px 20px}
+  .photo{width:92px;height:118px;font-size:38px}
+  .pp-stats{grid-template-columns:1fr 1fr}
+  .sig .hand{font-size:17px}
+}
+
 /* ---------- coordinates ---------- */
 .coords{position:absolute;left:16px;bottom:16px;z-index:6;background:rgba(0,0,0,.45);color:#fff;border-radius:6px;padding:6px 10px;
   font:500 12px/1 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.04em;pointer-events:none;font-variant-numeric:tabular-nums}
@@ -284,7 +345,7 @@ button{font:inherit;cursor:pointer}
   <nav class="nav" aria-label="Sections">
     <a href="#" aria-current="page">Map</a><a href="#">Projects</a><a href="#">Community</a><a href="#">New entries</a><a href="#">Sponsors</a><a href="#">Events</a>
   </nav>
-  <div style="display:flex;gap:10px;align-items:center"><button class="upload-btn" id="adminOpen" type="button">+ Upload project</button><button class="user" type="button">DIANA</button></div>
+  <div style="display:flex;gap:10px;align-items:center"><button class="upload-btn" id="adminOpen" type="button">+ Upload project</button><button class="user" id="userBtn" type="button" aria-label="Open my profile">DIANA</button></div>
 </header>
 
 <main class="stage" id="stage">
@@ -356,6 +417,7 @@ button{font:inherit;cursor:pointer}
   <div class="newsnote" id="newsnote">News layer on. Shaded regions are set by an admin. An AI model can suggest them later.</div>
   <div class="hint">Drag to spin · scroll or pinch to zoom · click a pin</div>
   <div class="coords" id="coords" hidden></div>
+  <div class="routechip" id="routechip" hidden>Showing Diana's route · 5 saved projects <button type="button" id="routeOff">Hide route</button></div>
   <div class="pickbar" id="pickbar" hidden>Click the globe where the project took place <button type="button" id="pickCancel">Cancel</button></div>
 
   <div id="card" hidden></div>
@@ -367,6 +429,7 @@ button{font:inherit;cursor:pointer}
 </main>
 
 <div class="story" id="story" hidden></div>
+<div class="pp" id="profile" hidden role="dialog" aria-label="My profile"></div>
 
 <div class="admin" id="admin" hidden>
   <div class="admin-bar"><h1>Upload a project</h1><span class="ai">Admin · mockup</span><span class="sp"></span>
@@ -674,6 +737,7 @@ function draw(){
     }
   }
   ctx.restore();
+  if (typeof drawRoute==="function") drawRoute();
   // limb shading + highlight for a 3D feel
   if (globe){
     let g=ctx.createRadialGradient(cx-r*.3,cy-r*.35,r*.1,cx,cy,r);
@@ -859,7 +923,7 @@ async function loadNearby(p){
     closeStory(); if (d) select(d); };
 }
 function closeStory(){ story.hidden=true; }
-addEventListener("keydown",e=>{ if(e.key==="Escape"){ if(picking) endPick(); else if(!adminEl.hidden) adminEl.hidden=true; else if(!story.hidden) closeStory(); else if(drawer.classList.contains("open")) drawer.classList.remove("open"); else closeCard(); }});
+addEventListener("keydown",e=>{ if(e.key==="Escape"){ if(picking) endPick(); else if(!profileEl.hidden) closeProfile(); else if(!adminEl.hidden) adminEl.hidden=true; else if(!story.hidden) closeStory(); else if(drawer.classList.contains("open")) drawer.classList.remove("open"); else closeCard(); }});
 
 // ---------- admin upload (AI steps are placeholders) ----------
 const adminEl=document.getElementById("admin");
@@ -991,6 +1055,120 @@ async function publishToApi(lat,lng){
   }
 }
 
+// ---------- profile: field passport (mock user until auth + profile endpoints exist) ----------
+const ME = { given:"Diana", surname:"Martinez", email:"diana.martinez@university.edu", university:"University of Sydney",
+  degree:"Master in Visual Anthropology", field:"Documentary Photography & Social Research", based:"Sydney, Australia",
+  home:[151.2093,-33.8688], since:"2023-09-18", no:"TC2309187", country:"AUS", role:"Student",
+  bio:"Visual anthropologist focusing on urban communities and cultural preservation. Interested in collaborative documentary projects that give voice to marginalized communities.",
+  interests:["Urban Life","Anthropology","Social Justice","Documentary"] };
+const SAVED = [
+  {id:"17", code:"MEX", country:"Mexico", continent:"North America", on:"2024-11-02"},
+  {id:"25", code:"KEN", country:"Kenya", continent:"Africa", on:"2025-01-19"},
+  {id:"23", code:"RWA", country:"Rwanda · DR Congo", continent:"Africa", on:"2025-03-08"},
+  {id:"26", code:"MEX", country:"Mexico · US border", continent:"North America", on:"2025-05-27"},
+  {id:"28", code:"AUS", country:"Australia", continent:"Oceania", on:"2025-08-14"},
+];
+const MONTHS=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+const pdate = iso => { const [y,m,d]=iso.split("-"); return `${d} ${MONTHS[+m-1]} ${y}`; };
+// ICAO 9303 check digit (weights 7-3-1): the machine-readable zone is computed, not decorative.
+const mrzCheck = s => String([...s].reduce((sum,c,i)=>sum+(c==="<"?0:/\d/.test(c)?+c:c.charCodeAt(0)-55)*[7,3,1][i%3],0)%10);
+function mrzLines(p){
+  const clean = s => s.toUpperCase().normalize("NFD").replace(/[^A-Z]/g,"<");
+  const l1 = `P<TCH${clean(p.surname)}<<${clean(p.given)}`.padEnd(44,"<").slice(0,44);
+  const issued=p.since.slice(2).replace(/-/g,""), expires=String(+p.since.slice(0,4)+5).slice(2)+p.since.slice(5).replace("-","");
+  const doc=p.no.padEnd(9,"<");
+  const l2=(`${doc}${mrzCheck(doc)}${p.country}${issued}${mrzCheck(issued)}<${expires}${mrzCheck(expires)}`+clean(p.degree.replace(/^Master in /,""))).padEnd(43,"<").slice(0,43);
+  return [l1, l2+mrzCheck(l2)];
+}
+const savedEntries = () => SAVED.map(s=>({...s, p:PROJECTS.find(x=>x.id===s.id)})).filter(s=>s.p).sort((a,b)=>a.on.localeCompare(b.on));
+const INK = {wildlife:"#4E8A12", anthropology:"#9A7A3C", urban:"#3D3D3D", border:"#D9730D", news:"#C8351B"};
+function stampSVG(e,i){
+  const ink=INK[e.p.cat]||INK.news, id="s"+i, top=esc(e.country.toUpperCase().slice(0,20)), coord=fmtLL(e.p.lat,e.p.lng);
+  const T=(x,y,size,txt,extra="")=>`<text x="${x}" y="${y}" text-anchor="middle" fill="${ink}" stroke="none" font-family="'IBM Plex Mono',monospace" font-size="${size}" ${extra}>${txt}</text>`;
+  const code=`<text x="100" y="80" text-anchor="middle" fill="${ink}" stroke="none" font-family="'Cormorant Garamond',serif" font-weight="700" font-size="32">${e.code}</text>`;
+  const shapes=[
+    `<circle cx="100" cy="75" r="68" stroke-width="3.2"/><circle cx="100" cy="75" r="62" stroke-width="1.2"/>${T(100,42,9,top,'font-weight="600" letter-spacing="2"')}${code}${T(100,99,8.5,pdate(e.on))}${T(100,115,7,"THE CHARTER · ENTRY")}`,
+    `<rect x="14" y="16" width="172" height="118" rx="10" stroke-width="3.2"/><rect x="21" y="23" width="158" height="104" rx="6" stroke-width="1.2"/>${T(100,44,10,"ENTRY · ADMITTED",'font-weight="600" letter-spacing="3"')}${code}<line x1="34" y1="92" x2="166" y2="92" stroke-width="1.2"/>${T(100,106,9,pdate(e.on))}${T(100,119,7.5,coord)}`,
+    `<polygon points="62,10 138,10 186,50 186,100 138,140 62,140 14,100 14,50" stroke-width="3.2"/><polygon points="65,18 135,18 178,53 178,97 135,132 65,132 22,97 22,53" stroke-width="1.2"/>${T(100,42,9,top,'font-weight="600" letter-spacing="2"')}${code}${T(100,100,8.5,pdate(e.on))}${T(100,116,7,esc(CATS[e.p.cat].label.toUpperCase().slice(0,26)))}`,
+    `<ellipse cx="100" cy="75" rx="88" ry="60" stroke-width="3.2"/><ellipse cx="100" cy="75" rx="81" ry="53" stroke-width="1.2"/>${T(100,46,9,top,'font-weight="600" letter-spacing="2"')}${code}${T(100,101,8.5,pdate(e.on))}${T(100,114,7,coord)}`,
+  ];
+  const tilt=(Math.abs([...e.p.id].reduce((h,c)=>(h*31+c.charCodeAt(0))|0,7))%26)-13;
+  return `<button class="stamp" type="button" data-id="${e.p.id}" style="transform:rotate(${tilt}deg)" aria-label="${esc(e.p.title)}, saved ${pdate(e.on)}. Open project.">
+    <svg viewBox="0 0 200 150"><defs><filter id="ink-${id}" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="${i*7+3}" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" result="d"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="3" seed="${i+3}" result="patch"/>
+      <feColorMatrix in="patch" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.2 1.9" result="mask"/><feComposite in="d" in2="mask" operator="in"/></filter></defs>
+      <g filter="url(#ink-${id})" fill="none" stroke="${ink}" opacity=".88">${shapes[i%4]}</g></svg></button>`;
+}
+function rosette(){
+  const a=Array.from({length:36},(_,i)=>`<ellipse rx="170" ry="16" transform="rotate(${i*5})"/>`).join("");
+  const b=Array.from({length:24},(_,i)=>`<ellipse rx="110" ry="9" transform="rotate(${i*7.5})"/>`).join("");
+  return `<svg class="rosette" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g fill="none" stroke="#b79a5b" stroke-opacity=".14" stroke-width=".7" transform="translate(470 470)">${a}</g>
+    <g fill="none" stroke="#1f3b44" stroke-opacity=".06" stroke-width=".6" transform="translate(-40 -40)">${b}</g></svg>`;
+}
+const profileEl=$("profile");
+function openProfile(){
+  const es=savedEntries(), [m1,m2]=mrzLines(ME), full=`${ME.given} ${ME.surname}`;
+  const stops=[ME.home, ...es.map(e=>[e.p.lng,e.p.lat])];
+  const km=Math.round(stops.slice(1).reduce((s,to,i)=>s+d3.geoDistance(stops[i],to)*6371,0));
+  const check='<svg width="15" height="15" viewBox="0 0 24 24" aria-label="Verified institutional email" style="vertical-align:-2px"><path fill="#1d8cf0" d="M12 1.5l2.6 1.9 3.2-.2 1 3 2.7 1.8-1 3 1 3-2.7 1.8-1 3-3.2-.2L12 22.5l-2.6-1.9-3.2.2-1-3L2.5 16l1-3-1-3 2.7-1.8 1-3 3.2.2z"/><path d="m7.8 12.2 2.8 2.8 5.6-5.8" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  profileEl.innerHTML=`<div class="pp-bar"><h1>My profile</h1><span class="sp"></span><button type="button" id="ppClose">Back to map</button></div>
+  <div class="pp-in">
+    <section class="cover" aria-label="Field passport"><div class="spread">
+      <div class="pg data">${rosette()}
+        <div class="pp-top"><div><div class="pp-brand">THE CHARTER</div><div class="pp-sub">FIELD PASSPORT · PASSEPORT DE TERRAIN · PASAPORTE DE CAMPO</div></div>
+          <div class="pp-no mono">TYPE <b>P</b> · CODE <b>TCH</b><br>No. <b>${ME.no}</b></div></div>
+        <div class="pp-id"><div class="photo">${initials(full)}<span class="seal">${check}</span></div>
+          <dl class="kv"><div><dt>Surname / Nom / Apellido</dt><dd>${ME.surname.toUpperCase()}</dd></div>
+            <div><dt>Given names / Prénoms / Nombres</dt><dd>${ME.given.toUpperCase()}</dd></div>
+            <div><dt>Programme</dt><dd>${esc(ME.degree)}</dd></div><div><dt>Institution</dt><dd>${esc(ME.university)}</dd></div></dl></div>
+        <dl class="kv kv2"><div><dt>Field of study</dt><dd>${esc(ME.field)}</dd></div><div><dt>Based in</dt><dd>${esc(ME.based)}</dd></div>
+          <div><dt>Member since</dt><dd class="mono">${pdate(ME.since)}</dd></div><div><dt>Status</dt><dd>${ME.role} ${check}</dd></div></dl>
+        <p class="bio">${esc(ME.bio)}</p>
+        <div class="tags">${ME.interests.map(x=>`<span>${esc(x)}</span>`).join("")}</div>
+        <div class="sig"><div><p class="pp-sub">HOLDER'S SIGNATURE</p><p class="hand">${esc(full)}</p></div><p class="mono" style="font-size:11px;color:#8a7f6f">${esc(ME.email)}</p></div>
+        <div class="mrz mono" aria-label="Machine readable zone"><p>${esc(m1)}</p><p>${esc(m2)}</p></div>
+      </div>
+      <div class="pg entries">
+        <div class="ent-h"><h2>Entries</h2><span class="pp-sub">VISAS · SAVED PROJECTS · PAGE 07</span></div>
+        <p style="margin:4px 0 0;font-size:13px;color:#6f675f">Each project you save gets a stamp. Click one to see it on the globe.</p>
+        <div class="stamps">${es.map(stampSVG).join("")}<div class="stamp-next"><div class="mono">NEXT ENTRY<br>save a project<br>from the map</div></div></div>
+      </div>
+    </div></section>
+    <dl class="pp-stats"><div><dt>Entries</dt><dd>${es.length}</dd></div><div><dt>Countries</dt><dd>${new Set(es.map(e=>e.code)).size}</dd></div>
+      <div><dt>Continents</dt><dd>${new Set(es.map(e=>e.continent)).size}</dd></div><div><dt>Route length</dt><dd>${km.toLocaleString()} km</dd></div></dl>
+    <div class="pp-actions"><button class="btn primary" type="button" id="showRoute">Show my route on the globe</button></div>
+  </div>`;
+  profileEl.hidden=false; profileEl.scrollTop=0; closeCard();
+  $("ppClose").onclick=closeProfile; $("ppClose").focus();
+  $("showRoute").onclick=()=>{ closeProfile(); showRoute(true); };
+  profileEl.querySelector(".stamps").onclick=e=>{ const b=e.target.closest(".stamp"); if(!b) return;
+    closeProfile(); const d=items.find(x=>x.p.id===b.dataset.id); if(d) select(d); };
+}
+function closeProfile(){ profileEl.hidden=true; }
+$("userBtn").onclick=openProfile;
+
+// Diana's saved places, joined as great-circle legs from home, drawn on the globe.
+var routeLegs=null; // var: draw() can run before this line executes
+function showRoute(on){
+  routeLegs = on ? (()=>{ const s=[ME.home, ...savedEntries().map(e=>[e.p.lng,e.p.lat])]; return s.slice(1).map((to,i)=>[s[i],to]); })() : null;
+  $("routechip").hidden=!on; state.auto=false;
+  if (on) flyTo(ME.home); else draw();
+}
+$("routeOff").onclick=()=>showRoute(false);
+function drawRoute(){
+  if (!routeLegs) return;
+  ctx.save(); ctx.beginPath(); path({type:"Sphere"}); ctx.clip();
+  ctx.setLineDash([6,4]); ctx.lineWidth=2.2; ctx.strokeStyle="#ffe3a3"; ctx.lineCap="round";
+  for (const [a,b] of routeLegs){ ctx.beginPath(); path({type:"LineString",coordinates:[a,b]}); ctx.stroke(); }
+  ctx.setLineDash([]);
+  if (isVisible(ME.home)){ const [x,y]=projection(ME.home); ctx.fillStyle="#ffe3a3"; ctx.strokeStyle="#1f3b44"; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(x,y,6,0,7); ctx.fill(); ctx.stroke();
+    ctx.font="600 11px Figtree, system-ui, sans-serif"; ctx.textAlign="left"; ctx.fillStyle="#fff"; ctx.fillText("Home · Sydney",x+10,y+4); }
+  ctx.restore();
+}
+
 // ---------- coordinates: cursor readout + pick on globe ----------
 const coordsEl=$("coords");
 function eventLL(e){
@@ -1072,7 +1250,7 @@ const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 let prev=performance.now();
 function loop(now){
   const dt=now-prev; prev=now;
-  if (state.auto && !reduce && !picking && state.proj==="globe" && story.hidden && adminEl.hidden){ state.rot[0]+=dt*0.006; draw(); }
+  if (state.auto && !reduce && !picking && state.proj==="globe" && story.hidden && adminEl.hidden && profileEl.hidden){ state.rot[0]+=dt*0.006; draw(); }
   else if (state.news && !reduce) draw();
   requestAnimationFrame(loop);
 }
