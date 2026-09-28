@@ -323,7 +323,7 @@ export default function App() {
         <Events />
       ) : currentSection === 'profile' ? (
         /* Profile Section */
-        <ProfilePage onLogout={handleLogout} />
+        <ProfilePage onLogout={handleLogout} onViewProject={handleProjectClick} />
       ) : (
         /* Community Section */
         <Community />

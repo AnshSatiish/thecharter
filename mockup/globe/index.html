@@ -5,7 +5,7 @@
 <title>The Charter Globe</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
 :root{
   color-scheme: dark;
@@ -245,7 +245,27 @@ button{font:inherit;cursor:pointer}
   .sug{grid-template-columns:1fr}
   .upload-btn{padding:6px 8px;font-size:11px}
 }
+/* ---------- coordinates ---------- */
+.coords{position:absolute;left:16px;bottom:16px;z-index:6;background:rgba(0,0,0,.45);color:#fff;border-radius:6px;padding:6px 10px;
+  font:500 12px/1 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.04em;pointer-events:none;font-variant-numeric:tabular-nums}
+.panel:not(.closed)~.coords{left:332px}
+.pickbar{position:absolute;top:16px;left:50%;transform:translateX(-50%);z-index:25;background:#1f1d1b;color:#fff;border-radius:999px;
+  padding:8px 8px 8px 16px;display:flex;align-items:center;gap:12px;font-size:13px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.pickbar button{border:0;border-radius:999px;background:#fff;color:#1f1d1b;padding:6px 12px;font-weight:700;font-size:12px}
+#globe.picking{cursor:crosshair}
+.src{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:11.5px;font-weight:600;color:var(--muted)}
+.src .dot{width:8px;height:8px;border-radius:50%;background:#b8aea2}
+.src .dot.live{background:#3f9a32;box-shadow:0 0 0 3px rgba(63,154,50,.18)}
+.loc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;align-items:end}
+.loc-grid select{font:inherit;font-size:14px;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:#fff}
+.pubmsg{font-size:13px;color:#b3261e;margin:10px 0 0}
+.nearby{display:flex;flex-direction:column;gap:6px}
+.nearby button{display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;border:1px solid rgba(255,255,255,.16);background:transparent;color:#efe9e0;border-radius:6px;padding:9px 12px;font-size:13.5px}
+.nearby button:hover{border-color:var(--gold)}
+.nearby span{color:#b7ad9f;font-variant-numeric:tabular-nums;white-space:nowrap}
+
 @media (max-width:760px){
+  .coords{display:none}
   .nav{display:none}
   .top{justify-content:space-between}
   .panel{width:auto;right:16px;top:auto;bottom:16px;max-height:62%}
@@ -279,6 +299,7 @@ button{font:inherit;cursor:pointer}
     <div class="panel-head">
       <h1>Verified work, mapped.</h1>
       <p>Curated photojournalism and field research. Click a pin to preview a project.</p>
+      <p class="src" id="src"><span class="dot"></span>Sample data</p>
     </div>
     <div class="panel-body">
       <div class="sec">
@@ -334,6 +355,8 @@ button{font:inherit;cursor:pointer}
 
   <div class="newsnote" id="newsnote">News layer on. Shaded regions are set by an admin. An AI model can suggest them later.</div>
   <div class="hint">Drag to spin · scroll or pinch to zoom · click a pin</div>
+  <div class="coords" id="coords" hidden></div>
+  <div class="pickbar" id="pickbar" hidden>Click the globe where the project took place <button type="button" id="pickCancel">Cancel</button></div>
 
   <div id="card" hidden></div>
 
@@ -394,10 +417,25 @@ button{font:inherit;cursor:pointer}
     </section>
 
     <section class="step">
-      <header><span class="num">5</span><h2>Publish</h2></header>
+      <header><span class="num">5</span><h2>Location and details</h2><div class="right"><span style="font-size:12px;color:var(--muted)">The AI suggestion fills these. Click the globe to correct them.</span></div></header>
+      <div class="loc-grid">
+        <label class="fld" for="catIn">Category<select id="catIn">
+          <option value="anthropology">Anthropology</option><option value="wildlife">Wildlife & human interaction</option>
+          <option value="urban">Urban life</option><option value="border">Cross-border interactions</option><option value="news">News</option></select></label>
+        <label class="fld" for="locIn" style="grid-column:span 2">Place name<input id="locIn" type="text" placeholder="e.g. Sierra Mazateca, Oaxaca, Mexico"></label>
+        <label class="fld" for="dateIn">Date<input id="dateIn" type="date"></label>
+        <label class="fld" for="latIn">Latitude<input id="latIn" type="number" step="0.0001" min="-90" max="90" placeholder="18.1333"></label>
+        <label class="fld" for="lngIn">Longitude<input id="lngIn" type="number" step="0.0001" min="-180" max="180" placeholder="-96.8333"></label>
+        <button class="btn" type="button" id="pickBtn">Pick on globe</button>
+      </div>
+    </section>
+
+    <section class="step">
+      <header><span class="num">6</span><h2>Publish</h2></header>
       <div id="publishArea">
         <p style="margin:0 0 12px;font-size:14px;color:var(--muted)">Both languages are stored. The project is labelled “Translated by AI, reviewed by Diana” and goes to a curator for the blue verified mark.</p>
         <button class="btn primary" type="button" id="publish" disabled>Approve and publish</button>
+        <p class="pubmsg" id="pubMsg" role="alert"></p>
       </div>
     </section>
   </div>
@@ -406,6 +444,10 @@ button{font:inherit;cursor:pointer}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
 <script>
+// Pins come from the FastAPI backend when it is running (see backend/), otherwise from this built-in sample.
+const API_BASE = window.CHARTER_API ?? (["localhost","127.0.0.1"].includes(location.hostname) ? "http://localhost:8000" : null);
+const DEV_ADMIN_TOKEN = "dev-admin-token"; // development only; JWT sessions replace this (backend/app/core/security.py)
+let apiLive = false;
 const PROJECTS = [{"id": "17", "title": "Toxo'o o tsui' kiee'n: Day of the Death in the Mazatecan Highlands in Oaxaca", "author": "Cinthia Karina Baños Paredes", "prof": "Ethnologist", "aff": "National School of Anthropology and History (ENAH)", "cat": "anthropology", "loc": "Sierra Mazateca, Oaxaca, Mexico", "lat": 18.1333, "lng": -96.8333, "date": "2022-10-27", "year": 2022, "desc": "The Day of the Dead celebration in the Sierra Mazateca territory is known as ·Tsui' kiee'n· or ·The Festival of the Sun·", "kw": ["Day of the Dead", "Mazatec", "Oaxaca", "Huehuentones", "ritual", "Naxinandá", "indigenous traditions", "anthropology"], "sdgs": ["SDG10", "SDG11", "SDG16"], "imgs": 4, "web": "https://cinthiabanosphotography.com", "verified": true}, {"id": "26", "title": "The Two Walls", "author": "Alejandro Cegarra", "prof": "Documentary Photographer & Visual Journalist - The New York Times/Bloomberg", "aff": "Universidad Central de Venezuela", "cat": "news", "loc": "US-Mexico Border, Tijuana & Ciudad Juárez", "lat": 32.5349, "lng": -117.0382, "date": "2024-09-15", "year": 2024, "desc": "Since 2019, Mexico's immigration policies have undergone a significant shift, transforming from a nation historically open to migrants and asylum seekers at its southern border to a country that enforces stringent immigration policies.", "kw": ["migration", "US-Mexico border", "asylum seekers", "Title 42", "Title 8", "Venezuela", "human rights", "displacement"], "sdgs": ["SDG10", "SDG16", "SDG1", "SDG3"], "imgs": 4, "web": "https://alejandrocegarra.com", "verified": true}, {"id": "23", "title": "The Lake Has Fallen Silent", "author": "Jean-Baptiste Munyankindi", "prof": "Environmental Photojournalist & Ecologist", "aff": "University of Rwanda", "cat": "wildlife", "loc": "Lake Kivu, Rwanda/DRC", "lat": -1.7167, "lng": 29.2333, "date": "2024-08-10", "year": 2024, "desc": "Lake Kivu, a majestic body of water at the border between Rwanda and the Democratic Republic of Congo, is a place where stories intertwine and destinies converge. Beneath the placid beauty lies turbulence and uncertainty.", "kw": ["Lake Kivu", "Rwanda", "DRC", "climate change", "fishing communities", "displacement", "environmental degradation", "methane extraction"], "sdgs": ["SDG13", "SDG14", "SDG1", "SDG2", "SDG8", "SDG11"], "imgs": 4, "web": "https://jbmunyankindi.photography", "verified": true}, {"id": "25", "title": "Occupy Parliament: Kenya's Finance Bill Protests", "author": "Wanjiru Kimathi", "prof": "Political Scientist", "aff": "University of Nairobi", "cat": "news", "loc": "Nairobi, Kenya", "lat": -1.2864, "lng": 36.8172, "date": "2024-06-25", "year": 2024, "desc": "Documenting the nationwide protests against the Finance Bill 2024 in Kenya, where a generation of young activists took to the streets demanding accountability and rejecting punitive taxation.", "kw": ["Kenya", "protests", "Finance Bill 2024", "Nairobi", "activism", "taxation", "civil disobedience", "OccupyParliament"], "sdgs": ["SDG10", "SDG16", "SDG11"], "imgs": 4, "web": "https://wanjirukimathi.photography", "verified": true}, {"id": "27", "title": "The Darién Gap: The World's Most Dangerous Migration Route", "author": "Santiago Ramírez", "prof": "Documentary Photographer", "aff": "Universidad de los Andes", "cat": "news", "loc": "Darién Gap, Colombia-Panama Border", "lat": 8.0, "lng": -77.5, "date": "2024-11-15", "year": 2024, "desc": "Documentación visual de una de las rutas migratorias más peligrosas del mundo: el Tapón del Darién, un paso de 100 kilómetros de selva densa que conecta Colombia y Panamá.", "kw": ["migration", "Darién Gap", "refugees", "humanitarian crisis", "Venezuela", "Latin America", "human rights", "border crossing"], "sdgs": ["SDG1", "SDG3", "SDG10", "SDG16"], "imgs": 4, "web": "https://santiagoramirezphoto.com", "verified": true}, {"id": "28", "title": "Cool Burning: Indigenous Fire Management in West Arnhem Land", "author": "Matthew Abbott", "prof": "Geographer & Documentary Photographer", "aff": "University of Sydney", "cat": "wildlife", "loc": "West Arnhem Land, Northern Territory, Australia", "lat": -12.4, "lng": 133.8, "date": "2024-08-20", "year": 2024, "desc": "Indigenous Australians have strategically burned land to protect their environment for tens of thousands of years. In a practice known as cool burning, fires move slowly, burn only the undergrowth, and remove the build-up of fuel that feeds bigger blazes.", "kw": ["Indigenous fire management", "cool burning", "climate change", "carbon credits", "Australia", "traditional knowledge", "wildfire prevention", "environmental conservation"], "sdgs": ["SDG13", "SDG15", "SDG11", "SDG10"], "imgs": 4, "web": "https://matthewabbott.com.au", "verified": true}, {"id": "18", "title": "Two Chinas on Rails", "author": "Gilles Sabrie", "prof": "Documentary Photographer & Sociologist", "aff": "Sciences Po Paris", "cat": "urban", "loc": "China", "lat": 35.8617, "lng": 104.1954, "date": "2024-03-15", "year": 2024, "desc": "A photographic exploration of China's dual railway system, where gleaming high-speed trains and aging slow trains run in parallel, revealing the stark class divisions and inequalities within the world's largest rail network.", "kw": ["China", "railway", "high-speed train", "inequality", "migration", "infrastructure", "transportation", "urbanization"], "sdgs": ["SDG9", "SDG10", "SDG11"], "imgs": 4, "web": "https://gillessabrie.com", "verified": false}];
 
 const CATS = {
@@ -446,11 +488,16 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt
 const initials = n => n.replace(/^(Dr\.?)\s+/,"").split(/\s+/).filter(Boolean).map(w=>w[0]).slice(0,2).join("").toUpperCase();
 const affCode = a => { const m = a.match(/\(([^)]+)\)/); if (m) return m[1];
   return a.split(/\s+/).filter(w=>/^[A-Z]/.test(w) && !["of","de","the"].includes(w)).map(w=>w[0]).join("").slice(0,4); };
-const img = (p,i=0) => p.imgs ? `img/p${p.id}_${Math.min(i,p.imgs-1)}.jpg` : "";
+const img = (p,i=0) => p.images?.length ? p.images[Math.min(i,p.images.length-1)] : p.imgs ? `img/p${p.id}_${Math.min(i,p.imgs-1)}.jpg` : "";
+const fmtLL = (lat,lng) => `${Math.abs(lat).toFixed(2)}° ${lat>=0?"N":"S"}, ${Math.abs(lng).toFixed(2)}° ${lng>=0?"E":"W"}`;
+const fromApi = p => ({ id:String(p.id), title:p.title, author:p.author?.name ?? "Unknown author", prof:p.author?.profession ?? "",
+  aff:p.author?.affiliation ?? "", cat:CATS[p.category] ? p.category : "news", loc:p.location_name, lat:p.lat, lng:p.lng,
+  date:p.date, year:p.year ?? +String(p.date).slice(0,4), desc:p.description, kw:p.keywords ?? [], sdgs:p.sdgs ?? [],
+  images:p.images ?? [], imgs:(p.images ?? []).length, web:p.author?.website, verified:!!p.verified });
 
 // ---------- state ----------
-const years = [...new Set(PROJECTS.map(p=>p.year))].sort();
-const sdgList = [...new Set(PROJECTS.flatMap(p=>p.sdgs))].sort((a,b)=>+a.slice(3)-+b.slice(3));
+let years = [...new Set(PROJECTS.map(p=>p.year))].sort();
+let sdgList = [...new Set(PROJECTS.flatMap(p=>p.sdgs))].sort((a,b)=>+a.slice(3)-+b.slice(3));
 const state = {
   q:"", semantic:true, cats:new Set(Object.keys(CATS)), sdgs:new Set(), y0:years[0], y1:years.at(-1),
   proj:"globe", researchers:false, borders:false, news:true, selected:null,
@@ -494,21 +541,27 @@ function renderQStatus(){
     : `${total} exact match${total===1?"":"es"}`;
 }
 const catsEl = document.getElementById("cats");
-catsEl.innerHTML = Object.entries(CATS).map(([k,c]) => {
-  const n = PROJECTS.filter(p=>p.cat===k).length;
-  return `<button class="cat" type="button" data-cat="${k}" aria-pressed="true"><span class="dot" style="background:${c.color}">${c.g}</span>${c.label}<span class="n">${n}</span></button>`;
-}).join("");
+const sdgEl = document.getElementById("sdgs");
+function buildFilters(){
+  years = [...new Set(PROJECTS.map(p=>p.year))].sort();
+  sdgList = [...new Set(PROJECTS.flatMap(p=>p.sdgs))].sort((a,b)=>+a.slice(3)-+b.slice(3));
+  state.y0 = years[0]; state.y1 = years.at(-1);
+  catsEl.innerHTML = Object.entries(CATS).map(([k,c]) => {
+    const n = PROJECTS.filter(p=>p.cat===k).length;
+    return `<button class="cat" type="button" data-cat="${k}" aria-pressed="${state.cats.has(k)}"><span class="dot" style="background:${c.color}">${c.g}</span>${c.label}<span class="n">${n}</span></button>`;
+  }).join("");
+  sdgEl.innerHTML = sdgList.map(s=>`<button class="chip" type="button" data-sdg="${s}" aria-pressed="${state.sdgs.has(s)}">SDG ${s.slice(3)}</button>`).join("");
+  for (const id of ["y0","y1"]) document.getElementById(id).innerHTML = years.map(y=>`<option ${y===state[id]?"selected":""}>${y}</option>`).join("");
+}
+buildFilters();
 catsEl.addEventListener("click", e => { const b=e.target.closest(".cat"); if(!b) return;
   const k=b.dataset.cat; state.cats.has(k)?state.cats.delete(k):state.cats.add(k);
   b.setAttribute("aria-pressed", state.cats.has(k)); refresh(); });
-const sdgEl = document.getElementById("sdgs");
-sdgEl.innerHTML = sdgList.map(s=>`<button class="chip" type="button" data-sdg="${s}" aria-pressed="false">SDG ${s.slice(3)}</button>`).join("");
 sdgEl.addEventListener("click", e => { const b=e.target.closest(".chip"); if(!b) return;
   const s=b.dataset.sdg; state.sdgs.has(s)?state.sdgs.delete(s):state.sdgs.add(s);
   b.setAttribute("aria-pressed", state.sdgs.has(s)); refresh(); });
 for (const id of ["y0","y1"]) {
   const sel=document.getElementById(id);
-  sel.innerHTML = years.map(y=>`<option ${y===state[id]?"selected":""}>${y}</option>`).join("");
   sel.addEventListener("change", ()=>{ state[id]=+sel.value; refresh(); });
 }
 document.getElementById("q").addEventListener("input", e=>{ state.q=e.target.value; refresh(); });
@@ -671,6 +724,7 @@ function placePins(){
     if (vis) this.setAttribute("transform",`translate(${p[0]},${p[1]})`);
     this.classList.toggle("active", state.selected===d.id);
   });
+  if (typeof placeDraft==="function") placeDraft();
   positionCard();
 }
 
@@ -777,15 +831,35 @@ function openStory(p){
       <div class="grid">${pics}</div>
       <h5>UN Sustainable Development Goals</h5><div class="kws">${p.sdgs.map(s=>`<span class="sdg">SDG ${s.slice(3)}</span>`).join("")}</div>
       <h5>Keywords</h5><div class="kws">${p.kw.map(k=>`<span>${esc(k)}</span>`).join("")}</div>
+      <h5>Nearby projects · within 2,000 km</h5><div class="nearby" id="nearby"><p style="color:#9d9387;font-size:13px;margin:0">Loading…</p></div>
       ${p.web?`<h5>Author</h5><p class="links"><a href="${esc(p.web)}" target="_blank" rel="noopener">Photographer website ↗</a></p>`:""}
       <p style="color:#8d8377;font-size:12px;margin-top:32px">Photographs remain the property of their author. Mockup, sample data.</p>
     </article>`;
   story.hidden=false; story.scrollTop=0;
   document.getElementById("storyClose").onclick=closeStory;
   document.getElementById("storyClose").focus();
+  loadNearby(p);
+}
+// Live: PostGIS ST_DWithin via GET /api/projects/near. Offline: the same great-circle distance computed here.
+async function loadNearby(p){
+  const el=document.getElementById("nearby"); let rows;
+  try {
+    if (!apiLive) throw new Error("offline");
+    const r=await fetch(`${API_BASE}/api/projects/near?lat=${p.lat}&lng=${p.lng}&km=2000`);
+    if (!r.ok) throw new Error(r.status);
+    rows=(await r.json()).map(x=>({p:fromApi(x), km:x.distance_km}));
+  } catch {
+    rows=PROJECTS.map(x=>({p:x, km:d3.geoDistance([p.lng,p.lat],[x.lng,x.lat])*6371})).filter(x=>x.km<=2000).sort((a,b)=>a.km-b.km);
+  }
+  rows=rows.filter(x=>x.p.id!==p.id);
+  if (!document.getElementById("nearby")) return;
+  el.innerHTML = rows.length ? rows.map(x=>`<button type="button" data-id="${x.p.id}">${esc(x.p.title)}<span>${Math.round(x.km).toLocaleString()} km</span></button>`).join("")
+    : '<p style="color:#9d9387;font-size:13px;margin:0">No other projects within 2,000 km yet.</p>';
+  el.onclick=e=>{ const b=e.target.closest("button"); if(!b) return; const d=items.find(i=>i.p.id===b.dataset.id);
+    closeStory(); if (d) select(d); };
 }
 function closeStory(){ story.hidden=true; }
-addEventListener("keydown",e=>{ if(e.key==="Escape"){ if(!adminEl.hidden) adminEl.hidden=true; else if(!story.hidden) closeStory(); else if(drawer.classList.contains("open")) drawer.classList.remove("open"); else closeCard(); }});
+addEventListener("keydown",e=>{ if(e.key==="Escape"){ if(picking) endPick(); else if(!adminEl.hidden) adminEl.hidden=true; else if(!story.hidden) closeStory(); else if(drawer.classList.contains("open")) drawer.classList.remove("open"); else closeCard(); }});
 
 // ---------- admin upload (AI steps are placeholders) ----------
 const adminEl=document.getElementById("admin");
@@ -850,6 +924,8 @@ $("translate").onclick=()=>{
       $("gloss").innerHTML="Kept untranslated (glossary): "+SAMPLE.glossary.map(g=>`<span class="term">${esc(g)}</span>`).join("");
       $("gloss").hidden=false;
       renderSugs(SAMPLE.sugs);
+      $("catIn").value="anthropology"; $("locIn").value="Sierra Mazateca, Oaxaca, Mexico";
+      $("latIn").value="18.1333"; $("lngIn").value="-96.8333"; $("dateIn").value="2022-10-27"; syncDraftPin();
     } else {
       const ph="[Placeholder. No model connected, so this is the original text] ";
       $("tEn").value=ph+$("tEs").value; $("dEn").value=ph+$("dEs").value; $("cEn").value=$("cEs").value?ph+$("cEs").value:"";
@@ -873,7 +949,11 @@ $("sugs").addEventListener("click",e=>{
   if (e.target.closest(".ok")) { row.classList.add("accepted"); row.classList.remove("rejected"); }
   if (e.target.closest(".no")) { row.classList.add("rejected"); row.classList.remove("accepted"); }
 });
-$("publish").onclick=()=>{
+$("publish").onclick=async()=>{
+  const lat=parseFloat($("latIn").value), lng=parseFloat($("lngIn").value);
+  $("pubMsg").textContent="";
+  if (!(Math.abs(lat)<=90 && Math.abs(lng)<=180)) { $("pubMsg").textContent="Add the coordinates first: type them in step 5 or use Pick on globe."; return; }
+  if (apiLive) return publishToApi(lat,lng);
   const pending=[...document.querySelectorAll(".sug:not(.accepted):not(.rejected)")].length;
   $("publishArea").innerHTML=`<div class="done"><h3>Approved (mockup)</h3>
     <p>In the real system this saves the project in Spanish and English, logs your edits to the translation and tags as training data, and sends it to a curator for the blue mark. Nothing was saved here.${pending?` ${pending} suggestion${pending>1?"s were":" was"} left unreviewed.`:""}</p>
@@ -881,6 +961,82 @@ $("publish").onclick=()=>{
   $("toPin").onclick=()=>{ adminEl.hidden=true;
     if (adminState.sample){ const d=items.find(x=>x.p.id==="17"); if(d) select(d); } };
 };
+
+const chipsOf = k => [...document.querySelectorAll(".sug")].filter(r=>r.querySelector(".k").textContent===k && !r.classList.contains("rejected"))
+  .flatMap(r=>[...r.querySelectorAll('.tchips button[aria-pressed="true"]')].map(b=>b.textContent));
+async function publishToApi(lat,lng){
+  const btn=$("publish"); btn.disabled=true; btn.textContent="Saving…";
+  const body={
+    title:$("tEn").value.trim() || $("tEs").value.trim(), description:$("dEn").value.trim() || $("dEs").value.trim(),
+    title_original:$("tEs").value.trim() || null, description_original:$("dEs").value.trim() || null, original_language:"es",
+    category:$("catIn").value, location_name:$("locIn").value.trim() || fmtLL(lat,lng), lat, lng,
+    date:$("dateIn").value || new Date().toISOString().slice(0,10),
+    keywords:chipsOf("Keywords"), sdgs:chipsOf("UN SDGs").map(s=>"SDG"+(s.match(/SDG\s*(\d+)/)||[])[1]).filter(s=>s!=="SDGundefined"),
+    images:adminState.sample ? SAMPLE.photos : [],
+    author_name:$("aName").value.trim() || "Unknown author", author_affiliation:$("aAff").value.trim() || "", author_website:$("aWeb").value.trim() || null,
+  };
+  try {
+    const r=await fetch(`${API_BASE}/api/projects`,{method:"POST",headers:{"Content-Type":"application/json","X-Admin-Token":DEV_ADMIN_TOKEN},body:JSON.stringify(body)});
+    const out=await r.json().catch(()=>({}));
+    if (!r.ok) throw new Error(typeof out.detail==="string" ? out.detail : JSON.stringify(out.detail ?? r.status));
+    await loadFromApi();
+    const uploads=$("thumbs").querySelectorAll('img[src^="data:"]').length;
+    $("publishArea").innerHTML=`<div class="done"><h3>Saved as project #${out.id}</h3>
+      <p>It's in the database at ${fmtLL(lat,lng)} and shows on the map as curation pending until a curator verifies it.${uploads?` The ${uploads} photo${uploads>1?"s":""} you added were not uploaded; file storage comes next.`:""}</p>
+      <div><button class="btn primary" type="button" id="toPin">See it on the map</button></div></div>`;
+    $("toPin").onclick=()=>{ adminEl.hidden=true; draftPin=null; const d=items.find(x=>x.p.id===String(out.id)); if(d) select(d); else placePins(); };
+  } catch(err) {
+    btn.disabled=false; btn.textContent="Approve and publish";
+    $("pubMsg").textContent=`The API didn't save it: ${err.message}. Check the backend is running on ${API_BASE}.`;
+  }
+}
+
+// ---------- coordinates: cursor readout + pick on globe ----------
+const coordsEl=$("coords");
+function eventLL(e){
+  const r=canvas.getBoundingClientRect(), xy=[e.clientX-r.left, e.clientY-r.top];
+  const ll=projection.invert(xy);
+  if (!ll || !isFinite(ll[0]) || !isFinite(ll[1])) return null;
+  if (state.proj==="globe"){ const rot=projection.rotate(); if (d3.geoDistance(ll,[-rot[0],-rot[1]])>Math.PI/2) return null; }
+  else { const back=projection(ll); if (!back || Math.hypot(back[0]-xy[0],back[1]-xy[1])>1) return null; }
+  return ll;
+}
+canvas.addEventListener("mousemove",e=>{ const ll=eventLL(e); coordsEl.hidden=!ll; if (ll) coordsEl.textContent=fmtLL(ll[1],ll[0]); });
+canvas.addEventListener("mouseleave",()=>{ coordsEl.hidden=true; });
+
+let picking=false, draftPin=null;
+function startPick(){ picking=true; adminEl.hidden=true; closeCard(); state.auto=false; $("pickbar").hidden=false; canvas.classList.add("picking");
+  if (draftPin) flyTo(draftPin); }
+function endPick(){ picking=false; $("pickbar").hidden=true; canvas.classList.remove("picking"); adminEl.hidden=false; $("latIn").focus(); }
+$("pickBtn").onclick=startPick;
+$("pickCancel").onclick=endPick;
+function syncDraftPin(){ const lat=parseFloat($("latIn").value), lng=parseFloat($("lngIn").value);
+  draftPin = Math.abs(lat)<=90 && Math.abs(lng)<=180 ? [lng,lat] : null; placePins(); }
+["latIn","lngIn"].forEach(id=>$(id).addEventListener("input",syncDraftPin));
+function placeDraft(){
+  let g=svg.select("g.draft");
+  if (!draftPin || !isVisible(draftPin)) { g.remove(); return; }
+  if (g.empty()){
+    g=svg.append("g").attr("class","draft").attr("pointer-events","none");
+    g.append("circle").attr("r",14).attr("fill","none").attr("stroke","#fff").attr("stroke-width",2).attr("stroke-dasharray","3 3");
+    g.append("circle").attr("r",4).attr("fill","#fff");
+  }
+  const p=projection(draftPin); g.attr("transform",`translate(${p[0]},${p[1]})`);
+}
+
+async function loadFromApi(){
+  const src=$("src");
+  if (!API_BASE){ src.innerHTML='<span class="dot"></span>Sample data'; return; }
+  try {
+    const r=await fetch(`${API_BASE}/api/projects`); if (!r.ok) throw new Error(r.status);
+    const data=await r.json();
+    PROJECTS.splice(0, PROJECTS.length, ...data.map(fromApi));
+    apiLive=true; buildFilters(); refresh();
+    src.innerHTML=`<span class="dot live"></span>Live from the API · ${data.length} projects`;
+  } catch {
+    apiLive=false; src.innerHTML='<span class="dot"></span>Sample data · API offline';
+  }
+}
 
 // ---------- interaction: drag = rotate, wheel/pinch = zoom ----------
 let last={x:0,y:0,k:1}, syncing=false;
@@ -900,7 +1056,12 @@ const zoom=d3.zoom().scaleExtent([0.7,8]).clickDistance(4)
   });
 const csel=d3.select(canvas).call(zoom).on("dblclick.zoom",null);
 function syncZoom(){ syncing=true; const t=d3.zoomIdentity.translate(last.x,last.y).scale(state.k); csel.call(zoom.transform,t); last={x:t.x,y:t.y,k:t.k}; syncing=false; }
-canvas.addEventListener("click",()=>closeCard());
+canvas.addEventListener("click",e=>{
+  if (!picking) return closeCard();
+  const ll=eventLL(e); if (!ll) return;
+  $("latIn").value=ll[1].toFixed(4); $("lngIn").value=ll[0].toFixed(4); syncDraftPin();
+  setTimeout(endPick, 450);
+});
 document.getElementById("zin").onclick=()=>zoomBy(1.5);
 document.getElementById("zout").onclick=()=>zoomBy(1/1.5);
 function zoomBy(f){ const a=state.k, b=Math.max(0.7,Math.min(8,a*f));
@@ -911,7 +1072,7 @@ const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 let prev=performance.now();
 function loop(now){
   const dt=now-prev; prev=now;
-  if (state.auto && !reduce && state.proj==="globe" && story.hidden && adminEl.hidden){ state.rot[0]+=dt*0.006; draw(); }
+  if (state.auto && !reduce && !picking && state.proj==="globe" && story.hidden && adminEl.hidden){ state.rot[0]+=dt*0.006; draw(); }
   else if (state.news && !reduce) draw();
   requestAnimationFrame(loop);
 }
@@ -926,4 +1087,5 @@ fetch("countries-110m.json").then(r=>r.json()).then(world=>{
 addEventListener("resize",resize);
 if (innerWidth<760) setPanel(false);
 resize(); refresh(); requestAnimationFrame(loop);
+loadFromApi();
 </script>

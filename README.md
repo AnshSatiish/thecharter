@@ -10,11 +10,14 @@ COMP 385 AI Capstone Project, Centennial College. Built for an external partner.
 
 | Folder | What it is | Run it |
 |---|---|---|
-| `frontend/` | React + Vite UI exported from Figma Make. Map (Leaflet), projects, community, events, job board, profile. Runs on mock data in `src/app/data/mockData.ts`. | `cd frontend && npm install && npm run dev` |
-| `mockup/globe/` | Standalone 3D globe mockup (D3, no API key). Pin previews, story view, filters, news layer, researcher mode, projection toggle. AI search and the admin upload with Spanish to English translation are **placeholders** with prepared example output. | `cd mockup/globe && python -m http.server 8080`, then open http://localhost:8080 |
+| `frontend/` | React + Vite UI exported from Figma Make. Map (Leaflet), projects, community, events, job board. The profile is a **field passport**: a data page with a computed machine-readable zone, one ink stamp per saved project, and a D3 field map joining the saved places by great-circle routes. Runs on mock data in `src/app/data/mockData.ts`. | `cd frontend && npm install && npm run dev` |
+| `mockup/globe/` | Standalone 3D globe mockup (D3, no API key). Pin previews, story view, filters, news layer, researcher mode, projection toggle, live latitude/longitude under the cursor. On localhost it loads pins from the backend (`/api/projects`), lists nearby projects with the PostGIS distance query, and the admin upload saves to the database with **Pick on globe** coordinates. Without the backend it falls back to built-in sample data. AI search and the Spanish to English translation are **placeholders** with prepared example output. | `cd mockup/globe && python -m http.server 8080`, then open http://localhost:8080 |
+| `backend/` | FastAPI API over SQLAlchemy. Projects with filters (category, SDG, year, keyword, map bounding box), nearby search, authors, admin upload and verification. Runs on SQLite with no setup, or PostgreSQL + PostGIS. Tested with pytest. Admin auth is a shared token for now (JWT planned). | `cd backend && python -m app.scripts.seed && uvicorn app.main:app --reload --port 8000` (after install, see below) |
+| `docker-compose.yml` | PostgreSQL 16 with PostGIS 3.4 for the backend. | `docker compose up -d` |
+| `data/samples/` | Sample dataset of 7 projects, loaded by the seed script. | |
 | `docs/requirements/` | Partner requirement documents: interactive map, admin and security, project summary. | |
 
-The backend, databases and AI pipelines described below are not built yet.
+The AI pipelines, JWT auth, ChromaDB and Alembic migrations described below are not built yet. The AI module folders exist in `backend/app/ai/` as empty placeholders.
 
 Project photographs in `frontend/src/assets/` and `mockup/globe/img/` belong to their authors and are included for development only (converted to JPEG to keep the repository small).
 
@@ -114,12 +117,13 @@ Target layout. Folders marked *(planned)* do not exist yet.
 
 ```
 .
-├── backend/                     (planned)
+├── backend/
 │   ├── app/
 │   │   ├── main.py              FastAPI application and router setup
-│   │   ├── api/                 Route handlers (projects, search, upload, auth, admin)
-│   │   ├── core/                Config, security, JWT, dependencies
-│   │   ├── db/                  SQLAlchemy models, migrations, session
+│   │   ├── api/                 Route handlers (projects and authors today; search, auth, admin planned)
+│   │   ├── core/                Config and security (admin token today, JWT planned)
+│   │   ├── db/                  SQLAlchemy models, session, table and PostGIS setup (migrations planned)
+│   │   ├── scripts/             Seed script for the sample dataset
 │   │   ├── ai/
 │   │   │   ├── translation/     Spanish to English translation with glossary
 │   │   │   ├── tagging/         Category and SDG classifier
@@ -139,12 +143,12 @@ Target layout. Folders marked *(planned)* do not exist yet.
 │   └── package.json
 ├── mockup/globe/                Standalone 3D globe prototype
 ├── notebooks/                   (planned) Exploratory data analysis and model experiments
-├── data/                        (planned)
-│   ├── uploads/                 Local file storage (git-ignored)
+├── data/
+│   ├── uploads/                 (planned) Local file storage (git-ignored)
 │   └── samples/                 Small sample dataset for development
 ├── docs/
 │   └── requirements/            Partner requirement documents
-└── docker-compose.yml           (planned)
+└── docker-compose.yml           PostgreSQL + PostGIS
 ```
 
 ## Getting started
@@ -162,16 +166,16 @@ Target layout. Folders marked *(planned)* do not exist yet.
 git clone <repository-url>
 cd the-charter
 
-# Start the databases
+# Optional: start PostgreSQL + PostGIS (without it the backend uses a local SQLite file)
 docker compose up -d
 
 # Backend
 cd backend
 python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
+source .venv/bin/activate        # Windows PowerShell: .venv\Scripts\Activate.ps1   Git Bash: source .venv/Scripts/activate
 pip install -r requirements.txt
-alembic upgrade head             # create database tables
-python -m app.scripts.seed       # load the sample dataset
+cp .env.example .env             # then edit; delete the DATABASE_URL line to use SQLite
+python -m app.scripts.seed       # create tables and load the sample dataset (safe to rerun)
 
 # Frontend
 cd ../frontend
@@ -190,8 +194,18 @@ Copy `.env.example` to `.env` in both `backend/` and `frontend/`, then fill in t
 
 **backend/.env**
 
+Used today:
+
 ```
-DATABASE_URL=postgresql://charter:charter@localhost:5432/charter
+DATABASE_URL=postgresql+psycopg://charter:charter@localhost:5432/charter   # unset: sqlite:///./charter.db
+ENV=development                  # development | production
+ADMIN_TOKEN=dev-admin-token      # sent as the X-Admin-Token header; required when ENV=production
+CORS_ORIGINS=http://localhost:5173,http://localhost:3031,http://localhost:8080
+```
+
+Planned, not read by the code yet:
+
+```
 CHROMA_PERSIST_DIR=./data/chroma
 UPLOAD_DIR=./data/uploads
 JWT_SECRET=<generate a long random string>
@@ -217,9 +231,11 @@ uvicorn app.main:app --reload --port 8000
 npm run dev
 ```
 
-The app runs at http://localhost:5173. Interactive API documentation is at http://localhost:8000/docs.
+The app runs at http://localhost:5173. Interactive API documentation is at http://localhost:8000/docs, and http://localhost:8000/health reports which database is in use.
 
-To build the embedding index after loading data:
+Main endpoints: `GET /api/projects` (filters `category`, `sdg`, `year_from`, `year_to`, `q`, `bbox=minLng,minLat,maxLng,maxLat`), `GET /api/projects/near?lat=&lng=&km=`, `GET /api/projects/{id}`, `GET /api/authors`, `GET /api/authors/{id}`. Admin only, with the `X-Admin-Token` header: `POST /api/projects` and `PATCH /api/projects/{id}/verify`.
+
+To build the embedding index after loading data *(planned, not implemented yet)*:
 
 ```bash
 python -m app.ai.embeddings.build_index
@@ -228,8 +244,12 @@ python -m app.ai.embeddings.build_index
 ## Testing
 
 ```bash
-# Backend unit and integration tests
+# Backend unit and integration tests (temporary SQLite database)
 cd backend && pytest
+
+# Same suite against PostGIS, including the postgres-marked test. Use a throwaway database: tables are recreated.
+docker exec thecharter-db-1 createdb -U charter charter_test
+DATABASE_URL=postgresql://charter:charter@localhost:5432/charter_test pytest
 
 # With coverage
 pytest --cov=app --cov-report=term-missing
