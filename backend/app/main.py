@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from app.api import ai, authors, documents, projects
+from app.api import ai, authors, documents, geo, projects
 from app.core.config import get_settings
 from app.db.init_db import init_db
 from app.db.session import engine
@@ -37,6 +37,7 @@ def create_app() -> FastAPI:
     app.include_router(documents.router, prefix="/api")
     app.include_router(authors.router, prefix="/api")
     app.include_router(ai.router, prefix="/api")
+    app.include_router(geo.router, prefix="/api")
 
     # Uploaded photographs and PDFs. Object storage replaces this mount in production.
     settings.upload_dir.mkdir(parents=True, exist_ok=True)

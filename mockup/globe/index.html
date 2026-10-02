@@ -450,6 +450,9 @@ body.locked .stage{inset:0}
 .loc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;align-items:end}
 .loc-grid select{font:inherit;font-size:14px;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:#fff}
 .pubmsg{font-size:13px;color:#b3261e;margin:10px 0 0}
+.loccheck{font-size:13px;line-height:1.45;margin:12px 0 0;padding:8px 12px;border-radius:6px;border:1px solid var(--line);background:#fff;color:var(--text)}
+.loccheck.ok{border-color:#a9d8b9;background:#eef8f1;color:#1f5a34}
+.loccheck.mismatch{border-color:#e7b3ab;background:#fdf0ee;color:#8f2416}
 .nearby{display:flex;flex-direction:column;gap:6px}
 .nearby button{display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;border:1px solid rgba(255,255,255,.16);background:transparent;color:#efe9e0;border-radius:6px;padding:9px 12px;font-size:13.5px}
 .nearby button:hover{border-color:var(--gold)}
@@ -699,6 +702,7 @@ body.locked .stage{inset:0}
         <label class="fld" for="lngIn">Longitude<input id="lngIn" type="number" step="0.0001" min="-180" max="180" placeholder="-96.8333"></label>
         <button class="btn" type="button" id="pickBtn">Pick on globe</button>
       </div>
+      <p class="loccheck" id="locCheck" role="status" hidden></p>
       <div class="fld" style="margin-top:14px">UN Sustainable Development Goals
         <div class="chips" id="sdgPick" role="group" aria-label="UN Sustainable Development Goals"></div>
         <span id="sdgPickSel" style="font-weight:400;font-size:12px"></span></div>
@@ -921,7 +925,14 @@ document.getElementById("drawerClose").onclick=()=>drawer.classList.remove("open
 // ---------- globe ----------
 const stage=document.getElementById("stage"), canvas=document.getElementById("globe"), ctx=canvas.getContext("2d");
 const svg=d3.select("#pins");
-let W=0,H=0,DPR=1, countries=null, borders=null, land=null, projection=d3.geoOrthographic(), path;
+let W=0,H=0,DPR=1, projection=d3.geoOrthographic(), path;
+// Country outlines come in two detail levels (Natural Earth 1:110m and 1:50m). The light one is drawn while the
+// globe moves; the detailed one is drawn once the view is still and zoomed in, then reused from a cached copy.
+let geoLo=null, geoHi=null, lastMove=0, baseKey=null, drawnHi=false;
+let hiAllowed=!matchMedia("(pointer:coarse)").matches;   // phones keep the light outlines
+const HI_ZOOM=1.8, baseCanvas=document.createElement("canvas");
+const toGeo = world => ({ countries:topojson.feature(world,world.objects.countries).features,
+  land:topojson.feature(world,world.objects.land), borders:topojson.mesh(world,world.objects.countries,(a,b)=>a!==b) });
 const graticule=d3.geoGraticule10();
 const LAND=["#F3CD8E","#EDB877","#E6A765","#F6DBA6","#DDB47C","#BFCB73","#A9BC62","#E9C27F"];
 const hash = s => { let h=0; for (const c of String(s)) h=(h*31+c.charCodeAt(0))|0; return Math.abs(h); };
@@ -956,10 +967,20 @@ function draw(){
   if (!W) return;
   setupProjection();
   const t=(performance.now()-t0)/1000;
-  ctx.setTransform(DPR,0,0,DPR,0,0);
-  ctx.clearRect(0,0,W,H);
   const globe = state.proj==="globe";
   const [cx,cy]=projection.translate(), r=projection.scale();
+  const useHi = !!geoHi && hiAllowed && state.k>=HI_ZOOM && performance.now()-lastMove>220;
+  const geo = useHi ? geoHi : geoLo;
+  const key = useHi ? [state.proj,state.rot[0].toFixed(3),state.rot[1].toFixed(3),state.k.toFixed(4),Math.round(state.panY),W,H,Math.round(cx),Math.round(cy),state.borders].join("|") : null;
+  drawnHi = useHi;
+  if (useHi && key===baseKey){
+    // nothing moved since the detailed map was drawn: paint the saved copy
+    ctx.setTransform(1,0,0,1,0,0); ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(baseCanvas,0,0);
+    ctx.setTransform(DPR,0,0,DPR,0,0); ctx.save(); ctx.beginPath(); path({type:"Sphere"}); ctx.clip();
+  } else {
+  const started=performance.now();
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.clearRect(0,0,W,H);
 
   // atmosphere
   if (globe){
@@ -978,15 +999,21 @@ function draw(){
   ctx.save(); ctx.beginPath(); path({type:"Sphere"}); ctx.clip();
 
   ctx.beginPath(); path(graticule); ctx.strokeStyle="rgba(255,255,255,.08)"; ctx.lineWidth=.7; ctx.stroke();
-  if (land){
+  if (geo){
     // shallow-water halo around coasts
-    ctx.beginPath(); path(land); ctx.strokeStyle="rgba(150,222,214,.45)"; ctx.lineWidth=Math.max(4,5*Math.sqrt(state.k)); ctx.lineJoin="round"; ctx.stroke();
-    for (const f of countries){ ctx.beginPath(); path(f); ctx.fillStyle=LAND[hash(f.id||f.properties.name)%LAND.length]; ctx.fill(); }
-    ctx.beginPath(); path(land); ctx.strokeStyle="rgba(120,80,40,.35)"; ctx.lineWidth=.8; ctx.stroke();
-    ctx.beginPath(); path(borders);
+    ctx.beginPath(); path(geo.land); ctx.strokeStyle="rgba(150,222,214,.45)"; ctx.lineWidth=Math.max(4,5*Math.sqrt(state.k)); ctx.lineJoin="round"; ctx.stroke();
+    for (const f of geo.countries){ ctx.beginPath(); path(f); ctx.fillStyle=LAND[hash(f.properties.name)%LAND.length]; ctx.fill(); }
+    ctx.beginPath(); path(geo.land); ctx.strokeStyle="rgba(120,80,40,.35)"; ctx.lineWidth=.8; ctx.stroke();
+    ctx.beginPath(); path(geo.borders);
     if (state.borders){ ctx.strokeStyle="#2b1d12"; ctx.lineWidth=1.4; ctx.setLineDash([]); }
     else { ctx.strokeStyle="rgba(255,255,255,.45)"; ctx.lineWidth=.5; }
     ctx.stroke();
+  }
+  if (useHi){
+    // keep a copy of the finished map so the idle news pulse does not redraw 80,000 outline points
+    baseCanvas.width=canvas.width; baseCanvas.height=canvas.height; baseCanvas.getContext("2d").drawImage(canvas,0,0); baseKey=key;
+    if (performance.now()-started>900) hiAllowed=false;   // too slow on this device: stay on the light outlines
+  }
   }
   // news caps
   const showNews = state.news && !document.body.classList.contains("locked");
@@ -1110,7 +1137,7 @@ function flyTo([lng,lat]){
   const kFrom=state.k, kTo=Math.max(state.k, state.proj==="globe"?1.35:1.6);
   const i=d3.interpolate(from,to), dur=matchMedia("(prefers-reduced-motion: reduce)").matches?0:900;
   d3.transition().duration(dur).ease(d3.easeCubicInOut).tween("fly",()=>tt=>{
-    state.rot=i(tt); state.k=kFrom+(kTo-kFrom)*tt; syncZoom(); draw(); });
+    state.rot=i(tt); state.k=kFrom+(kTo-kFrom)*tt; lastMove=performance.now(); syncZoom(); draw(); });
 }
 
 // ---------- results drawer ----------
@@ -1569,7 +1596,22 @@ function eventLL(e){
   else { const back=projection(ll); if (!back || Math.hypot(back[0]-xy[0],back[1]-xy[1])>1) return null; }
   return ll;
 }
-canvas.addEventListener("mousemove",e=>{ const ll=eventLL(e); coordsEl.hidden=!ll; if (ll) coordsEl.textContent=fmtLL(ll[1],ll[0]); });
+// Which country a coordinate is in, from the most detailed outlines loaded. A bounding box check keeps it fast.
+const boundsOf=new WeakMap();
+function countryAt(ll){
+  const list=(geoHi || geoLo)?.countries; if (!list) return null;
+  for (const f of list){
+    let b=boundsOf.get(f); if (!b){ b=d3.geoBounds(f); boundsOf.set(f,b); }
+    const [[w,s],[e,n]]=b, inLng = w<=e ? (ll[0]>=w && ll[0]<=e) : (ll[0]>=w || ll[0]<=e);
+    if (inLng && ll[1]>=s && ll[1]<=n && d3.geoContains(f,ll)) return f.properties.name;
+  }
+  return null;
+}
+let lastCountry=0, countryText="";
+canvas.addEventListener("mousemove",e=>{ const ll=eventLL(e); coordsEl.hidden=!ll; if (!ll) return;
+  const now=performance.now();
+  if (now-lastCountry>70){ lastCountry=now; const c=countryAt(ll); countryText = c ? " · "+c : ""; }
+  coordsEl.textContent=fmtLL(ll[1],ll[0])+countryText; });
 canvas.addEventListener("mouseleave",()=>{ coordsEl.hidden=true; });
 
 let picking=false, draftPin=null;
@@ -1588,8 +1630,29 @@ function setSdgPick(list){ sdgPick.querySelectorAll(".sdgc").forEach(b=>b.setAtt
 syncSdgPick();
 $("pickCancel").onclick=endPick;
 function syncDraftPin(){ const lat=parseFloat($("latIn").value), lng=parseFloat($("lngIn").value);
-  draftPin = Math.abs(lat)<=90 && Math.abs(lng)<=180 ? [lng,lat] : null; placePins(); }
+  draftPin = Math.abs(lat)<=90 && Math.abs(lng)<=180 ? [lng,lat] : null; placePins(); checkLocation(); }
 ["latIn","lngIn"].forEach(id=>$(id).addEventListener("input",syncDraftPin));
+// Advisory check: the backend compares the coordinates with the country named in the place (it catches swapped numbers).
+// Without the backend the page still says which country the point is in.
+let locTimer=null;
+function checkLocation(){
+  clearTimeout(locTimer);
+  const el=$("locCheck"), lat=parseFloat($("latIn").value), lng=parseFloat($("lngIn").value), place=$("locIn").value.trim();
+  if (!(Math.abs(lat)<=90 && Math.abs(lng)<=180)) { el.hidden=true; return; }
+  locTimer=setTimeout(async()=>{
+    let status="unknown", message;
+    try {
+      if (!apiLive) throw new Error("offline");
+      const r=await fetch(`${API_BASE}/api/geo/check?lat=${lat}&lng=${lng}&place=${encodeURIComponent(place)}`);
+      if (!r.ok) throw new Error(r.status);
+      ({status, message} = await r.json());
+    } catch {
+      const c=countryAt([lng,lat]); message = c ? `These coordinates are in ${c}.` : "These coordinates are over open water.";
+    }
+    el.className="loccheck "+status; el.textContent=message; el.hidden=false;
+  }, 350);
+}
+$("locIn").addEventListener("input",checkLocation);
 function placeDraft(){
   let g=svg.select("g.draft");
   if (!draftPin || !isVisible(draftPin)) { g.remove(); return; }
@@ -1629,7 +1692,7 @@ const zoom=d3.zoom().scaleExtent([0.7,8]).clickDistance(4)
       if (state.proj==="globe") state.rot[1]=Math.max(-85,Math.min(85,state.rot[1]-dy*s));
       else state.panY=Math.max(-H*state.k*0.6,Math.min(H*state.k*0.6,state.panY+dy));
     }
-    last={x:t.x,y:t.y,k:t.k}; draw();
+    last={x:t.x,y:t.y,k:t.k}; lastMove=performance.now(); draw();
   });
 const csel=d3.select(canvas).call(zoom).on("dblclick.zoom",null);
 function syncZoom(){ syncing=true; const t=d3.zoomIdentity.translate(last.x,last.y).scale(state.k); csel.call(zoom.transform,t); last={x:t.x,y:t.y,k:t.k}; syncing=false; }
@@ -1642,7 +1705,7 @@ canvas.addEventListener("click",e=>{
 document.getElementById("zin").onclick=()=>zoomBy(1.5);
 document.getElementById("zout").onclick=()=>zoomBy(1/1.5);
 function zoomBy(f){ const a=state.k, b=Math.max(0.7,Math.min(8,a*f));
-  d3.transition().duration(300).tween("z",()=>tt=>{ state.k=a+(b-a)*tt; syncZoom(); draw(); }); }
+  d3.transition().duration(300).tween("z",()=>tt=>{ state.k=a+(b-a)*tt; lastMove=performance.now(); syncZoom(); draw(); }); }
 
 // ---------- loop ----------
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -1651,17 +1714,16 @@ function loop(now){
   const dt=now-prev; prev=now;
   const covered = !story.hidden || !adminEl.hidden || !profileEl.hidden || !lbEl.hidden || document.hidden;
   if (covered) { /* the globe is not visible */ }
-  else if (state.auto && !reduce && !picking && state.proj==="globe"){ state.rot[0]+=dt*0.006; draw(); }
+  else if (state.auto && !reduce && !picking && state.proj==="globe"){ state.rot[0]+=dt*0.006; lastMove=now; draw(); }
+  else if (geoHi && hiAllowed && !drawnHi && state.k>=HI_ZOOM && now-lastMove>240) draw();   // view settled: sharpen once
   else if (state.news && !reduce && now-lastPulse>80){ lastPulse=now; draw(); }
   requestAnimationFrame(loop);
 }
 
 // ---------- boot ----------
 fetch("countries-110m.json").then(r=>r.json()).then(world=>{
-  countries=topojson.feature(world,world.objects.countries).features;
-  land=topojson.feature(world,world.objects.land);
-  borders=topojson.mesh(world,world.objects.countries,(a,b)=>a!==b);
-  draw();
+  geoLo=toGeo(world); draw();
+  if (hiAllowed) setTimeout(()=>fetch("countries-50m.json").then(r=>r.json()).then(w=>{ geoHi=toGeo(w); }).catch(()=>{}), 1200);
 }).catch(()=>{ document.querySelector(".hint").textContent="Country shapes failed to load. Pins still work."; });
 addEventListener("resize",resize);
 if (innerWidth<760) setPanel(false);
