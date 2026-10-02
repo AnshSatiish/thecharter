@@ -18,7 +18,7 @@ SAMPLE_FILE = Path(__file__).resolve().parents[3] / "data" / "samples" / "projec
 PROJECT_FIELDS = (
     "title", "description", "category", "location_name", "lat", "lng", "verified",
     "keywords", "sdgs", "images", "original_language", "title_original",
-    "description_original", "translation_reviewed_by",
+    "description_original", "translation_reviewed_by", "captions", "summary",
 )
 
 

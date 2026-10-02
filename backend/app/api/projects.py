@@ -1,17 +1,21 @@
-"""Project endpoints: list with filters, nearby search, detail, upload and verification."""
+"""Project endpoints: list with filters, nearby search, detail, upload, edits, photos and verification."""
 import datetime as dt
+from pathlib import PurePosixPath
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import String, and_, cast, func, or_, select, text
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile, status
+from sqlalchemy import String, and_, cast, or_, select, text
 from sqlalchemy.orm import Session
 
+from app.core.config import get_settings
 from app.core.security import require_admin
-from app.db.models import Author, Project
+from app.db.models import Author, Document, Project
 from app.db.session import get_db, is_postgres
-from app.schemas import Category, ProjectIn, ProjectNearOut, ProjectOut
+from app.schemas import Category, ProjectIn, ProjectNearOut, ProjectOut, ProjectPatch
 from app.services.authors import get_or_create_author
 from app.services.geo import haversine_km, parse_bbox
+from app.services.storage import LocalStorage, get_storage, safe_filename
+from app.services.uploads import image_extension, read_limited
 
 router = APIRouter(prefix="/projects", tags=["projects"])
 DB = Annotated[Session, Depends(get_db)]
@@ -52,6 +56,16 @@ def list_projects(
                 Project.location_name.ilike(pattern, escape="\\"),
                 Author.name.ilike(pattern, escape="\\"),
                 cast(Project.keywords, String).ilike(pattern, escape="\\"),
+                cast(Project.captions, String).ilike(pattern, escape="\\"),
+                Project.summary.ilike(pattern, escape="\\"),
+                # Keyword search over the uploaded PDFs
+                Project.documents.any(
+                    or_(
+                        Document.text.ilike(pattern, escape="\\"),
+                        Document.title.ilike(pattern, escape="\\"),
+                        cast(Document.keywords, String).ilike(pattern, escape="\\"),
+                    )
+                ),
             )
         )
     if bbox:
@@ -96,18 +110,23 @@ def projects_near(
         scored = ((p, haversine_km(lat, lng, p.lat, p.lng)) for p in db.scalars(select(Project)).unique())
         ranked = sorted((pair for pair in scored if pair[1] <= km), key=lambda pair: pair[1])
 
-    return [
-        ProjectNearOut.model_validate({**ProjectOut.model_validate(p).model_dump(exclude={"year"}), "distance_km": round(d, 1)})
-        for p, d in ranked
-    ]
+    out = []
+    for project, distance in ranked:
+        project.distance_km = round(distance, 1)  # transient attribute, read by the schema
+        out.append(ProjectNearOut.model_validate(project))
+    return out
 
 
-@router.get("/{project_id}", response_model=ProjectOut)
-def get_project(project_id: int, db: DB) -> Project:
+def _get_or_404(db: Session, project_id: int) -> Project:
     project = db.get(Project, project_id)
     if project is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Project not found")
     return project
+
+
+@router.get("/{project_id}", response_model=ProjectOut)
+def get_project(project_id: int, db: DB) -> Project:
+    return _get_or_404(db, project_id)
 
 
 @router.post("", response_model=ProjectOut, status_code=status.HTTP_201_CREATED, dependencies=[Depends(require_admin)])
@@ -131,10 +150,66 @@ def create_project(body: ProjectIn, db: DB) -> Project:
 
 @router.patch("/{project_id}/verify", response_model=ProjectOut, dependencies=[Depends(require_admin)])
 def verify_project(project_id: int, db: DB) -> Project:
-    project = db.get(Project, project_id)
-    if project is None:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "Project not found")
+    project = _get_or_404(db, project_id)
     project.verified = True
     db.commit()
+    db.refresh(project)
+    return project
+
+
+@router.patch("/{project_id}", response_model=ProjectOut, dependencies=[Depends(require_admin)])
+def update_project(project_id: int, body: ProjectPatch, db: DB) -> Project:
+    """Edit title, description, summary, captions or keywords. Fields left out are unchanged."""
+    project = _get_or_404(db, project_id)
+    changes = body.model_dump(exclude_unset=True)
+    for field in ("title", "description", "captions", "keywords"):
+        if field in changes and changes[field] is None:
+            raise HTTPException(422, f"{field} cannot be null")
+    for field, value in changes.items():
+        setattr(project, field, value)
+    db.commit()
+    db.refresh(project)
+    return project
+
+
+@router.post("/{project_id}/images", response_model=ProjectOut, dependencies=[Depends(require_admin)])
+def upload_images(
+    project_id: int,
+    db: DB,
+    storage: Annotated[LocalStorage, Depends(get_storage)],
+    files: Annotated[list[UploadFile], File()],
+    captions: Annotated[list[str] | None, Form(description="Admin-written narration, matched to files by order")] = None,
+) -> Project:
+    """Add photographs (JPEG, PNG or WebP) with their narration. Nothing is saved unless every file is valid."""
+    project = _get_or_404(db, project_id)
+    captions = captions or []
+    if len(captions) > len(files):
+        raise HTTPException(422, "More captions than files")
+
+    validated: list[tuple[bytes, str]] = []
+    for upload in files:
+        data = read_limited(upload, get_settings().max_image_mb)
+        extension = image_extension(data)
+        if extension is None:
+            raise HTTPException(
+                status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, f"{upload.filename}: only JPEG, PNG and WebP images are accepted"
+            )
+        # The stored extension follows the real content, whatever the client called the file.
+        stem = PurePosixPath(safe_filename(upload.filename or "", default="image")).stem or "image"
+        validated.append((data, stem + extension))
+
+    paths = [storage.save(data, f"projects/{project_id}", name) for data, name in validated]
+    images = list(project.images or [])
+    existing = (list(project.captions or []) + [""] * len(images))[: len(images)]
+    new_captions = [c.strip() for c in captions] + [""] * (len(files) - len(captions))
+    # Reassign rather than mutate: plain JSON columns do not track in-place changes.
+    project.images = images + [storage.url(p) for p in paths]
+    project.captions = existing + new_captions
+    try:
+        db.commit()
+    except Exception:
+        for p in paths:
+            storage.delete(p)
+        raise
     db.refresh(project)
     return project

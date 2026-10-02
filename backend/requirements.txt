@@ -4,6 +4,8 @@ SQLAlchemy~=2.0.54
 pydantic~=2.13.5
 pydantic-settings~=2.15.0
 psycopg[binary]~=3.3.6
+pypdf~=6.19.0
+python-multipart~=0.0.32
 
 # Testing
 pytest~=9.1.1

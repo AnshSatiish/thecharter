@@ -24,6 +24,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { AspectRatio } from './ui/aspect-ratio';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog';
 import type { PhotoProject } from '../types';
+import { photoProjects } from '../data/mockData';
 import { entries, inkFor, mrzLines, stampDate, userProfile, UserProfile } from './profile/passportData';
 import { VisaStamp } from './profile/VisaStamp';
 import { FieldMap } from './profile/FieldMap';
@@ -75,6 +76,9 @@ const jobOpportunities: JobOpportunity[] = [
   { id: '3', title: 'Photojournalism Fellowship', organization: 'Magnum Foundation', location: 'Various Locations', type: 'Fellowship', deadline: '2025-01-10', description: 'One-year fellowship for emerging photographers focusing on social justice issues.' },
   { id: '4', title: 'Research Assistant - Urban Studies', organization: 'University of Sydney', location: 'Sydney, Australia', type: 'Part-time', deadline: '2024-12-20', description: 'Support visual documentation of urban transformation in Western Sydney communities.' },
 ];
+
+// Newest four projects in the library, shown as a compact row under the passport.
+const featured = [...photoProjects].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 4);
 
 const initials = (name: string) => name.replace(/^(Dr\.|Prof\.)\s+/, '').split(/\s+/).map((w) => w[0]).slice(0, 2).join('');
 
@@ -209,6 +213,29 @@ export function ProfilePage({ onLogout, onViewProject }: ProfilePageProps) {
             </Button>
           )}
         </div>
+
+        {/* ── Featured projects ───────────────────────────────────────── */}
+        <section className="mt-5" aria-labelledby="featured-h">
+          <div className="flex items-baseline justify-between gap-3 mb-2">
+            <h2 id="featured-h" className="text-[22px] text-[#1f3b44]" style={serif}>Featured projects</h2>
+            <span className="text-xs text-[#6f675f]">Newest in the library</span>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {featured.map((p) => (
+              <button key={p.id} type="button" onClick={() => onViewProject?.(p)}
+                className="group flex flex-col justify-start text-left bg-white rounded-[10px] overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E64626]">
+                <div className="aspect-[16/9] overflow-hidden bg-[#e9e2d3]">
+                  <img src={p.images[0]} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                </div>
+                <div className="px-3 pt-2 pb-3 min-w-0">
+                  <span className="block text-[10px] uppercase tracking-[0.08em] font-bold" style={{ color: inkFor(p.category).ink }}>{inkFor(p.category).label}</span>
+                  <span className="block text-[13.5px] leading-snug font-semibold text-[#23201d] line-clamp-2 mt-0.5">{p.title}</span>
+                  <span className="block text-[11.5px] text-[#6f675f] truncate mt-0.5">{p.location.name}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
 
         {/* ── Field map ───────────────────────────────────────────────── */}
         <section className="mt-6 bg-white rounded-2xl shadow-lg p-5 sm:p-7" aria-labelledby="fieldmap-h">

@@ -74,8 +74,14 @@ button{font:inherit;cursor:pointer}
 .cat[aria-pressed="false"]{opacity:.42}
 .cat[aria-pressed="false"] .dot{background:#bbb!important}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:600;color:var(--text)}
-.chip[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+/* UN Sustainable Development Goals: official colour per goal, white type */
+.sdgc{width:36px;height:36px;border:0;border-radius:4px;color:#fff;font-weight:700;font-size:15px;display:grid;place-items:center;padding:0}
+.sdgc[aria-pressed="true"]{outline:3px solid var(--ink);outline-offset:2px}
+.chips.has-sel .sdgc[aria-pressed="false"]{opacity:.35}
+.sdgsel{margin:8px 0 0;font-size:12px;color:var(--muted);line-height:1.4}
+.sdgt{display:inline-flex;align-items:center;gap:8px;color:#fff;border-radius:4px;padding:6px 10px 6px 8px;font-size:12px;font-weight:700;letter-spacing:.02em;text-transform:uppercase}
+.sdgt b{font-size:18px;line-height:1}
+.kws .sdgt{border:0;border-radius:4px;padding:7px 11px 7px 9px;font-size:12px}
 .years{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
 .years select{font:inherit;font-size:13px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--text)}
 .reset{align-self:flex-start;border:0;background:none;color:var(--red);font-weight:600;font-size:13px;padding:0}
@@ -163,12 +169,34 @@ button{font:inherit;cursor:pointer}
 .facts dt{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#9d9387;margin-bottom:4px}
 .facts dd{margin:0;font-size:14px}
 .lede{font-family:var(--serif);font-size:22px;line-height:1.4;margin:26px 0;max-width:65ch}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:8px 0 28px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px 14px;margin:8px 0 28px}
+.grid figure{margin:0}
 .grid img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;display:block}
+.shot{border:0;padding:0;background:none;display:block;width:100%;cursor:zoom-in;border-radius:4px;position:relative}
+.shot::after{content:"View full screen";position:absolute;right:8px;bottom:8px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;font-weight:600;padding:4px 8px;border-radius:4px;opacity:0;transition:opacity .15s}
+.shot:hover::after,.shot:focus-visible::after{opacity:1}
+.grid figcaption{margin-top:9px;font-size:13.5px;line-height:1.55;color:#cfc6b8}
+.hero{cursor:zoom-in}
+.docs{display:flex;flex-direction:column;gap:8px}
+.docs a{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:11px 14px;color:#efe9e0;text-decoration:none;font-weight:600;font-size:14px}
+.docs a:hover{border-color:var(--gold)}
+.docs span{color:#b7ad9f;font-weight:400;font-size:12.5px}
+.sum{font-size:15px;line-height:1.6;color:#ded6ca;margin:0;max-width:65ch}
+
+/* ---------- full-screen photo viewer ---------- */
+.lb{position:fixed;inset:0;z-index:80;background:#080706;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;color:#efe9e0}
+.lb figure{margin:0;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:52px 0 20px;min-height:0;box-sizing:border-box}
+.lb img{width:100%;height:calc(100% - 150px);min-height:0;object-fit:contain}
+.lb figcaption{max-width:820px;width:100%;max-height:130px;overflow-y:auto;padding-inline:8px;box-sizing:border-box}
+.lb figcaption span{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#9d9387}
+.lb figcaption p{margin:6px 0 0;font-size:14.5px;line-height:1.55}
+.lb-x{position:absolute;top:12px;right:14px;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.4);color:#fff;border-radius:6px;padding:8px 14px;font-weight:600;font-size:13px;z-index:2}
+.lb-nav{border:0;background:transparent;color:#fff;font-size:44px;line-height:1;width:64px;height:100%;opacity:.7}
+.lb-nav:hover{opacity:1;background:rgba(255,255,255,.05)}
+.lb-nav:disabled{opacity:.15}
 .story h5{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#9d9387;margin:24px 0 10px}
 .kws{display:flex;flex-wrap:wrap;gap:6px}
 .kws span{border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:4px 10px;font-size:12px}
-.sdg{background:#fff;color:#141210;font-weight:700}
 .links a{color:var(--gold)}
 
 
@@ -208,8 +236,13 @@ button{font:inherit;cursor:pointer}
 .drop{border:2px dashed #cfc5b6;border-radius:10px;padding:22px;text-align:center;color:var(--muted);font-size:14px;background:#fff;transition:background .15s,border-color .15s}
 .drop.over{background:#fff6ec;border-color:var(--orange)}
 .drop label{color:var(--red);font-weight:700;cursor:pointer;text-decoration:underline}
-.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.thumbs img{width:96px;height:72px;object-fit:cover;border-radius:6px}
+.thumbs{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.shotrow{display:grid;grid-template-columns:132px minmax(0,1fr) auto;gap:14px;align-items:start;background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px}
+.shotrow img{width:132px;height:99px;object-fit:cover;border-radius:6px}
+.shotrow .rm{border:0;background:none;font-size:20px;color:var(--muted);padding:2px 6px}
+.ai.real{color:#1f6b3a;background:#e7f5ec;border:1px solid #a9d8b9}
+.pdfres{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+.pdfres .meta{margin:0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .meta-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
 .fld{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:600;color:var(--muted)}
 .fld input,.fld textarea{font:inherit;font-size:14px;font-weight:400;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:#fff;resize:vertical}
@@ -219,8 +252,6 @@ button{font:inherit;cursor:pointer}
 .pair .fld textarea.en{background:#fbfaff;border-color:#d9ccfb}
 .lang{display:inline-flex;gap:6px;align-items:center;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
 .lang b{background:var(--ink);color:#fff;border-radius:3px;padding:1px 5px;font-size:10px}
-.gloss{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--muted);margin-bottom:14px}
-.gloss span.term{background:#fff;border:1px solid var(--line);border-radius:999px;padding:2px 9px;color:var(--text);font-style:italic}
 .spin{width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite;display:inline-block;vertical-align:-2px;margin-right:6px}
 @keyframes rot{to{transform:rotate(360deg)}}
 .sugs{display:flex;flex-direction:column;gap:10px}
@@ -242,10 +273,67 @@ button{font:inherit;cursor:pointer}
 .done h3{margin:0;font-size:17px}
 .done p{margin:0;font-size:14px;color:var(--muted);line-height:1.5}
 @media (max-width:760px){
+  .shotrow{grid-template-columns:88px minmax(0,1fr) auto}
+  .shotrow img{width:88px;height:66px}
+  .lb{grid-template-columns:minmax(0,1fr)}
+  .lb-nav{position:absolute;bottom:150px;height:64px;width:52px}
+  .lb-nav.prev{left:0}.lb-nav.next{right:0}
+  .lb figure{padding-inline:8px}
   .pair{grid-template-columns:1fr}
   .sug{grid-template-columns:1fr}
   .upload-btn{padding:6px 8px;font-size:11px}
 }
+/* ---------- sign-in gate: the globe turns behind a passport cover ---------- */
+body.locked .top,body.locked .panel,body.locked .panel-toggle,body.locked .tools,body.locked .hint,body.locked .newsnote,
+body.locked .coords,body.locked #pins,body.locked .routechip{visibility:hidden}
+body.locked .stage{inset:0}
+.gate{position:fixed;inset:0;z-index:100;display:grid;grid-template-columns:minmax(0,1fr) 420px;align-items:center;gap:32px;
+  padding:32px clamp(16px,5vw,72px);color:#f3efe8;overflow-y:auto;
+  background:linear-gradient(90deg,rgba(12,19,24,0) 0%,rgba(12,19,24,.25) 45%,rgba(12,19,24,.82) 100%);transition:opacity .5s ease}
+.gate.leaving{opacity:0;pointer-events:none}
+.gate-lede{align-self:end;padding-bottom:6vh;max-width:520px;pointer-events:none}
+.gate-lede .mark{font-family:var(--serif);font-size:15px;letter-spacing:.3em;color:var(--gold)}
+.gate-lede h1{font-family:var(--serif);font-weight:600;font-size:clamp(40px,5.4vw,76px);line-height:.98;margin:10px 0 14px;text-wrap:balance;text-shadow:0 2px 24px rgba(0,0,0,.45)}
+.gate-lede p{font-size:16px;line-height:1.5;color:#d9d2c6;margin:0;max-width:40ch;text-shadow:0 1px 12px rgba(0,0,0,.6)}
+.pass{width:100%;max-width:420px;border-radius:18px;overflow:hidden;box-shadow:0 30px 80px -20px rgba(0,0,0,.7);color-scheme:light;position:relative}
+.pass-cover{background:#1f3b44;padding:26px 28px 22px;text-align:center;position:relative;
+  background-image:radial-gradient(circle at 50% 0,rgba(255,255,255,.08),transparent 60%)}
+.pass-cover svg{width:58px;height:58px;display:block;margin:0 auto 12px}
+.pass-cover b{display:block;font-family:var(--serif);font-weight:600;font-size:26px;letter-spacing:.2em;color:#e3c98f}
+.pass-cover span{display:block;font-size:9.5px;letter-spacing:.2em;color:#bfa56a;margin-top:6px}
+.pass-card{background:#f4efe3;color:var(--text);padding:24px 28px 26px;position:relative}
+.pass-card h2{font-family:var(--serif);font-weight:600;font-size:26px;margin:0;color:#1f3b44}
+.pass-card .sub{margin:4px 0 16px;font-size:13.5px;color:#6f675f;line-height:1.45}
+.gfld{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a7f6f;font-weight:600}
+.gfld input{font:inherit;font-size:15px;letter-spacing:0;text-transform:none;font-weight:400;color:var(--text);background:#fffdf8;border:1px solid #cfc3a8;border-radius:6px;padding:11px 12px}
+.gfld input:focus{outline:2px solid #1f3b44;outline-offset:1px;border-color:#1f3b44}
+.gfld input[aria-invalid="true"]{border-color:#b3261e}
+.gerr{min-height:18px;margin:-4px 0 8px;font-size:12.5px;color:#b3261e}
+.gkeep{display:flex;align-items:center;gap:8px;font-size:13px;color:#4a443d;margin-bottom:14px}
+.gkeep input{width:16px;height:16px;accent-color:#1f3b44}
+.gbtn{width:100%;border:0;border-radius:6px;background:var(--red);color:#fff;font-weight:700;font-size:15px;padding:12px;letter-spacing:.02em}
+.gbtn:hover{background:#cf3a1c}
+.gbtn:disabled{opacity:.6}
+.glinks{display:flex;justify-content:space-between;gap:12px;margin-top:14px}
+.glinks button{border:0;background:none;padding:0;font-size:13px;color:#1f3b44;text-decoration:underline;text-underline-offset:3px}
+.gnote{margin:16px 0 0;padding-top:12px;border-top:1px dashed #cfc3a8;font-size:11.5px;line-height:1.45;color:#8a7f6f}
+.gok{font-size:13.5px;line-height:1.5;color:#2f5d1c;background:#edf5e4;border:1px solid #b9d7a0;border-radius:6px;padding:10px 12px;margin:0 0 12px}
+/* entry stamp lands on the card when the sign-in is accepted */
+.gstamp{position:absolute;right:14px;top:8px;width:150px;pointer-events:none;mix-blend-mode:multiply;opacity:0;transform:rotate(-11deg) scale(2.2)}
+.gate.stamped .gstamp{opacity:.9;transform:rotate(-11deg) scale(1);transition:transform .22s cubic-bezier(.2,1.4,.4,1),opacity .12s}
+@media (max-width:860px){
+  .gate{grid-template-columns:minmax(0,1fr);align-content:end;gap:18px;padding:20px 16px;background:linear-gradient(180deg,rgba(12,19,24,0) 0%,rgba(12,19,24,.55) 38%,rgba(12,19,24,.9) 100%)}
+  .gate-lede{align-self:auto;padding-bottom:0}
+  .gate-lede p,.gate-lede .mark{display:none}
+  .gate-lede h1{font-size:34px;margin:0}
+  .pass{justify-self:center}
+  .pass-cover{padding:16px 20px 14px}
+  .pass-cover svg{width:40px;height:40px;margin-bottom:8px}
+  .pass-cover b{font-size:21px}
+  .pass-card{padding:18px 20px 20px}
+}
+@media (prefers-reduced-motion:reduce){.gate.stamped .gstamp{transform:rotate(-11deg)}}
+
 /* ---------- profile: field passport ---------- */
 .pp{position:fixed;inset:0;z-index:55;background:#efe9dd;overflow-y:auto;color:var(--text);color-scheme:light;animation:fade .25s ease}
 .pp-bar{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:12px;padding:10px 20px;background:var(--ink);color:#f3efe8}
@@ -289,6 +377,17 @@ button{font:inherit;cursor:pointer}
 .stamp:hover svg,.stamp:focus-visible svg{transform:scale(1.06)}
 .stamp-next{display:grid;place-items:center}
 .stamp-next div{width:100%;max-width:180px;aspect-ratio:4/3;border:2px dashed #c4b594;border-radius:50%;display:grid;place-items:center;text-align:center;font-size:11px;color:#8a7f6f;line-height:1.4}
+.feat-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:8px}
+.feat-h h2{font-family:var(--serif);font-size:22px;font-weight:600;color:#1f3b44;margin:0}
+.feat-h span{font-size:12px;color:#6f675f}
+.feat-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.feat-card{display:flex;flex-direction:column;justify-content:flex-start;border:0;padding:0;background:#fff;border-radius:10px;overflow:hidden;text-align:left;color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.08);transition:box-shadow .15s,transform .15s}
+.feat-card:hover{box-shadow:0 6px 18px rgba(0,0,0,.14);transform:translateY(-2px)}
+.feat-card img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#e9e2d3}
+.feat-card div{padding:9px 11px 11px}
+.feat-card b{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+.feat-card strong{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13.5px;line-height:1.3;font-weight:600;margin-top:2px}
+.feat-card small{display:block;font-size:11.5px;color:#6f675f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
 .pp-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
 .pp-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#d9cfbd;border:1px solid #d9cfbd;border-radius:10px;overflow:hidden}
 .pp-stats div{background:#fbf8f1;padding:12px 16px}
@@ -303,6 +402,7 @@ button{font:inherit;cursor:pointer}
   .mrz{margin:16px -20px -20px;padding:12px 20px}
   .photo{width:92px;height:118px;font-size:38px}
   .pp-stats{grid-template-columns:1fr 1fr}
+  .feat-row{grid-template-columns:1fr 1fr}
   .sig .hand{font-size:17px}
 }
 
@@ -340,6 +440,64 @@ button{font:inherit;cursor:pointer}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
+<div class="gate" id="gate" hidden>
+  <div class="gate-lede">
+    <div class="mark">THE CHARTER</div>
+    <h1>Mapping the new world.</h1>
+    <p>A library of verified photojournalism and field research, placed on the map where it happened.</p>
+  </div>
+  <div class="pass" role="dialog" aria-labelledby="gateTitle">
+    <div class="pass-cover">
+      <svg viewBox="0 0 60 60" fill="none" stroke="#e3c98f" stroke-width="1.6" aria-hidden="true"><circle cx="30" cy="30" r="26"/><ellipse cx="30" cy="30" rx="11" ry="26"/><path d="M4 30h52M9 16h42M9 44h42"/></svg>
+      <b>THE CHARTER</b><span>FIELD PASSPORT · PASSEPORT DE TERRAIN · PASAPORTE DE CAMPO</span>
+    </div>
+    <div class="pass-card">
+      <svg class="gstamp" viewBox="0 0 200 150" aria-hidden="true"><g fill="none" stroke="#C8351B">
+        <rect x="14" y="16" width="172" height="118" rx="10" stroke-width="3.2"/><rect x="21" y="23" width="158" height="104" rx="6" stroke-width="1.2"/>
+        <text x="100" y="46" text-anchor="middle" fill="#C8351B" stroke="none" font-family="'IBM Plex Mono',monospace" font-size="10" font-weight="600" letter-spacing="3">THE CHARTER</text>
+        <text x="100" y="84" text-anchor="middle" fill="#C8351B" stroke="none" font-family="'Cormorant Garamond',serif" font-weight="700" font-size="30">ADMITTED</text>
+        <line x1="34" y1="95" x2="166" y2="95" stroke-width="1.2"/>
+        <text id="gstampDate" x="100" y="112" text-anchor="middle" fill="#C8351B" stroke="none" font-family="'IBM Plex Mono',monospace" font-size="10"></text></g></svg>
+
+      <form id="gSignin" novalidate>
+        <h2 id="gateTitle">Sign in</h2>
+        <p class="sub">Use the email your university or newsroom gave you.</p>
+        <label class="gfld" for="gEmail">Institutional email<input id="gEmail" type="email" autocomplete="username" placeholder="name@university.edu" required></label>
+        <label class="gfld" for="gPass">Password<input id="gPass" type="password" autocomplete="current-password" required></label>
+        <p class="gerr" id="gErr" role="alert"></p>
+        <label class="gkeep" for="gKeep"><input id="gKeep" type="checkbox" checked>Keep me signed in on this device</label>
+        <button class="gbtn" type="submit" id="gSubmit">Enter the map</button>
+        <div class="glinks"><button type="button" data-view="gForgot">Forgot password?</button><button type="button" data-view="gRequest">Request access</button></div>
+        <p class="gnote">Demo sign-in. Any institutional email and password are accepted until accounts are connected. Your password is not stored.</p>
+      </form>
+
+      <form id="gForgot" novalidate hidden>
+        <h2>Reset your password</h2>
+        <p class="sub">Enter your institutional email and we will send a link to set a new password.</p>
+        <label class="gfld" for="gFEmail">Institutional email<input id="gFEmail" type="email" autocomplete="username" placeholder="name@university.edu" required></label>
+        <p class="gerr" id="gFErr" role="alert"></p>
+        <p class="gok" id="gFOk" hidden></p>
+        <button class="gbtn" type="submit">Send reset link</button>
+        <div class="glinks"><button type="button" data-view="gSignin">Back to sign in</button></div>
+        <p class="gnote">Demo. No email is sent yet.</p>
+      </form>
+
+      <form id="gRequest" novalidate hidden>
+        <h2>Request access</h2>
+        <p class="sub">Access is granted by institution. An administrator reviews each request.</p>
+        <label class="gfld" for="gRName">Full name<input id="gRName" type="text" autocomplete="name" required></label>
+        <label class="gfld" for="gREmail">Institutional email<input id="gREmail" type="email" autocomplete="email" placeholder="name@university.edu" required></label>
+        <label class="gfld" for="gRInst">University or newsroom<input id="gRInst" type="text" autocomplete="organization" required></label>
+        <p class="gerr" id="gRErr" role="alert"></p>
+        <p class="gok" id="gROk" hidden></p>
+        <button class="gbtn" type="submit">Send request</button>
+        <div class="glinks"><button type="button" data-view="gSignin">Back to sign in</button></div>
+        <p class="gnote">Demo. The request is not sent yet.</p>
+      </form>
+    </div>
+  </div>
+</div>
+
 <header class="top">
   <a class="logo" href="#" aria-label="The Charter home"><b>THE CHARTER</b><small>MAPPING THE NEW WORLD</small></a>
   <nav class="nav" aria-label="Sections">
@@ -366,17 +524,17 @@ button{font:inherit;cursor:pointer}
       <div class="sec">
         <label class="search" for="q">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8a8178" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
-          <input id="q" type="search" placeholder="Try: grief rituals">
+          <input id="q" type="search" placeholder="Search keywords, places, authors">
         </label>
         <div class="smode" role="group" aria-label="Search type">
-          <button type="button" data-smode="meaning" aria-pressed="true">By meaning</button>
-          <button type="button" data-smode="keywords" aria-pressed="false">Exact keywords</button>
+          <button type="button" data-smode="keywords" aria-pressed="true">Keywords</button>
+          <button type="button" data-smode="meaning" aria-pressed="false">By meaning</button>
         </div>
-        <div class="examples" id="examples"></div>
+        <div class="examples" id="examples" hidden></div>
         <div class="qstatus" id="qstatus"></div>
       </div>
       <div class="sec"><h2>Study category</h2><div class="cats" id="cats"></div></div>
-      <div class="sec"><h2>UN Sustainable Development Goals</h2><div class="chips" id="sdgs"></div></div>
+      <div class="sec"><h2>UN Sustainable Development Goals</h2><div class="chips" id="sdgs"></div><p class="sdgsel" id="sdgSel"></p></div>
       <div class="sec"><h2>Year</h2>
         <div class="years"><select id="y0" aria-label="From year"></select> to <select id="y1" aria-label="To year"></select></div>
       </div>
@@ -430,23 +588,37 @@ button{font:inherit;cursor:pointer}
 
 <div class="story" id="story" hidden></div>
 <div class="pp" id="profile" hidden role="dialog" aria-label="My profile"></div>
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <button class="lb-x" id="lbClose" type="button">Close</button>
+  <button class="lb-nav prev" id="lbPrev" type="button" aria-label="Previous photo">&#8249;</button>
+  <figure><img id="lbImg" alt=""><figcaption><span id="lbCount"></span><p id="lbCap"></p></figcaption></figure>
+  <button class="lb-nav next" id="lbNext" type="button" aria-label="Next photo">&#8250;</button>
+</div>
 
 <div class="admin" id="admin" hidden>
   <div class="admin-bar"><h1>Upload a project</h1><span class="ai">Admin · mockup</span><span class="sp"></span>
     <button type="button" id="adminClose">Back to map</button></div>
   <div class="admin-in">
-    <div class="placeholder-note">The AI steps on this page are placeholders. They return prepared example output so you can see the flow. No model is connected yet and nothing is saved.
-      <div style="margin-top:10px"><button class="btn" type="button" id="loadSample">Load a Spanish example</button></div></div>
+    <div class="placeholder-note">The summary and keywords are real: the backend reads your PDF or description with its baseline summarizer when it is running. In the example, the category, SDG and location suggestions are prepared placeholders. Photo narration is always written by you.
+      <div style="margin-top:10px"><button class="btn" type="button" id="loadSample">Load an example</button></div></div>
 
     <section class="step">
-      <header><span class="num">1</span><h2>Photographs</h2></header>
+      <header><span class="num">1</span><h2>Project document (PDF)</h2></header>
+      <div class="drop" id="pdfDrop">Drag the project PDF here, or <label for="pdfFile">choose a file</label>
+        <input id="pdfFile" type="file" accept="application/pdf,.pdf" hidden></div>
+      <p class="meta" id="pdfInfo" style="margin:10px 0 0"></p>
+      <div id="pdfOut"></div>
+    </section>
+
+    <section class="step">
+      <header><span class="num">2</span><h2>Photographs and narration</h2><div class="right"><span style="font-size:12px;color:var(--muted)">Narration appears under each photo. It is never generated.</span></div></header>
       <div class="drop" id="drop">Drag high-resolution photos here, or <label for="files">choose files</label>
         <input id="files" type="file" accept="image/*" multiple hidden></div>
       <div class="thumbs" id="thumbs"></div>
     </section>
 
     <section class="step">
-      <header><span class="num">2</span><h2>Author</h2></header>
+      <header><span class="num">3</span><h2>Author</h2></header>
       <div class="meta-row">
         <label class="fld" for="aName">Name<input id="aName" type="text"></label>
         <label class="fld" for="aAff">Affiliation<input id="aAff" type="text"></label>
@@ -456,31 +628,20 @@ button{font:inherit;cursor:pointer}
     </section>
 
     <section class="step">
-      <header><span class="num">3</span><h2>Text and translation</h2>
-        <div class="right"><span class="lang" id="detected">Language: waiting for text</span>
-          <button class="btn violet" type="button" id="translate">Translate to English</button><span class="ai">AI · placeholder</span></div></header>
-      <div class="gloss" id="gloss" hidden></div>
-      <div class="pair">
-        <label class="fld" for="tEs"><span class="lang"><b>ES</b> Title, original</span><textarea id="tEs"></textarea></label>
-        <label class="fld" for="tEn"><span class="lang"><b>EN</b> Title, AI translation, editable</span><textarea id="tEn" class="en"></textarea></label>
-      </div>
-      <div class="pair">
-        <label class="fld" for="dEs"><span class="lang"><b>ES</b> Description, original</span><textarea id="dEs" class="tall"></textarea></label>
-        <label class="fld" for="dEn"><span class="lang"><b>EN</b> Description, AI translation, editable</span><textarea id="dEn" class="tall en"></textarea></label>
-      </div>
-      <div class="pair">
-        <label class="fld" for="cEs"><span class="lang"><b>ES</b> Caption, photo 1</span><textarea id="cEs"></textarea></label>
-        <label class="fld" for="cEn"><span class="lang"><b>EN</b> Caption, photo 1</span><textarea id="cEn" class="en"></textarea></label>
+      <header><span class="num">4</span><h2>Title and description</h2></header>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <label class="fld" for="tEn">Title<input id="tEn" type="text"></label>
+        <label class="fld" for="dEn">Description<textarea id="dEn" class="tall"></textarea></label>
       </div>
     </section>
 
     <section class="step">
-      <header><span class="num">4</span><h2>Suggestions to review</h2><div class="right"><span class="ai">AI · placeholder</span></div></header>
-      <div id="sugs"><p class="placeholder-note">Suggestions appear after translation: category, SDGs, keywords, map location and a preview summary.</p></div>
+      <header><span class="num">5</span><h2>Suggestions to review</h2><div class="right"><button class="btn violet" type="button" id="suggest">Suggest keywords and summary</button></div></header>
+      <div id="sugs"><p class="placeholder-note">Suggestions are drawn from your description. You accept, edit or reject each one.</p></div>
     </section>
 
     <section class="step">
-      <header><span class="num">5</span><h2>Location and details</h2><div class="right"><span style="font-size:12px;color:var(--muted)">The AI suggestion fills these. Click the globe to correct them.</span></div></header>
+      <header><span class="num">6</span><h2>Location and details</h2><div class="right"><span style="font-size:12px;color:var(--muted)">Type the coordinates, or click the globe to set them.</span></div></header>
       <div class="loc-grid">
         <label class="fld" for="catIn">Category<select id="catIn">
           <option value="anthropology">Anthropology</option><option value="wildlife">Wildlife & human interaction</option>
@@ -491,13 +652,16 @@ button{font:inherit;cursor:pointer}
         <label class="fld" for="lngIn">Longitude<input id="lngIn" type="number" step="0.0001" min="-180" max="180" placeholder="-96.8333"></label>
         <button class="btn" type="button" id="pickBtn">Pick on globe</button>
       </div>
+      <div class="fld" style="margin-top:14px">UN Sustainable Development Goals
+        <div class="chips" id="sdgPick" role="group" aria-label="UN Sustainable Development Goals"></div>
+        <span id="sdgPickSel" style="font-weight:400;font-size:12px"></span></div>
     </section>
 
     <section class="step">
-      <header><span class="num">6</span><h2>Publish</h2></header>
+      <header><span class="num">7</span><h2>Publish</h2></header>
       <div id="publishArea">
-        <p style="margin:0 0 12px;font-size:14px;color:var(--muted)">Both languages are stored. The project is labelled “Translated by AI, reviewed by Diana” and goes to a curator for the blue verified mark.</p>
-        <button class="btn primary" type="button" id="publish" disabled>Approve and publish</button>
+        <p style="margin:0 0 12px;font-size:14px;color:var(--muted)">The project is saved with its photos, narration and PDF, then goes to a curator for the blue verified mark.</p>
+        <button class="btn primary" type="button" id="publish">Approve and publish</button>
         <p class="pubmsg" id="pubMsg" role="alert"></p>
       </div>
     </section>
@@ -511,7 +675,7 @@ button{font:inherit;cursor:pointer}
 const API_BASE = window.CHARTER_API ?? (["localhost","127.0.0.1"].includes(location.hostname) ? "http://localhost:8000" : null);
 const DEV_ADMIN_TOKEN = "dev-admin-token"; // development only; JWT sessions replace this (backend/app/core/security.py)
 let apiLive = false;
-const PROJECTS = [{"id": "17", "title": "Toxo'o o tsui' kiee'n: Day of the Death in the Mazatecan Highlands in Oaxaca", "author": "Cinthia Karina Baños Paredes", "prof": "Ethnologist", "aff": "National School of Anthropology and History (ENAH)", "cat": "anthropology", "loc": "Sierra Mazateca, Oaxaca, Mexico", "lat": 18.1333, "lng": -96.8333, "date": "2022-10-27", "year": 2022, "desc": "The Day of the Dead celebration in the Sierra Mazateca territory is known as ·Tsui' kiee'n· or ·The Festival of the Sun·", "kw": ["Day of the Dead", "Mazatec", "Oaxaca", "Huehuentones", "ritual", "Naxinandá", "indigenous traditions", "anthropology"], "sdgs": ["SDG10", "SDG11", "SDG16"], "imgs": 4, "web": "https://cinthiabanosphotography.com", "verified": true}, {"id": "26", "title": "The Two Walls", "author": "Alejandro Cegarra", "prof": "Documentary Photographer & Visual Journalist - The New York Times/Bloomberg", "aff": "Universidad Central de Venezuela", "cat": "news", "loc": "US-Mexico Border, Tijuana & Ciudad Juárez", "lat": 32.5349, "lng": -117.0382, "date": "2024-09-15", "year": 2024, "desc": "Since 2019, Mexico's immigration policies have undergone a significant shift, transforming from a nation historically open to migrants and asylum seekers at its southern border to a country that enforces stringent immigration policies.", "kw": ["migration", "US-Mexico border", "asylum seekers", "Title 42", "Title 8", "Venezuela", "human rights", "displacement"], "sdgs": ["SDG10", "SDG16", "SDG1", "SDG3"], "imgs": 4, "web": "https://alejandrocegarra.com", "verified": true}, {"id": "23", "title": "The Lake Has Fallen Silent", "author": "Jean-Baptiste Munyankindi", "prof": "Environmental Photojournalist & Ecologist", "aff": "University of Rwanda", "cat": "wildlife", "loc": "Lake Kivu, Rwanda/DRC", "lat": -1.7167, "lng": 29.2333, "date": "2024-08-10", "year": 2024, "desc": "Lake Kivu, a majestic body of water at the border between Rwanda and the Democratic Republic of Congo, is a place where stories intertwine and destinies converge. Beneath the placid beauty lies turbulence and uncertainty.", "kw": ["Lake Kivu", "Rwanda", "DRC", "climate change", "fishing communities", "displacement", "environmental degradation", "methane extraction"], "sdgs": ["SDG13", "SDG14", "SDG1", "SDG2", "SDG8", "SDG11"], "imgs": 4, "web": "https://jbmunyankindi.photography", "verified": true}, {"id": "25", "title": "Occupy Parliament: Kenya's Finance Bill Protests", "author": "Wanjiru Kimathi", "prof": "Political Scientist", "aff": "University of Nairobi", "cat": "news", "loc": "Nairobi, Kenya", "lat": -1.2864, "lng": 36.8172, "date": "2024-06-25", "year": 2024, "desc": "Documenting the nationwide protests against the Finance Bill 2024 in Kenya, where a generation of young activists took to the streets demanding accountability and rejecting punitive taxation.", "kw": ["Kenya", "protests", "Finance Bill 2024", "Nairobi", "activism", "taxation", "civil disobedience", "OccupyParliament"], "sdgs": ["SDG10", "SDG16", "SDG11"], "imgs": 4, "web": "https://wanjirukimathi.photography", "verified": true}, {"id": "27", "title": "The Darién Gap: The World's Most Dangerous Migration Route", "author": "Santiago Ramírez", "prof": "Documentary Photographer", "aff": "Universidad de los Andes", "cat": "news", "loc": "Darién Gap, Colombia-Panama Border", "lat": 8.0, "lng": -77.5, "date": "2024-11-15", "year": 2024, "desc": "Documentación visual de una de las rutas migratorias más peligrosas del mundo: el Tapón del Darién, un paso de 100 kilómetros de selva densa que conecta Colombia y Panamá.", "kw": ["migration", "Darién Gap", "refugees", "humanitarian crisis", "Venezuela", "Latin America", "human rights", "border crossing"], "sdgs": ["SDG1", "SDG3", "SDG10", "SDG16"], "imgs": 4, "web": "https://santiagoramirezphoto.com", "verified": true}, {"id": "28", "title": "Cool Burning: Indigenous Fire Management in West Arnhem Land", "author": "Matthew Abbott", "prof": "Geographer & Documentary Photographer", "aff": "University of Sydney", "cat": "wildlife", "loc": "West Arnhem Land, Northern Territory, Australia", "lat": -12.4, "lng": 133.8, "date": "2024-08-20", "year": 2024, "desc": "Indigenous Australians have strategically burned land to protect their environment for tens of thousands of years. In a practice known as cool burning, fires move slowly, burn only the undergrowth, and remove the build-up of fuel that feeds bigger blazes.", "kw": ["Indigenous fire management", "cool burning", "climate change", "carbon credits", "Australia", "traditional knowledge", "wildfire prevention", "environmental conservation"], "sdgs": ["SDG13", "SDG15", "SDG11", "SDG10"], "imgs": 4, "web": "https://matthewabbott.com.au", "verified": true}, {"id": "18", "title": "Two Chinas on Rails", "author": "Gilles Sabrie", "prof": "Documentary Photographer & Sociologist", "aff": "Sciences Po Paris", "cat": "urban", "loc": "China", "lat": 35.8617, "lng": 104.1954, "date": "2024-03-15", "year": 2024, "desc": "A photographic exploration of China's dual railway system, where gleaming high-speed trains and aging slow trains run in parallel, revealing the stark class divisions and inequalities within the world's largest rail network.", "kw": ["China", "railway", "high-speed train", "inequality", "migration", "infrastructure", "transportation", "urbanization"], "sdgs": ["SDG9", "SDG10", "SDG11"], "imgs": 4, "web": "https://gillessabrie.com", "verified": false}];
+const PROJECTS = [{"id": "17", "title": "Toxo'o o tsui' kiee'n: Day of the Death in the Mazatecan Highlands in Oaxaca", "author": "Cinthia Karina Baños Paredes", "prof": "Ethnologist", "aff": "National School of Anthropology and History (ENAH)", "cat": "anthropology", "loc": "Sierra Mazateca, Oaxaca, Mexico", "lat": 18.1333, "lng": -96.8333, "date": "2022-10-27", "year": 2022, "desc": "The Day of the Dead celebration in the Sierra Mazateca territory is known as ·Tsui' kiee'n· or ·The Festival of the Sun·", "kw": ["Day of the Dead", "Mazatec", "Oaxaca", "Huehuentones", "ritual", "Naxinandá", "indigenous traditions", "anthropology"], "sdgs": ["SDG10", "SDG11", "SDG16"], "imgs": 4, "web": "https://cinthiabanosphotography.com", "verified": true, "caps": ["The Cemetery Vigil: The Sea of Light. In the depths of the night of October 31st, the Mazatec community cemetery transforms into a sea of light. This image captures hundreds of burning candles illuminating the graves, creating a sacred landscape where fire symbolizes the living presence of the deceased. According to Mazatec cosmology, candlelight serves as a guide for souls to find their way back to earth during these sacred days. Families remain throughout the night in vigil, conversing with their dead, sharing food and drink, keeping candles perpetually lit.", "Chaxo o': The Huehuentón as Ancestral Portal. The Huehuentón (chaxo o' in Mazatec) is much more than a masked dancer: it is the physical embodiment of ancestors returning to the world of the living. This photograph captures the ritual moment of transformation when the mask bearer ceases to be an individual and becomes a vessel for ancestral spirits. The carved wooden mask represents the face of the ancients, the \"navel of the earth\" who founded the community. The multicolored textile—woven by women with patterns representing the four directions of the cosmos—serves as spiritual armor protecting the bearer during transit between worlds.", "The Home Altar: Architecture of Reunion. The home altar is a complex cosmological construction that functions as a dimensional portal between the realm of the living (tikjandá) and that of the dead (nda kjuani). This image shows a multi-level altar that replicates the vertical structure of the Mazatec universe: the upper level represents heaven decorated with cempasúchil flowers whose aroma guides the spirits; the middle level symbolizes the land of the living with photographs and favorite foods; the lower level represents the underworld with candles and copal that purify the path of ascent. Families construct these altars weeks in advance, and during the days of Tsui' kiee'n they maintain constant conversation with the photographs.", "The Procession of Masks: Ritual Geography of the Town. The Huehuentones do not dance just anywhere: their route through the town traces a sacred geography that reactivates points of spiritual power. This photograph documents the moment when a group of fifteen Huehuentones proceeds along the main street, stopping at specific houses where community members have died during the year. At each stop, they execute a particular dance that varies according to the age and social role of the deceased. The masks they wear are inherited through generations, some more than 100 years old, accumulating the spiritual power of all the ancestors they have represented."]}, {"id": "26", "title": "The Two Walls", "author": "Alejandro Cegarra", "prof": "Documentary Photographer & Visual Journalist - The New York Times/Bloomberg", "aff": "Universidad Central de Venezuela", "cat": "news", "loc": "US-Mexico Border, Tijuana & Ciudad Juárez", "lat": 32.5349, "lng": -117.0382, "date": "2024-09-15", "year": 2024, "desc": "Since 2019, Mexico's immigration policies have undergone a significant shift, transforming from a nation historically open to migrants and asylum seekers at its southern border to a country that enforces stringent immigration policies.", "kw": ["migration", "US-Mexico border", "asylum seekers", "Title 42", "Title 8", "Venezuela", "human rights", "displacement"], "sdgs": ["SDG10", "SDG16", "SDG1", "SDG3"], "imgs": 4, "web": "https://alejandrocegarra.com", "verified": true, "caps": ["Ruben Soto (right), a migrant from Venezuela, sits with Rosa Bello, a Honduran migrant, atop a freight train known as \"The Beast,\" in Samalayuca, Mexico. Ruben and Rosa met in Mexico and fell in love on their way to the United States.", "A migrant jumps between cars on a freight train known as \"The Beast\" in Piedras Negras, Mexico. Migrants and asylum seekers lacking the financial resources to pay a smuggler often resort to using cargo trains to reach the United States border. This mode of transportation is very dangerous; over the years, hundreds have fallen onto the tracks and have been killed or mutilated. Thousands more have fallen victim to extortion, rape, kidnapping, or robbery orchestrated by drug cartels or corrupt authorities in various stops along the train's northward route.", "The De Coto family poses for a portrait aboard \"The Beast\" while heading to Ciudad Juárez. This photo was taken in Samalayuca, Mexico, three days before the expiration of Title 42, a US COVD-19 prevention measure that in effect allowed deportation of migrants without reviewing asylum claims. Since 2020, there have been over two million expulsions of migrants by US Customs and Border Protection under Title 42.", "Ruben Soto (right), a migrant from Venezuela, sits with Rosa Bello, a Honduran migrant, atop a freight train known as \"The Beast,\" in Samalayuca, Mexico. Ruben and Rosa met in Mexico and fell in love on their way to the United States."]}, {"id": "23", "title": "The Lake Has Fallen Silent", "author": "Jean-Baptiste Munyankindi", "prof": "Environmental Photojournalist & Ecologist", "aff": "University of Rwanda", "cat": "wildlife", "loc": "Lake Kivu, Rwanda/DRC", "lat": -1.7167, "lng": 29.2333, "date": "2024-08-10", "year": 2024, "desc": "Lake Kivu, a majestic body of water at the border between Rwanda and the Democratic Republic of Congo, is a place where stories intertwine and destinies converge. Beneath the placid beauty lies turbulence and uncertainty.", "kw": ["Lake Kivu", "Rwanda", "DRC", "climate change", "fishing communities", "displacement", "environmental degradation", "methane extraction"], "sdgs": ["SDG13", "SDG14", "SDG1", "SDG2", "SDG8", "SDG11"], "imgs": 4, "web": "https://jbmunyankindi.photography", "verified": true, "caps": ["A fisherman repairs his nets at dawn along the shores of Lake Kivu in Goma, DRC. Against the backdrop of storm clouds and the bustling harbor, he prepares for another day on waters that have sustained his community for generations, even as climate change brings increasingly unpredictable weather patterns and declining fish populations.", "Sambaza, a sardine local to the waters of Lake Kivu, are captured in a net. Several factors, including overfishing and the presence of gas extraction plants, threaten the sambaza population, in Goma, DRC.", "Women selling sambaza at Rond-Point Rutshuru, a busy street in Goma, DRC.", "A woman eats sambaza and fufu at a restaurant in Goma, DRC."]}, {"id": "25", "title": "Occupy Parliament: Kenya's Finance Bill Protests", "author": "Wanjiru Kimathi", "prof": "Political Scientist", "aff": "University of Nairobi", "cat": "news", "loc": "Nairobi, Kenya", "lat": -1.2864, "lng": 36.8172, "date": "2024-06-25", "year": 2024, "desc": "Documenting the nationwide protests against the Finance Bill 2024 in Kenya, where a generation of young activists took to the streets demanding accountability and rejecting punitive taxation.", "kw": ["Kenya", "protests", "Finance Bill 2024", "Nairobi", "activism", "taxation", "civil disobedience", "OccupyParliament"], "sdgs": ["SDG10", "SDG16", "SDG11"], "imgs": 4, "web": "https://wanjirukimathi.photography", "verified": true, "caps": ["Protestors chant anti-government slogans while climbing a Kenya Police water cannon truck during a nationwide protest against tax hikes and the Finance Bill 2024 in Nairobi, Kenya.", "Protestors chant slogans and push a makeshift barricade as they clash with Kenyan police officers during an anti-government demonstration in Nairobi, Kenya.", "A Kenyan police officer fires a tear gas canister during a demonstration against tax hikes as Members of Parliament vote on the Finance Bill 2024 in downtown Nairobi, Kenya.", "A tear gas canister explodes under a protestor in Nairobi, Kenya."]}, {"id": "27", "title": "The Darién Gap: The World's Most Dangerous Migration Route", "author": "Santiago Ramírez", "prof": "Documentary Photographer", "aff": "Universidad de los Andes", "cat": "news", "loc": "Darién Gap, Colombia-Panama Border", "lat": 8.0, "lng": -77.5, "date": "2024-11-15", "year": 2024, "desc": "Documentación visual de una de las rutas migratorias más peligrosas del mundo: el Tapón del Darién, un paso de 100 kilómetros de selva densa que conecta Colombia y Panamá.", "kw": ["migration", "Darién Gap", "refugees", "humanitarian crisis", "Venezuela", "Latin America", "human rights", "border crossing"], "sdgs": ["SDG1", "SDG3", "SDG10", "SDG16"], "imgs": 4, "web": "https://santiagoramirezphoto.com", "verified": true, "caps": ["A group of Afghan, Chinese, Venezuelan, and Ecuadorian migrants wade toward a boat headed for the Darién Gap, in Capurganá, Colombia. Many of the Afghans had never seen the ocean before.", "A final base camp before entering the Darién Gap, in Las Tecas, Colombia. A record 520,000 migrants crossed through the Darién jungle in 2023.", "Thousands of migrants wade into the Rio Muerto (\"Death River\") at the Darién Gap, where several have drowned in its treacherous waters. They assist one another to prevent drowning in the swift currents.", "Sarah Cuauro, (6) was separated from her mother during their trek through the jungle. Ángel Garcia, (42) took care of her for several days as they climbed through the mud to Banderas Hill, a crossing point in the Darién Gap. They had no idea where Sarah's mother was or whether she was injured."]}, {"id": "28", "title": "Cool Burning: Indigenous Fire Management in West Arnhem Land", "author": "Matthew Abbott", "prof": "Geographer & Documentary Photographer", "aff": "University of Sydney", "cat": "wildlife", "loc": "West Arnhem Land, Northern Territory, Australia", "lat": -12.4, "lng": 133.8, "date": "2024-08-20", "year": 2024, "desc": "Indigenous Australians have strategically burned land to protect their environment for tens of thousands of years. In a practice known as cool burning, fires move slowly, burn only the undergrowth, and remove the build-up of fuel that feeds bigger blazes.", "kw": ["Indigenous fire management", "cool burning", "climate change", "carbon credits", "Australia", "traditional knowledge", "wildfire prevention", "environmental conservation"], "sdgs": ["SDG13", "SDG15", "SDG11", "SDG10"], "imgs": 4, "web": "https://matthewabbott.com.au", "verified": true, "caps": ["Nawarddeken women conducting traditional cool burning in West Arnhem Land. The controlled fires move slowly through the grasslands, burning only undergrowth while leaving trees intact, creating a mosaic pattern that prevents larger wildfires during the dry season.", "Nawarddeken elder Conrad Maralngurra burns grass to protect the Mamadawerre community from late-season wildfires, in Mamadawerre, Arnhem Land, Australia. The late-evening fire will die out naturally once the temperature drops and moisture levels rise.", "Smoke from a cool-burn fire covers Djalama Valley in West Arnhem Land, at the beginning of the dry season in Australia's Northern Territory.", "Stacey Lee (11, left) sets the bark of trees alight to produce a natural light source to help hunt for file snakes (Acrochordus arafurae), in Djulkar, Arnhem Land, Australia."]}, {"id": "18", "title": "Two Chinas on Rails", "author": "Gilles Sabrie", "prof": "Documentary Photographer & Sociologist", "aff": "Sciences Po Paris", "cat": "urban", "loc": "China", "lat": 35.8617, "lng": 104.1954, "date": "2024-03-15", "year": 2024, "desc": "A photographic exploration of China's dual railway system, where gleaming high-speed trains and aging slow trains run in parallel, revealing the stark class divisions and inequalities within the world's largest rail network.", "kw": ["China", "railway", "high-speed train", "inequality", "migration", "infrastructure", "transportation", "urbanization"], "sdgs": ["SDG9", "SDG10", "SDG11"], "imgs": 4, "web": "https://gillessabrie.com", "verified": false, "caps": ["At Beijing West Railway station, a migrant worker loaded with baggage, heads back to the family hometown for the New Year holiday. The Lunar New Year is the busiest time of year for train travel, with an estimated 190 million trips taken during the 2024 spring festival holidays. The modernisation of the China Railway network has made this yearly migration a lot easier, reducing it to a few hours when it could take one or two days just a decade earlier.", "In the VIP waiting room of Chengdu Airport, recently opened high-speed railway station, a detail of painting shows a high-speed train riding in a mountainous landscape.", "A crowded concourse at Beijing West railway station, a few days before the Lunar New Year. The station was the largest in Asia when it was inaugurated in the late 90s but it has struggled to keep up with expanding passenger numbers as China's railways undergo modernisation. It serves both green (slow) trains, and some high speed trains.", "At Beijing West Railway station, a migrant worker loaded with baggage, heads back to the family hometown for the New Year holiday. The Lunar New Year is the busiest time of year for train travel, with an estimated 190 million trips taken during the 2024 spring festival holidays. The modernisation of the China Railway network has made this yearly migration a lot easier, reducing it to a few hours when it could take one or two days just a decade earlier."]}];
 
 const CATS = {
   wildlife:     {label:"Wildlife & human interaction", color:"#64A70B", g:"W"},
@@ -528,6 +692,14 @@ const HOTSPOTS = [
   {name:"Haiti", c:[-72.6,18.9], r:1.6},
   {name:"Eastern Ukraine", c:[37.5,48.3], r:3.2},
 ];
+// Official UN SDG names and colours (UN SDG communications guidelines).
+const SDGS = {1:["No poverty","#E5243B"],2:["Zero hunger","#DDA63A"],3:["Good health and well-being","#4C9F38"],4:["Quality education","#C5192D"],
+  5:["Gender equality","#FF3A21"],6:["Clean water and sanitation","#26BDE2"],7:["Affordable and clean energy","#FCC30B"],8:["Decent work and economic growth","#A21942"],
+  9:["Industry, innovation and infrastructure","#FD6925"],10:["Reduced inequalities","#DD1367"],11:["Sustainable cities and communities","#FD9D24"],
+  12:["Responsible consumption and production","#BF8B2E"],13:["Climate action","#3F7E44"],14:["Life below water","#0A97D9"],15:["Life on land","#56C02B"],
+  16:["Peace, justice and strong institutions","#00689D"],17:["Partnerships for the goals","#19486A"]};
+const sdgNum = s => +String(s).replace(/\D/g,"");
+const sdgTile = s => { const n=sdgNum(s), [name,c]=SDGS[n] ?? ["","#666"]; return `<span class="sdgt" style="background:${c}"><b>${n}</b>${name}</span>`; };
 const CHECK = '<svg class="check" viewBox="0 0 24 24" aria-label="Curated"><path fill="#1d8cf0" d="M12 1.5l2.6 1.9 3.2-.2 1 3 2.7 1.8-1 3 1 3-2.7 1.8-1 3-3.2-.2L12 22.5l-2.6-1.9-3.2.2-1-3L2.5 16l1-3-1-3 2.7-1.8 1-3 3.2.2z"/><path d="m7.8 12.2 2.8 2.8 5.6-5.8" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 // Placeholder for semantic search. The real version embeds the query and ranks projects by vector similarity (ChromaDB).
@@ -552,17 +724,20 @@ const initials = n => n.replace(/^(Dr\.?)\s+/,"").split(/\s+/).filter(Boolean).m
 const affCode = a => { const m = a.match(/\(([^)]+)\)/); if (m) return m[1];
   return a.split(/\s+/).filter(w=>/^[A-Z]/.test(w) && !["of","de","the"].includes(w)).map(w=>w[0]).join("").slice(0,4); };
 const img = (p,i=0) => p.images?.length ? p.images[Math.min(i,p.images.length-1)] : p.imgs ? `img/p${p.id}_${Math.min(i,p.imgs-1)}.jpg` : "";
+const imgFull = (p,i=0) => { const u=img(p,i); return /^img\/p\d+_\d+\.jpg$/.test(u) ? u.replace("img/","img/full/") : u; };
+const fmtSize = b => b>=1048576 ? (b/1048576).toFixed(1)+" MB" : Math.max(1,Math.round(b/1024))+" KB";
 const fmtLL = (lat,lng) => `${Math.abs(lat).toFixed(2)}° ${lat>=0?"N":"S"}, ${Math.abs(lng).toFixed(2)}° ${lng>=0?"E":"W"}`;
 const fromApi = p => ({ id:String(p.id), title:p.title, author:p.author?.name ?? "Unknown author", prof:p.author?.profession ?? "",
   aff:p.author?.affiliation ?? "", cat:CATS[p.category] ? p.category : "news", loc:p.location_name, lat:p.lat, lng:p.lng,
   date:p.date, year:p.year ?? +String(p.date).slice(0,4), desc:p.description, kw:p.keywords ?? [], sdgs:p.sdgs ?? [],
-  images:p.images ?? [], imgs:(p.images ?? []).length, web:p.author?.website, verified:!!p.verified });
+  images:(p.images ?? []).map(u=>u.startsWith("/files/") ? API_BASE+u : u), imgs:(p.images ?? []).length, web:p.author?.website, verified:!!p.verified,
+  caps:p.captions ?? [], summary:p.summary ?? "", docs:p.documents ?? [] });
 
 // ---------- state ----------
 let years = [...new Set(PROJECTS.map(p=>p.year))].sort();
 let sdgList = [...new Set(PROJECTS.flatMap(p=>p.sdgs))].sort((a,b)=>+a.slice(3)-+b.slice(3));
 const state = {
-  q:"", semantic:true, cats:new Set(Object.keys(CATS)), sdgs:new Set(), y0:years[0], y1:years.at(-1),
+  q:"", semantic:false, cats:new Set(Object.keys(CATS)), sdgs:new Set(), y0:years[0], y1:years.at(-1),
   proj:"globe", researchers:false, borders:false, news:true, selected:null,
   rot:[70,-10], k:1, panY:0, auto:true,
 };
@@ -575,7 +750,8 @@ function visibleItems(){
     if (!(state.cats.has(p.cat) && p.year>=state.y0 && p.year<=state.y1 &&
       (!state.sdgs.size || p.sdgs.some(s=>state.sdgs.has(s))))) return false;
     if (!q) return true;
-    if ([p.title,p.author,p.loc,p.aff,p.desc,...p.kw].join(" ").toLowerCase().includes(q)) return true;
+    if ([p.title,p.author,p.loc,p.aff,p.desc,p.summary,...p.kw,...(p.caps ?? [])].join(" ").toLowerCase().includes(q)) return true;
+    if (apiHits.has(p.id)) { why[p.id]="Found in the project document"; return true; }
     if (hits[p.id]) { why[p.id]="Related by meaning: "+hits[p.id].join(", "); return true; }
     return false;
   });
@@ -587,21 +763,33 @@ function visibleItems(){
 }
 
 let lastWhy = {};
+let apiHits = new Set(), qTimer = null;
+// The backend's keyword search also reads the text of uploaded PDFs, which the page does not hold.
+function searchApi(){
+  clearTimeout(qTimer);
+  const q=state.q.trim();
+  if (!apiLive || !q) { apiHits=new Set(); return; }
+  qTimer=setTimeout(async()=>{
+    try { const r=await fetch(`${API_BASE}/api/projects?q=${encodeURIComponent(q)}`); if (!r.ok) return;
+      const ids=(await r.json()).map(p=>String(p.id)); if (state.q.trim()!==q) return;
+      apiHits=new Set(ids); refresh(); } catch {}
+  }, 250);
+}
 // ---------- filter UI ----------
 document.getElementById("examples").innerHTML = EXAMPLES.map(e=>`<button type="button">${e}</button>`).join("");
 document.getElementById("examples").addEventListener("click", e => { const b=e.target.closest("button"); if(!b) return;
   const q=document.getElementById("q"); q.value=b.textContent; state.q=b.textContent; setSmode(true); refresh();
   document.getElementById("drawer").classList.add("open"); });
-function setSmode(on){ state.semantic=on;
+function setSmode(on){ state.semantic=on; document.getElementById("examples").hidden=!on;
   document.querySelectorAll(".smode button").forEach(b=>b.setAttribute("aria-pressed", (b.dataset.smode==="meaning")===on)); }
 document.querySelectorAll(".smode button").forEach(b=>b.onclick=()=>{ setSmode(b.dataset.smode==="meaning"); refresh(); });
 function renderQStatus(){
   const el=document.getElementById("qstatus");
-  if (!state.q.trim()) { el.innerHTML = state.semantic ? '<span class="ai">AI · placeholder</span> Describe a topic in your own words.' : ""; return; }
-  const byMeaning=Object.keys(lastWhy).length, total=items.length;
+  if (!state.q.trim()) { el.innerHTML = state.semantic ? '<span class="ai">AI · placeholder</span> Describe a topic in your own words.' : "Searches titles, places, authors, keywords, photo narration and project documents."; return; }
+  const byMeaning=Object.values(lastWhy).filter(w=>w.startsWith("Related")).length, total=items.length;
   el.innerHTML = state.semantic
     ? `<span class="ai">AI · placeholder</span> ${total} result${total===1?"":"s"}, ${byMeaning} found by meaning`
-    : `${total} exact match${total===1?"":"es"}`;
+    : `${total} keyword match${total===1?"":"es"}`;
 }
 const catsEl = document.getElementById("cats");
 const sdgEl = document.getElementById("sdgs");
@@ -613,26 +801,30 @@ function buildFilters(){
     const n = PROJECTS.filter(p=>p.cat===k).length;
     return `<button class="cat" type="button" data-cat="${k}" aria-pressed="${state.cats.has(k)}"><span class="dot" style="background:${c.color}">${c.g}</span>${c.label}<span class="n">${n}</span></button>`;
   }).join("");
-  sdgEl.innerHTML = sdgList.map(s=>`<button class="chip" type="button" data-sdg="${s}" aria-pressed="${state.sdgs.has(s)}">SDG ${s.slice(3)}</button>`).join("");
+  sdgEl.innerHTML = sdgList.map(s=>{ const n=sdgNum(s), [name,c]=SDGS[n] ?? ["","#666"];
+    return `<button class="sdgc" type="button" data-sdg="${s}" aria-pressed="${state.sdgs.has(s)}" style="background:${c}" title="SDG ${n}: ${name}" aria-label="SDG ${n}: ${name}">${n}</button>`; }).join("");
+  syncSdgSel();
   for (const id of ["y0","y1"]) document.getElementById(id).innerHTML = years.map(y=>`<option ${y===state[id]?"selected":""}>${y}</option>`).join("");
 }
 buildFilters();
 catsEl.addEventListener("click", e => { const b=e.target.closest(".cat"); if(!b) return;
   const k=b.dataset.cat; state.cats.has(k)?state.cats.delete(k):state.cats.add(k);
   b.setAttribute("aria-pressed", state.cats.has(k)); refresh(); });
-sdgEl.addEventListener("click", e => { const b=e.target.closest(".chip"); if(!b) return;
+function syncSdgSel(){ sdgEl.classList.toggle("has-sel", state.sdgs.size>0);
+  document.getElementById("sdgSel").textContent = state.sdgs.size ? "Showing: "+[...state.sdgs].sort((a,b)=>sdgNum(a)-sdgNum(b)).map(s=>SDGS[sdgNum(s)]?.[0]).join(", ") : "Hover a goal to see its name. Click to filter."; }
+sdgEl.addEventListener("click", e => { const b=e.target.closest(".sdgc"); if(!b) return;
   const s=b.dataset.sdg; state.sdgs.has(s)?state.sdgs.delete(s):state.sdgs.add(s);
-  b.setAttribute("aria-pressed", state.sdgs.has(s)); refresh(); });
+  b.setAttribute("aria-pressed", state.sdgs.has(s)); syncSdgSel(); refresh(); });
 for (const id of ["y0","y1"]) {
   const sel=document.getElementById(id);
   sel.addEventListener("change", ()=>{ state[id]=+sel.value; refresh(); });
 }
-document.getElementById("q").addEventListener("input", e=>{ state.q=e.target.value; refresh(); });
+document.getElementById("q").addEventListener("input", e=>{ state.q=e.target.value; apiHits=new Set(); refresh(); searchApi(); });
 document.getElementById("reset").addEventListener("click", ()=>{
   state.q=""; document.getElementById("q").value="";
   state.cats=new Set(Object.keys(CATS)); state.sdgs.clear(); state.y0=years[0]; state.y1=years.at(-1);
   document.querySelectorAll(".cat").forEach(b=>b.setAttribute("aria-pressed","true"));
-  document.querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed","false"));
+  document.querySelectorAll(".sdgc").forEach(b=>b.setAttribute("aria-pressed","false")); syncSdgSel(); apiHits=new Set();
   document.getElementById("y0").value=state.y0; document.getElementById("y1").value=state.y1; refresh();
 });
 
@@ -672,6 +864,8 @@ function resize(){
   canvas.width=W*DPR; canvas.height=H*DPR; draw();
 }
 function center(){
+  // signed out: the globe sits to the left of the passport cover (above it on phones)
+  if (document.body.classList.contains("locked")) return W>860 ? [W*0.33, H*0.5] : [W/2, H*0.2];
   const off = (!panel.classList.contains("closed") && W>900) ? 170 : 0;
   return [W/2+off, H/2];
 }
@@ -728,7 +922,8 @@ function draw(){
     ctx.stroke();
   }
   // news caps
-  if (state.news){
+  const showNews = state.news && !document.body.classList.contains("locked");
+  if (showNews){
     const pulse=.3+.08*Math.sin(t*2.4);
     for (const h of HOTSPOTS){
       const c=d3.geoCircle().center(h.c).radius(h.r)();
@@ -745,7 +940,7 @@ function draw(){
     ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,r,0,7); ctx.fill();
   }
   // hotspot labels
-  if (state.news){
+  if (showNews){
     ctx.font="600 11px Figtree, system-ui, sans-serif"; ctx.textAlign="center";
     for (const h of HOTSPOTS){
       if (!isVisible(h.c)) continue;
@@ -855,7 +1050,7 @@ function renderList(){
   document.getElementById("drawerTitle").textContent = state.researchers ? `Researchers (${items.length})` : `Projects (${items.length})`;
   const list=document.getElementById("list");
   if (!items.length){ list.innerHTML = state.q.trim() && !state.semantic
-      ? '<p class="empty">No exact matches. Switch to “By meaning” to find related projects.</p>'
+      ? '<p class="empty">No keyword matches. Try another word, or switch to “By meaning”.</p>'
       : '<p class="empty">Nothing matches these filters. Clear a filter to see more.</p>'; return; }
   list.innerHTML=items.map((d,i)=>{ const p=d.p;
     const th = d.kind==="project" ? `<span class="th" style="background-image:url('${img(p)}')"></span>`
@@ -876,7 +1071,7 @@ function refresh(){
 const story=document.getElementById("story");
 function openStory(p){
   const c=CATS[p.cat];
-  const pics=Array.from({length:Math.min(p.imgs,4)},(_,i)=>`<img src="${img(p,i)}" alt="Photograph ${i+1} from ${esc(p.title)}" loading="lazy">`).join("");
+  const pics=Array.from({length:p.imgs},(_,i)=>`<figure><button class="shot" type="button" data-i="${i}" aria-label="View photograph ${i+1} full screen"><img src="${img(p,i)}" alt="Photograph ${i+1} from ${esc(p.title)}" loading="lazy"></button>${p.caps?.[i] ? `<figcaption>${esc(p.caps[i])}</figcaption>` : ""}</figure>`).join("");
   story.innerHTML=`<div class="story-bar"><div class="logo"><b style="font-size:17px">THE CHARTER</b></div>
       <button type="button" id="storyClose">Back to map</button></div>
     <div class="hero" style="background-image:url('${img(p)}')"></div>
@@ -893,7 +1088,9 @@ function openStory(p){
       </dl>
       <p class="lede">${esc(p.desc)}</p>
       <div class="grid">${pics}</div>
-      <h5>UN Sustainable Development Goals</h5><div class="kws">${p.sdgs.map(s=>`<span class="sdg">SDG ${s.slice(3)}</span>`).join("")}</div>
+      ${p.summary ? `<h5>Summary</h5><p class="sum">${esc(p.summary)}</p>` : ""}
+      ${p.docs?.length ? `<h5>Project document</h5><div class="docs">${p.docs.map(d=>`<a href="${esc(API_BASE+d.url)}" target="_blank" rel="noopener">${esc(d.title || d.filename)} ↗<span>PDF · ${d.pages} page${d.pages===1?"":"s"} · ${fmtSize(d.size_bytes)}</span></a>`).join("")}</div>` : ""}
+      ${p.sdgs.length ? `<h5>UN Sustainable Development Goals</h5><div class="kws">${p.sdgs.map(sdgTile).join("")}</div>` : ""}
       <h5>Keywords</h5><div class="kws">${p.kw.map(k=>`<span>${esc(k)}</span>`).join("")}</div>
       <h5>Nearby projects · within 2,000 km</h5><div class="nearby" id="nearby"><p style="color:#9d9387;font-size:13px;margin:0">Loading…</p></div>
       ${p.web?`<h5>Author</h5><p class="links"><a href="${esc(p.web)}" target="_blank" rel="noopener">Photographer website ↗</a></p>`:""}
@@ -902,8 +1099,25 @@ function openStory(p){
   story.hidden=false; story.scrollTop=0;
   document.getElementById("storyClose").onclick=closeStory;
   document.getElementById("storyClose").focus();
+  story.querySelectorAll(".shot").forEach(b=>b.onclick=()=>openLb(p,+b.dataset.i));
+  story.querySelector(".hero").onclick=()=>openLb(p,0);
   loadNearby(p);
 }
+// Full-screen photo viewer: arrows or swipe-free buttons to move, Esc to close.
+const lbEl=document.getElementById("lb"); let lbState={p:null,i:0};
+function openLb(p,i){ lbState={p,i}; lbEl.hidden=false; showLb(); document.getElementById("lbClose").focus(); }
+function showLb(){ const {p,i}=lbState, n=p.imgs;
+  const im=document.getElementById("lbImg"); im.src=imgFull(p,i); im.alt=`Photograph ${i+1} from ${p.title}`;
+  document.getElementById("lbCount").textContent=`${i+1} / ${n} · ${p.author}`;
+  document.getElementById("lbCap").textContent=p.caps?.[i] ?? "";
+  document.getElementById("lbPrev").disabled=i===0; document.getElementById("lbNext").disabled=i===n-1; }
+function stepLb(d){ const n=lbState.p.imgs, i=lbState.i+d; if (i<0 || i>=n) return; lbState.i=i; showLb(); }
+function closeLb(){ lbEl.hidden=true; }
+document.getElementById("lbClose").onclick=closeLb;
+document.getElementById("lbPrev").onclick=()=>stepLb(-1);
+document.getElementById("lbNext").onclick=()=>stepLb(1);
+lbEl.addEventListener("click",e=>{ if (e.target===lbEl || e.target.tagName==="FIGURE") closeLb(); });
+addEventListener("keydown",e=>{ if (lbEl.hidden) return; if (e.key==="ArrowLeft") stepLb(-1); if (e.key==="ArrowRight") stepLb(1); });
 // Live: PostGIS ST_DWithin via GET /api/projects/near. Offline: the same great-circle distance computed here.
 async function loadNearby(p){
   const el=document.getElementById("nearby"); let rows;
@@ -923,24 +1137,15 @@ async function loadNearby(p){
     closeStory(); if (d) select(d); };
 }
 function closeStory(){ story.hidden=true; }
-addEventListener("keydown",e=>{ if(e.key==="Escape"){ if(picking) endPick(); else if(!profileEl.hidden) closeProfile(); else if(!adminEl.hidden) adminEl.hidden=true; else if(!story.hidden) closeStory(); else if(drawer.classList.contains("open")) drawer.classList.remove("open"); else closeCard(); }});
+addEventListener("keydown",e=>{ if(e.key==="Escape"){ if(document.body.classList.contains("locked")) return; if(!lbEl.hidden) closeLb(); else if(picking) endPick(); else if(!profileEl.hidden) closeProfile(); else if(!adminEl.hidden) adminEl.hidden=true; else if(!story.hidden) closeStory(); else if(drawer.classList.contains("open")) drawer.classList.remove("open"); else closeCard(); }});
 
 // ---------- admin upload (AI steps are placeholders) ----------
 const adminEl=document.getElementById("admin");
 const SAMPLE = {
   photos:["img/p17_0.jpg","img/p17_1.jpg","img/p17_2.jpg","img/p17_3.jpg"],
   author:"Cinthia Karina Baños Paredes", aff:"National School of Anthropology and History (ENAH)", web:"https://cinthiabanosphotography.com",
-  es:{
-    t:"Toxo'o o tsui' kiee'n: Día de Muertos en la Sierra Mazateca de Oaxaca",
-    d:"La celebración de Día de Muertos en el territorio de la Sierra Mazateca se conoce como ·Tsui' kiee'n· o ·La Fiesta del Sol·. Es la celebración más importante de la cultura mazateca y representa ·Naxinandá·, que en su cosmogonía significa \"comunidad\". Las personas que migraron regresan para reencontrarse con sus familiares vivos y difuntos; las almas de sus ancestros están representadas en el ·Toxo'o· por los ·Huehuentones o chaxo o'·, que son los hombres y mujeres del ombligo de la tierra.",
-    c:"La vigilia en el panteón: el mar de luz",
-  },
-  en:{
-    t:"Toxo'o o tsui' kiee'n: Day of the Dead in the Mazatec Highlands of Oaxaca",
-    d:"The Day of the Dead celebration in the Sierra Mazateca territory is known as ·Tsui' kiee'n· or ·The Festival of the Sun·. It is the most significant celebration in Mazatec culture, representing ·Naxinandá·, which in their cosmogony means \"community.\" People who migrated return to reunite with their living and deceased relatives; the souls of their ancestors are represented in the ·Toxo'o· by the ·Huehuentones or chaxo o'·, who are the men and women of the earth's navel.",
-    c:"The Cemetery Vigil: The Sea of Light",
-  },
-  glossary:["Tsui' kiee'n","Naxinandá","Toxo'o","Huehuentones","chaxo o'","Sierra Mazateca"],
+  title:"Toxo'o o tsui' kiee'n: Day of the Dead in the Mazatec Highlands of Oaxaca",
+  desc:"The Day of the Dead celebration in the Sierra Mazateca territory is known as ·Tsui' kiee'n· or ·The Festival of the Sun·. It is the most significant celebration in Mazatec culture, representing ·Naxinandá·, which in their cosmogony means \"community.\" People who migrated return to reunite with their living and deceased relatives; the souls of their ancestors are represented in the ·Toxo'o· by the ·Huehuentones or chaxo o'·, who are the men and women of the earth's navel.",
   sugs:[
     {k:"Category", type:"one", v:"Anthropology", conf:"0.93 (next: News 0.04)"},
     {k:"UN SDGs", type:"chips", v:["SDG 11 Sustainable cities and communities","SDG 10 Reduced inequalities","SDG 16 Peace, justice and strong institutions"], conf:"0.81 · 0.64 · 0.52"},
@@ -950,13 +1155,48 @@ const SAMPLE = {
   ],
 };
 const $=id=>document.getElementById(id);
-let adminState={sample:false, translated:false};
+let adminState={sample:false};
 $("adminOpen").onclick=()=>{ adminEl.hidden=false; adminEl.scrollTop=0; $("loadSample").focus(); };
 $("adminClose").onclick=()=>{ adminEl.hidden=true; };
 
-function addThumbs(srcs){ $("thumbs").insertAdjacentHTML("beforeend", srcs.map(s=>`<img src="${s}" alt="Uploaded photo">`).join("")); }
+// One row per photo: the picture, and the narration the admin writes for it.
+function addShot(src,file,caption=""){
+  const row=document.createElement("div"); row.className="shotrow"; row._file=file || null; row._src=src;
+  row.innerHTML=`<img src="${src}" alt="Photo to publish"><label class="fld">Narration for this photo<textarea placeholder="What is happening here? Who, where, when.">${esc(caption)}</textarea></label><button type="button" class="rm" aria-label="Remove this photo">&times;</button>`;
+  $("thumbs").appendChild(row);
+}
+$("thumbs").addEventListener("click",e=>{ const b=e.target.closest(".rm"); if (b) b.closest(".shotrow").remove(); });
 function readFiles(files){ for (const f of files){ if(!f.type.startsWith("image/")) continue;
-  const r=new FileReader(); r.onload=()=>addThumbs([r.result]); r.readAsDataURL(f); } }
+  const r=new FileReader(); r.onload=()=>addShot(r.result,f); r.readAsDataURL(f); } }
+
+// Project document: the backend extracts the text and proposes a summary and keywords for the admin to edit.
+let pdfFile=null;
+function setPdf(f){
+  if (!f) return;
+  if (f.type!=="application/pdf" && !/\.pdf$/i.test(f.name)) { $("pdfInfo").textContent="That file is not a PDF."; return; }
+  pdfFile=f; $("pdfInfo").innerHTML=`<strong>${esc(f.name)}</strong> · ${fmtSize(f.size)}`; $("publish").disabled=false; analysePdf();
+}
+async function analysePdf(){
+  const box=$("pdfOut");
+  if (!apiLive) { box.innerHTML='<p class="placeholder-note" style="margin-top:12px">The backend is not running, so the PDF cannot be read or stored yet. Start it to get a summary and keywords.</p>'; return; }
+  box.innerHTML='<p class="meta" style="margin-top:12px">Reading the PDF…</p>';
+  try {
+    const fd=new FormData(); fd.append("file",pdfFile);
+    const r=await fetch(`${API_BASE}/api/ai/extract-pdf`,{method:"POST",headers:{"X-Admin-Token":DEV_ADMIN_TOKEN},body:fd});
+    const o=await r.json().catch(()=>({}));
+    if (!r.ok) throw new Error(typeof o.detail==="string" ? o.detail : r.status);
+    box.innerHTML=`<div class="pdfres"><p class="meta">${o.pages} page${o.pages===1?"":"s"} · ${Number(o.characters).toLocaleString()} characters of text <span class="ai real">Baseline summarizer</span></p>
+      ${o.has_text ? "" : '<p class="pubmsg" style="margin:0">This PDF has no selectable text (it looks scanned), so there is nothing to summarize or search.</p>'}
+      <label class="fld" for="pdfSummary">Summary, edit before publishing<textarea id="pdfSummary" style="min-height:96px;line-height:1.45">${esc(o.summary ?? "")}</textarea></label>
+      <div class="fld">Keywords found in the document, click to remove<div class="tchips" id="pdfKw">${(o.keywords ?? []).map(k=>`<button type="button" aria-pressed="true">${esc(k)}</button>`).join("")}</div></div></div>`;
+    $("pdfKw").onclick=e=>{ const b=e.target.closest("button"); if (b) b.setAttribute("aria-pressed", b.getAttribute("aria-pressed")!=="true"); };
+  } catch(err) { box.innerHTML=`<p class="pubmsg">The PDF could not be read: ${esc(String(err.message))}</p>`; }
+}
+$("pdfFile").onchange=e=>setPdf(e.target.files[0]);
+const pdfDrop=$("pdfDrop");
+["dragenter","dragover"].forEach(ev=>pdfDrop.addEventListener(ev,e=>{ e.preventDefault(); pdfDrop.classList.add("over"); }));
+["dragleave","drop"].forEach(ev=>pdfDrop.addEventListener(ev,e=>{ e.preventDefault(); pdfDrop.classList.remove("over"); }));
+pdfDrop.addEventListener("drop",e=>setPdf(e.dataTransfer.files[0]));
 $("files").onchange=e=>readFiles(e.target.files);
 const drop=$("drop");
 ["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.add("over"); }));
@@ -964,47 +1204,43 @@ const drop=$("drop");
 drop.addEventListener("drop",e=>readFiles(e.dataTransfer.files));
 
 $("loadSample").onclick=()=>{
-  $("thumbs").innerHTML=""; addThumbs(SAMPLE.photos);
+  $("thumbs").innerHTML=""; const caps17=PROJECTS.find(p=>p.id==="17")?.caps ?? [];
+  SAMPLE.photos.forEach((s,i)=>addShot(s,null,caps17[i] ?? ""));
   $("aName").value=SAMPLE.author; $("aAff").value=SAMPLE.aff; $("aWeb").value=SAMPLE.web;
-  $("tEs").value=SAMPLE.es.t; $("dEs").value=SAMPLE.es.d; $("cEs").value=SAMPLE.es.c;
-  ["tEn","dEn","cEn"].forEach(id=>$(id).value="");
-  adminState={sample:true, translated:false}; detectLang(); resetSugs();
+  $("tEn").value=SAMPLE.title; $("dEn").value=SAMPLE.desc;
+  adminState={sample:true}; resetSugs();
 };
-function detectLang(){
-  const txt=($("tEs").value+" "+$("dEs").value).toLowerCase();
-  const es=(txt.match(/\b(el|la|los|las|de|del|que|y|en|por|para|una|con)\b/g)||[]).length;
-  $("detected").innerHTML = txt.trim() ? `Detected: <b>${es>=3?"ES":"?"}</b> ${es>=3?"Spanish":"unclear"}` : "Language: waiting for text";
-}
-["tEs","dEs","cEs"].forEach(id=>$(id).addEventListener("input",()=>{ adminState.sample=false; detectLang(); }));
-function resetSugs(){ $("sugs").innerHTML='<p class="placeholder-note">Suggestions appear after translation: category, SDGs, keywords, map location and a preview summary.</p>'; $("publish").disabled=true; $("gloss").hidden=true; }
+["tEn","dEn"].forEach(id=>$(id).addEventListener("input",()=>{ adminState.sample=false; }));
+function resetSugs(){ $("sugs").innerHTML='<p class="placeholder-note">Suggestions are drawn from your description. You accept, edit or reject each one.</p>'; }
 
-$("translate").onclick=()=>{
-  if (!$("tEs").value.trim() && !$("dEs").value.trim()) { $("detected").textContent="Add a Spanish title or description first"; return; }
-  const b=$("translate"); b.disabled=true; b.innerHTML='<span class="spin"></span>Translating';
-  setTimeout(()=>{
-    b.disabled=false; b.textContent="Translate again";
-    if (adminState.sample){
-      $("tEn").value=SAMPLE.en.t; $("dEn").value=SAMPLE.en.d; $("cEn").value=SAMPLE.en.c;
-      $("gloss").innerHTML="Kept untranslated (glossary): "+SAMPLE.glossary.map(g=>`<span class="term">${esc(g)}</span>`).join("");
-      $("gloss").hidden=false;
-      renderSugs(SAMPLE.sugs);
+// Keywords and a short summary from the description. Real when the backend is running; the example also shows prepared category, SDG and location suggestions.
+$("suggest").onclick=async()=>{
+  const title=$("tEn").value.trim(), desc=$("dEn").value.trim();
+  if (!title && !desc) { $("sugs").innerHTML='<p class="pubmsg" style="margin:0">Add a title or description in step 4 first.</p>'; return; }
+  const b=$("suggest"); b.disabled=true; b.innerHTML='<span class="spin"></span>Reading';
+  const done=()=>{ b.disabled=false; b.textContent="Suggest again"; };
+  if (adminState.sample){
+    setTimeout(()=>{ renderSugs(SAMPLE.sugs);
       $("catIn").value="anthropology"; $("locIn").value="Sierra Mazateca, Oaxaca, Mexico";
-      $("latIn").value="18.1333"; $("lngIn").value="-96.8333"; $("dateIn").value="2022-10-27"; syncDraftPin();
-    } else {
-      const ph="[Placeholder. No model connected, so this is the original text] ";
-      $("tEn").value=ph+$("tEs").value; $("dEn").value=ph+$("dEs").value; $("cEn").value=$("cEs").value?ph+$("cEs").value:"";
-      $("gloss").hidden=true;
-      $("sugs").innerHTML='<p class="placeholder-note">Custom text needs the real tagging model to produce suggestions. Load the Spanish example to see what this step will look like.</p>';
-    }
-    adminState.translated=true; $("publish").disabled=false;
-  }, 1300);
+      $("latIn").value="18.1333"; $("lngIn").value="-96.8333"; $("dateIn").value="2022-10-27"; syncDraftPin(); setSdgPick(["SDG10","SDG11","SDG16"]); done(); }, 700);
+    return;
+  }
+  if (!apiLive) { $("sugs").innerHTML='<p class="placeholder-note">The backend is not running, so there is nothing to read your text. Start it, or load the example to see this step.</p>'; done(); return; }
+  try {
+    const post=(path,body)=>fetch(API_BASE+path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}).then(r=>{ if(!r.ok) throw new Error(r.status); return r.json(); });
+    const [kw,sm]=await Promise.all([post("/api/ai/keywords",{text:`${title}. ${desc}`,top_k:8}), post("/api/ai/summarize",{text:desc || title,max_sentences:2})]);
+    renderSugs([{k:"Keywords", type:"chips", v:kw.keywords ?? [], conf:"Extracted from your title and description", real:true},
+                {k:"Preview summary", type:"text", v:sm.summary ?? "", conf:"Baseline summarizer: the most representative sentences of your description", real:true}]);
+  } catch(err) { $("sugs").innerHTML=`<p class="pubmsg" style="margin:0">Suggestions failed: ${esc(String(err.message))}</p>`; }
+  done();
 };
 function renderSugs(list){
   $("sugs").innerHTML='<div class="sugs">'+list.map((s,i)=>{
-    const v = s.type==="chips" ? `<div class="tchips">${s.v.map(x=>`<button type="button" aria-pressed="true" title="Click to remove">${esc(x)}</button>`).join("")}</div>`
+    const v = s.type==="chips" ? `<div class="tchips">${s.v.map(x=>{ const m=s.k==="UN SDGs" && x.match(/SDG (\d+)/);
+        return `<button type="button" aria-pressed="true" title="Click to remove"${m ? ` style="background:${SDGS[+m[1]][1]};color:#fff;border-color:transparent"` : ""}>${esc(x)}</button>`; }).join("")}</div>`
       : s.type==="text" ? `<textarea aria-label="${s.k}" style="color:var(--text);background:#fff;font:inherit;font-size:14px;border:1px solid var(--line);border-radius:6px;padding:8px;min-height:60px">${esc(s.v)}</textarea>`
       : `<strong>${esc(s.v)}</strong>`;
-    return `<div class="sug" data-i="${i}"><span class="k">${s.k}</span><div class="v">${v}<span class="conf">Example score: ${esc(s.conf)}</span></div>
+    return `<div class="sug" data-i="${i}"><span class="k">${s.k}</span><div class="v">${v}<span class="conf">${s.real ? "" : "Example score: "}${esc(s.conf)}</span></div>
       <div class="acts"><button type="button" class="ok">Accept</button><button type="button" class="no">Reject</button></div></div>`;}).join("")+'</div>';
 }
 $("sugs").addEventListener("click",e=>{
@@ -1016,11 +1252,11 @@ $("sugs").addEventListener("click",e=>{
 $("publish").onclick=async()=>{
   const lat=parseFloat($("latIn").value), lng=parseFloat($("lngIn").value);
   $("pubMsg").textContent="";
-  if (!(Math.abs(lat)<=90 && Math.abs(lng)<=180)) { $("pubMsg").textContent="Add the coordinates first: type them in step 5 or use Pick on globe."; return; }
+  if (!(Math.abs(lat)<=90 && Math.abs(lng)<=180)) { $("pubMsg").textContent="Add the coordinates first: type them in step 6 or use Pick on globe."; return; }
   if (apiLive) return publishToApi(lat,lng);
   const pending=[...document.querySelectorAll(".sug:not(.accepted):not(.rejected)")].length;
   $("publishArea").innerHTML=`<div class="done"><h3>Approved (mockup)</h3>
-    <p>In the real system this saves the project in Spanish and English, logs your edits to the translation and tags as training data, and sends it to a curator for the blue mark. Nothing was saved here.${pending?` ${pending} suggestion${pending>1?"s were":" was"} left unreviewed.`:""}</p>
+    <p>With the backend running, this saves the project with its photos, narration and PDF and sends it to a curator for the blue mark. Nothing was saved here.${pending?` ${pending} suggestion${pending>1?"s were":" was"} left unreviewed.`:""}</p>
     <div><button class="btn primary" type="button" id="toPin">${adminState.sample?"See it on the map":"Back to map"}</button></div></div>`;
   $("toPin").onclick=()=>{ adminEl.hidden=true;
     if (adminState.sample){ const d=items.find(x=>x.p.id==="17"); if(d) select(d); } };
@@ -1029,24 +1265,39 @@ $("publish").onclick=async()=>{
 const chipsOf = k => [...document.querySelectorAll(".sug")].filter(r=>r.querySelector(".k").textContent===k && !r.classList.contains("rejected"))
   .flatMap(r=>[...r.querySelectorAll('.tchips button[aria-pressed="true"]')].map(b=>b.textContent));
 async function publishToApi(lat,lng){
-  const btn=$("publish"); btn.disabled=true; btn.textContent="Saving…";
+  const btn=$("publish");
+  if (!$("tEn").value.trim()) { $("pubMsg").textContent="Add a title in step 4 first."; return; }
+  btn.disabled=true; btn.textContent="Saving…";
+  const rows=[...document.querySelectorAll("#thumbs .shotrow")], pathRows=rows.filter(r=>!r._file), fileRows=rows.filter(r=>r._file);
+  const summaryFromSugs=()=>{ const r=[...document.querySelectorAll(".sug")].find(x=>x.querySelector(".k").textContent==="Preview summary" && !x.classList.contains("rejected")); return r?.querySelector("textarea")?.value.trim(); };
   const body={
-    title:$("tEn").value.trim() || $("tEs").value.trim(), description:$("dEn").value.trim() || $("dEs").value.trim(),
-    title_original:$("tEs").value.trim() || null, description_original:$("dEs").value.trim() || null, original_language:"es",
+    title:$("tEn").value.trim(), description:$("dEn").value.trim() || $("pdfSummary")?.value.trim() || "",
     category:$("catIn").value, location_name:$("locIn").value.trim() || fmtLL(lat,lng), lat, lng,
     date:$("dateIn").value || new Date().toISOString().slice(0,10),
-    keywords:chipsOf("Keywords"), sdgs:chipsOf("UN SDGs").map(s=>"SDG"+(s.match(/SDG\s*(\d+)/)||[])[1]).filter(s=>s!=="SDGundefined"),
-    images:adminState.sample ? SAMPLE.photos : [],
+    keywords:[...new Set([...chipsOf("Keywords"), ...[...document.querySelectorAll('#pdfKw button[aria-pressed="true"]')].map(b=>b.textContent)])], sdgs:pickedSdgs(),
+    images:pathRows.map(r=>r._src), captions:pathRows.map(r=>r.querySelector("textarea").value.trim()),
+    summary:($("pdfSummary")?.value.trim()) || summaryFromSugs() || null,
     author_name:$("aName").value.trim() || "Unknown author", author_affiliation:$("aAff").value.trim() || "", author_website:$("aWeb").value.trim() || null,
   };
   try {
     const r=await fetch(`${API_BASE}/api/projects`,{method:"POST",headers:{"Content-Type":"application/json","X-Admin-Token":DEV_ADMIN_TOKEN},body:JSON.stringify(body)});
     const out=await r.json().catch(()=>({}));
     if (!r.ok) throw new Error(typeof out.detail==="string" ? out.detail : JSON.stringify(out.detail ?? r.status));
+    const auth={"X-Admin-Token":DEV_ADMIN_TOKEN}, problems=[];
+    if (fileRows.length){
+      const fd=new FormData(); fileRows.forEach(r=>{ fd.append("files",r._file); fd.append("captions",r.querySelector("textarea").value.trim()); });
+      const r2=await fetch(`${API_BASE}/api/projects/${out.id}/images`,{method:"POST",headers:auth,body:fd});
+      if (!r2.ok) problems.push("the photos");
+    }
+    if (pdfFile){
+      const fd=new FormData(); fd.append("file",pdfFile); fd.append("title",body.title);
+      const r3=await fetch(`${API_BASE}/api/projects/${out.id}/documents`,{method:"POST",headers:auth,body:fd});
+      if (!r3.ok) problems.push("the PDF");
+    }
     await loadFromApi();
-    const uploads=$("thumbs").querySelectorAll('img[src^="data:"]').length;
+    const saved=[fileRows.length ? `${fileRows.length} photo${fileRows.length>1?"s":""} with narration` : "", pdfFile ? "the PDF" : ""].filter(Boolean).join(" and ");
     $("publishArea").innerHTML=`<div class="done"><h3>Saved as project #${out.id}</h3>
-      <p>It's in the database at ${fmtLL(lat,lng)} and shows on the map as curation pending until a curator verifies it.${uploads?` The ${uploads} photo${uploads>1?"s":""} you added were not uploaded; file storage comes next.`:""}</p>
+      <p>It's in the database at ${fmtLL(lat,lng)} and shows on the map as curation pending until a curator verifies it.${saved && !problems.length ? ` Stored ${saved}.` : ""}${problems.length ? ` The project was saved, but ${problems.join(" and ")} could not be uploaded.` : ""}</p>
       <div><button class="btn primary" type="button" id="toPin">See it on the map</button></div></div>`;
     $("toPin").onclick=()=>{ adminEl.hidden=true; draftPin=null; const d=items.find(x=>x.p.id===String(out.id)); if(d) select(d); else placePins(); };
   } catch(err) {
@@ -1113,7 +1364,7 @@ function openProfile(){
   const stops=[ME.home, ...es.map(e=>[e.p.lng,e.p.lat])];
   const km=Math.round(stops.slice(1).reduce((s,to,i)=>s+d3.geoDistance(stops[i],to)*6371,0));
   const check='<svg width="15" height="15" viewBox="0 0 24 24" aria-label="Verified institutional email" style="vertical-align:-2px"><path fill="#1d8cf0" d="M12 1.5l2.6 1.9 3.2-.2 1 3 2.7 1.8-1 3 1 3-2.7 1.8-1 3-3.2-.2L12 22.5l-2.6-1.9-3.2.2-1-3L2.5 16l1-3-1-3 2.7-1.8 1-3 3.2.2z"/><path d="m7.8 12.2 2.8 2.8 5.6-5.8" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  profileEl.innerHTML=`<div class="pp-bar"><h1>My profile</h1><span class="sp"></span><button type="button" id="ppClose">Back to map</button></div>
+  profileEl.innerHTML=`<div class="pp-bar"><h1>My profile</h1><span class="sp"></span><button type="button" id="ppOut">Sign out</button><button type="button" id="ppClose">Back to map</button></div>
   <div class="pp-in">
     <section class="cover" aria-label="Field passport"><div class="spread">
       <div class="pg data">${rosette()}
@@ -1136,18 +1387,81 @@ function openProfile(){
         <div class="stamps">${es.map(stampSVG).join("")}<div class="stamp-next"><div class="mono">NEXT ENTRY<br>save a project<br>from the map</div></div></div>
       </div>
     </div></section>
+    <section aria-labelledby="featH"><div class="feat-h"><h2 id="featH">Featured projects</h2><span>Newest in the library</span></div>
+      <div class="feat-row">${[...PROJECTS].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,4).map(p=>`<button class="feat-card" type="button" data-id="${p.id}">
+        <img src="${img(p)}" alt="" loading="lazy"><div><b style="color:${INK[p.cat]||INK.news}">${esc(CATS[p.cat].label)}</b><strong>${esc(p.title)}</strong><small>${esc(p.loc)}</small></div></button>`).join("")}</div></section>
     <dl class="pp-stats"><div><dt>Entries</dt><dd>${es.length}</dd></div><div><dt>Countries</dt><dd>${new Set(es.map(e=>e.code)).size}</dd></div>
       <div><dt>Continents</dt><dd>${new Set(es.map(e=>e.continent)).size}</dd></div><div><dt>Route length</dt><dd>${km.toLocaleString()} km</dd></div></dl>
     <div class="pp-actions"><button class="btn primary" type="button" id="showRoute">Show my route on the globe</button></div>
   </div>`;
   profileEl.hidden=false; profileEl.scrollTop=0; closeCard();
   $("ppClose").onclick=closeProfile; $("ppClose").focus();
+  $("ppOut").onclick=signOut;
   $("showRoute").onclick=()=>{ closeProfile(); showRoute(true); };
+  profileEl.querySelector(".feat-row").onclick=e=>{ const b=e.target.closest(".feat-card"); if(!b) return;
+    closeProfile(); const p=PROJECTS.find(x=>x.id===b.dataset.id); if(p) openStory(p); };
   profileEl.querySelector(".stamps").onclick=e=>{ const b=e.target.closest(".stamp"); if(!b) return;
     closeProfile(); const d=items.find(x=>x.p.id===b.dataset.id); if(d) select(d); };
 }
 function closeProfile(){ profileEl.hidden=true; }
 $("userBtn").onclick=openProfile;
+
+// ---------- sign-in gate (demo: no accounts yet; JWT + institutional allowlist replace this) ----------
+const gate=$("gate"), SESSION_KEY="charter.session";
+const validEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim());
+const cap = s => s ? s[0].toUpperCase()+s.slice(1).toLowerCase() : s;
+const readSession = () => { try { return JSON.parse(localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY)); } catch { return null; } };
+function applyUser(email){
+  // name on the passport and header comes from the email: first.last@… → First Last
+  const parts=email.split("@")[0].split(/[._-]+/).filter(Boolean);
+  ME.email=email; ME.given=cap(parts[0] ?? "Member"); ME.surname=parts.slice(1).map(cap).join(" ") || "Member";
+  $("userBtn").textContent=ME.given.toUpperCase();
+}
+function lock(){
+  document.body.classList.add("locked"); gate.hidden=false; gate.classList.remove("leaving","stamped");
+  showGateView("gSignin"); $("gPass").value=""; $("gErr").textContent=""; $("gSubmit").disabled=false;
+  closeCard(); state.auto=true; state.k=1; syncZoom(); resize(); $("gEmail").focus();
+}
+function unlock(animate){
+  const finish=()=>{ document.body.classList.remove("locked"); gate.hidden=true; resize(); };
+  if (!animate) return finish();
+  $("gstampDate").textContent=pdate(new Date().toISOString().slice(0,10));
+  gate.classList.add("stamped");
+  setTimeout(()=>gate.classList.add("leaving"), reduce ? 0 : 750);
+  setTimeout(finish, reduce ? 0 : 1250);
+}
+function showGateView(id){ ["gSignin","gForgot","gRequest"].forEach(v=>$(v).hidden=v!==id);
+  const first=$(id).querySelector("input"); if (first && !gate.hidden) first.focus(); }
+gate.addEventListener("click",e=>{ const b=e.target.closest("[data-view]"); if (b) showGateView(b.dataset.view); });
+$("gSignin").addEventListener("submit",e=>{
+  e.preventDefault();
+  const email=$("gEmail").value.trim(), pass=$("gPass").value;
+  const badEmail=!validEmail(email), badPass=!pass;
+  $("gEmail").setAttribute("aria-invalid",badEmail); $("gPass").setAttribute("aria-invalid",badPass);
+  $("gErr").textContent = badEmail ? "Enter your institutional email, like name@university.edu." : badPass ? "Enter your password." : "";
+  if (badEmail) return $("gEmail").focus(); if (badPass) return $("gPass").focus();
+  try { ($("gKeep").checked ? localStorage : sessionStorage).setItem(SESSION_KEY, JSON.stringify({email})); } catch {}
+  $("gPass").value=""; $("gSubmit").disabled=true;
+  applyUser(email); unlock(true);
+});
+$("gForgot").addEventListener("submit",e=>{
+  e.preventDefault(); const v=$("gFEmail").value.trim(), bad=!validEmail(v);
+  $("gFEmail").setAttribute("aria-invalid",bad); $("gFErr").textContent=bad ? "Enter your institutional email." : "";
+  $("gFOk").hidden=bad; if (!bad) $("gFOk").textContent=`If ${v} is on the access list, a reset link will be sent to it.`;
+});
+$("gRequest").addEventListener("submit",e=>{
+  e.preventDefault();
+  const bad = !$("gRName").value.trim() ? ["gRName","Enter your full name."] : !validEmail($("gREmail").value) ? ["gREmail","Enter your institutional email."]
+    : !$("gRInst").value.trim() ? ["gRInst","Enter your university or newsroom."] : null;
+  ["gRName","gREmail","gRInst"].forEach(id=>$(id).setAttribute("aria-invalid", !!bad && bad[0]===id));
+  $("gRErr").textContent=bad ? bad[1] : ""; $("gROk").hidden=!!bad;
+  if (bad) return $(bad[0]).focus();
+  $("gROk").textContent=`Thanks, ${$("gRName").value.trim().split(" ")[0]}. An administrator will review the request for ${$("gRInst").value.trim()}.`;
+});
+function signOut(){
+  try { localStorage.removeItem(SESSION_KEY); sessionStorage.removeItem(SESSION_KEY); } catch {}
+  closeProfile(); showRoute(false); adminEl.hidden=true; closeStory(); lock();
+}
 
 // Diana's saved places, joined as great-circle legs from home, drawn on the globe.
 var routeLegs=null; // var: draw() can run before this line executes
@@ -1187,6 +1501,15 @@ function startPick(){ picking=true; adminEl.hidden=true; closeCard(); state.auto
   if (draftPin) flyTo(draftPin); }
 function endPick(){ picking=false; $("pickbar").hidden=true; canvas.classList.remove("picking"); adminEl.hidden=false; $("latIn").focus(); }
 $("pickBtn").onclick=startPick;
+// SDG picker: all 17 goals in their official colours
+const sdgPick=$("sdgPick");
+sdgPick.innerHTML=Object.entries(SDGS).map(([n,[name,c]])=>`<button class="sdgc" type="button" data-n="${n}" aria-pressed="false" style="background:${c}" title="SDG ${n}: ${name}" aria-label="SDG ${n}: ${name}">${n}</button>`).join("");
+const pickedSdgs=()=>[...sdgPick.querySelectorAll('[aria-pressed="true"]')].map(b=>"SDG"+b.dataset.n);
+function syncSdgPick(){ const p=pickedSdgs(); sdgPick.classList.toggle("has-sel",p.length>0);
+  $("sdgPickSel").textContent=p.length ? p.map(s=>SDGS[sdgNum(s)][0]).join(", ") : "None selected. Hover a goal to see its name."; }
+sdgPick.onclick=e=>{ const b=e.target.closest(".sdgc"); if(!b) return; b.setAttribute("aria-pressed", b.getAttribute("aria-pressed")!=="true"); syncSdgPick(); };
+function setSdgPick(list){ sdgPick.querySelectorAll(".sdgc").forEach(b=>b.setAttribute("aria-pressed", list.includes("SDG"+b.dataset.n))); syncSdgPick(); }
+syncSdgPick();
 $("pickCancel").onclick=endPick;
 function syncDraftPin(){ const lat=parseFloat($("latIn").value), lng=parseFloat($("lngIn").value);
   draftPin = Math.abs(lat)<=90 && Math.abs(lng)<=180 ? [lng,lat] : null; placePins(); }
@@ -1264,6 +1587,7 @@ fetch("countries-110m.json").then(r=>r.json()).then(world=>{
 }).catch(()=>{ document.querySelector(".hint").textContent="Country shapes failed to load. Pins still work."; });
 addEventListener("resize",resize);
 if (innerWidth<760) setPanel(false);
+{ const s=readSession(); if (s?.email && validEmail(s.email)) applyUser(s.email); else { document.body.classList.add("locked"); gate.hidden=false; $("gEmail").focus(); } }
 resize(); refresh(); requestAnimationFrame(loop);
 loadFromApi();
 </script>

@@ -53,6 +53,9 @@ class Project(Base):
     keywords: Mapped[list[str]] = mapped_column(JSON, default=list)
     sdgs: Mapped[list[str]] = mapped_column(JSON, default=list)
     images: Mapped[list[str]] = mapped_column(JSON, default=list)
+    # Photo narration, parallel to `images`. Written by the admin, never generated.
+    captions: Mapped[list[str] | None] = mapped_column(JSON, default=list)
+    summary: Mapped[str | None] = mapped_column(Text)
     original_language: Mapped[str] = mapped_column(String(8), default="en")
     title_original: Mapped[str | None] = mapped_column(String(500))
     description_original: Mapped[str | None] = mapped_column(Text)
@@ -61,9 +64,32 @@ class Project(Base):
     author_id: Mapped[int] = mapped_column(ForeignKey("authors.id"), index=True)
 
     author: Mapped[Author] = relationship(back_populates="projects", lazy="joined")
+    documents: Mapped[list["Document"]] = relationship(
+        back_populates="project", cascade="all, delete-orphan", lazy="selectin", order_by="Document.id"
+    )
 
     __table_args__ = (
         CheckConstraint(f"category IN {CATEGORIES}", name="ck_project_category"),
         CheckConstraint("lat BETWEEN -90 AND 90", name="ck_project_lat"),
         CheckConstraint("lng BETWEEN -180 AND 180", name="ck_project_lng"),
     )
+
+
+class Document(Base):
+    """A PDF uploaded for a project. The file lives in UPLOAD_DIR; `text` is kept for keyword search."""
+
+    __tablename__ = "documents"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    project_id: Mapped[int] = mapped_column(ForeignKey("projects.id", ondelete="CASCADE"), index=True)
+    title: Mapped[str] = mapped_column(String(300))
+    filename: Mapped[str] = mapped_column(String(300))
+    path: Mapped[str] = mapped_column(String(600))
+    size_bytes: Mapped[int] = mapped_column()
+    pages: Mapped[int] = mapped_column(default=0)
+    text: Mapped[str] = mapped_column(Text, default="", deferred=True)
+    summary: Mapped[str | None] = mapped_column(Text)
+    keywords: Mapped[list[str]] = mapped_column(JSON, default=list)
+    uploaded_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), default=lambda: dt.datetime.now(dt.timezone.utc))
+
+    project: Mapped[Project] = relationship(back_populates="documents")

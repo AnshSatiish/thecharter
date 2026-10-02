@@ -31,7 +31,7 @@ def test_list_all_with_frontend_shape(client):
     assert set(p) == {
         "id", "title", "description", "category", "location_name", "lat", "lng", "date", "year",
         "keywords", "sdgs", "verified", "images", "original_language", "title_original",
-        "description_original", "author",
+        "description_original", "author", "captions", "summary", "documents",
     }
     assert set(p["author"]) == {
         "id", "name", "profession", "role", "affiliation", "website", "google_scholar", "researchgate", "academia",

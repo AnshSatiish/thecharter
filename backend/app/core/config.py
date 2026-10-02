@@ -1,11 +1,13 @@
 """Application settings, read from environment variables and backend/.env."""
 from functools import lru_cache
+from pathlib import Path
 from typing import Literal
 
 from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 DEV_ADMIN_TOKEN = "dev-admin-token"
+REPO_ROOT = Path(__file__).resolve().parents[3]
 
 
 class Settings(BaseSettings):
@@ -15,6 +17,14 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./charter.db"
     admin_token: str | None = None
     cors_origins: str = "http://localhost:5173,http://localhost:3031,http://localhost:8080"
+    upload_dir: Path = REPO_ROOT / "data" / "uploads"
+    max_image_mb: int = 25
+    max_pdf_mb: int = 50
+
+    @field_validator("upload_dir")
+    @classmethod
+    def _absolute_upload_dir(cls, v: Path) -> Path:
+        return v.expanduser().resolve()
 
     @field_validator("database_url")
     @classmethod
