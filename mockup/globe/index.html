@@ -356,15 +356,27 @@ body.locked .stage{inset:0}
 .gstamp{position:absolute;right:14px;top:8px;width:150px;pointer-events:none;mix-blend-mode:multiply;opacity:0;transform:rotate(-11deg) scale(2.2)}
 .gate.stamped .gstamp{opacity:.9;transform:rotate(-11deg) scale(1);transition:transform .22s cubic-bezier(.2,1.4,.4,1),opacity .12s}
 @media (max-width:860px){
-  .gate{grid-template-columns:minmax(0,1fr);align-content:end;gap:18px;padding:20px 16px;background:linear-gradient(180deg,rgba(12,19,24,0) 0%,rgba(12,19,24,.55) 38%,rgba(12,19,24,.9) 100%)}
-  .gate-lede{align-self:auto;padding-bottom:0}
-  .gate-lede p,.gate-lede .mark{display:none}
-  .gate-lede h1{font-size:34px;margin:0}
-  .pass{justify-self:center}
-  .pass-cover{padding:16px 20px 14px}
-  .pass-cover img{width:min(230px,80%);margin:2px auto 10px}
-  .pass-cover b{font-size:21px}
-  .pass-card{padding:18px 20px 20px}
+  /* phones: the card is a sheet rising from the bottom; the globe shows above it like a horizon */
+  .gate{display:flex;flex-direction:column;gap:0;padding:max(150px,24vh) 0 0;
+    background:linear-gradient(180deg,rgba(12,19,24,0) 0%,rgba(12,19,24,.3) 60%,rgba(12,19,24,.8) 100%)}
+  .gate-lede{display:none}
+  .pass{max-width:none;flex-shrink:0;margin-top:auto;border-radius:22px 22px 0 0;box-shadow:0 -18px 50px -18px rgba(0,0,0,.7)}
+  .pass-cover{padding:24px 24px 20px}
+  .pass-cover img{width:min(236px,72%);margin:0 auto}
+  .pass-cover span{display:none}
+  .pass-card{padding:28px 24px calc(28px + env(safe-area-inset-bottom,0px))}
+  .pass-card h2{font-size:28px}
+  .pass-card .sub{margin:6px 0 24px;font-size:14.5px}
+  .gfld{gap:8px;margin-bottom:20px;font-size:11px}
+  .gfld input{font-size:16px;padding:12px 14px}
+  .gerr{min-height:0;margin:-8px 0 16px}
+  .gerr:empty{display:none}
+  .gkeep{margin:2px 0 22px;font-size:14.5px;gap:10px}
+  .gbtn{padding:15px;font-size:16px}
+  .glinks{margin-top:10px}
+  .glinks button{font-size:14px}
+  .gnote{margin-top:12px;padding-top:16px;font-size:12px}
+  .gstamp{top:14px;right:18px}
 }
 @media (prefers-reduced-motion:reduce){.gate.stamped .gstamp{transform:rotate(-11deg)}}
 
@@ -482,7 +494,7 @@ body.locked .stage{inset:0}
   .tchips button,.chip{min-height:38px;padding-inline:12px}
   .sdgc{width:44px;height:44px}
   .panel-close,.drawer header button,.card .x,.shotrow .rm{width:44px;height:44px}
-  .fld input,.fld textarea,.loc-grid select,.gfld input,.years select,.search{min-height:44px}
+  .fld input,.fld textarea,.loc-grid select,.gfld input,.years select,.search{min-height:44px;box-sizing:border-box}
   .glinks button,.reset,.examples button{min-height:44px;padding-block:10px}
   .gkeep input{width:22px;height:22px}
   .gkeep{min-height:44px}
@@ -943,7 +955,12 @@ function resize(){
 }
 function center(){
   // signed out: the globe sits to the left of the passport cover (above it on phones)
-  if (document.body.classList.contains("locked")) return W>860 ? [W*0.33, H*0.5] : [W/2, H*0.2];
+  if (document.body.classList.contains("locked")){
+    if (W>860) return [W*0.33, H*0.5];
+    // phones: the globe's centre sits at the sheet's top edge, so its upper half rises behind the card
+    const top=document.querySelector(".pass").getBoundingClientRect().top;
+    return [W/2, Math.max(Math.min(W,H)*0.42+28, top-4)];
+  }
   const off = (!panel.classList.contains("closed") && W>900) ? 170 : 0;
   return [W/2+off, H/2];
 }
