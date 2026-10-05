@@ -19,8 +19,9 @@ htmlcov/
 !.env.example
 
 # Local data
-data/uploads/
-data/chroma/
+backend/data/uploads/
+backend/data/chroma/
+*.db
 
 # OS / editor
 .DS_Store

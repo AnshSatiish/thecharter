@@ -1,14 +1,14 @@
-"""Build data/geo/countries.geojson from the Natural Earth 1:50m TopoJSON the globe uses.
+"""Build backend/data/geo/countries.geojson from the Natural Earth 1:50m TopoJSON the globe uses.
 
-Run from backend/:  python -m app.scripts.build_countries
+Run from backend/inference/:  python -m app.scripts.build_countries
 The output is committed, so this only needs rerunning when the outline file changes.
 """
 import json
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[3]
-SOURCE = ROOT / "mockup" / "globe" / "countries-50m.json"
-TARGET = ROOT / "data" / "geo" / "countries.geojson"
+BACKEND = Path(__file__).resolve().parents[3]
+SOURCE = BACKEND.parent / "frontend" / "countries-50m.json"
+TARGET = BACKEND / "data" / "geo" / "countries.geojson"
 
 
 def decode_arcs(topology: dict) -> list[list[tuple[float, float]]]:

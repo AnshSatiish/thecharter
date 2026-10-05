@@ -10,17 +10,20 @@ COMP 385 AI Capstone Project, Centennial College. Built for an external partner.
 
 | Folder | What it is | Run it |
 |---|---|---|
-| `frontend/` | React + Vite UI exported from Figma Make. Map (Leaflet), projects, community, events, job board. The profile is a **field passport**: a data page with a computed machine-readable zone, one ink stamp per saved project, and a D3 field map joining the saved places by great-circle routes. Runs on mock data in `src/app/data/mockData.ts`. | `cd frontend && npm install && npm run dev` |
-| `mockup/globe/` | **The site the team is building on.** Standalone 3D globe (D3, no API key). Passport-style sign-in screen (demo: any institutional email is accepted until accounts exist) and field-passport profile. Pin previews, story view, filters, news layer, researcher mode, projection toggle, live latitude/longitude and country name under the cursor. Country outlines are Natural Earth data at two detail levels: 1:110m while the globe moves, 1:50m once it is still and zoomed in. On localhost it loads pins from the backend (`/api/projects`), lists nearby projects with the PostGIS distance query, and the admin upload saves to the database with **Pick on globe** coordinates. Without the backend it falls back to built-in sample data. Search by meaning is a **placeholder** with prepared example output. | `cd mockup/globe && python -m http.server 8080`, then open http://localhost:8080 |
-| `backend/` | FastAPI API over SQLAlchemy. Projects with filters (category, SDG, year, keyword, map bounding box), nearby search, authors, admin upload and verification. Photo upload with admin-written narration, PDF upload with text extraction, keyword search over the PDF text, and a baseline summarizer and keyword extractor. Runs on SQLite with no setup, or PostgreSQL + PostGIS. Tested with pytest. Admin auth is a shared token for now (JWT planned). | `cd backend && python -m app.scripts.seed && uvicorn app.main:app --reload --port 8000` (after install, see below) |
-| `docker-compose.yml` | PostgreSQL 16 with PostGIS 3.4 for the backend. | `docker compose up -d` |
-| `data/geo/` | Country outlines (Natural Earth 1:50m) used by the backend's location check: `GET /api/geo/check` reports which country a coordinate is in and whether that matches the place name, which catches a swapped latitude and longitude. A test asserts every sample project sits in the country its place name mentions. Rebuild with `python -m app.scripts.build_countries`. | |
-| `data/samples/` | Sample dataset of 7 projects, loaded by the seed script. | |
+| `backend/eda/` | Exploratory data analysis: notebooks that describe the data before any modelling. Empty until partner data arrives. | |
+| `backend/preprocessing/` | Cleaning and preparing data for models. Empty for now; PDF text extraction currently lives in the API (`inference/app/services/text.py`). | |
+| `backend/model_training/` | Training and evaluating models. Empty for now; the current summarizer and keyword extractor are rule-based baselines that need no training. | |
+| `backend/inference/` | The FastAPI application that serves results. Projects with filters (category, SDG, year, keyword, map bounding box), nearby search, authors, admin upload and verification, photo and PDF uploads with file storage, the baseline summarizer and keyword extraction, and the location check. Runs on SQLite with no setup, or PostgreSQL + PostGIS. Tested with pytest. Admin auth is a shared token for now (JWT planned). | `cd backend/inference && python -m app.scripts.seed && uvicorn app.main:app --reload --port 8000` (after install, see below) |
+| `backend/data/` | `samples/`: 7 sample projects loaded by the seed script. `geo/`: country outlines (Natural Earth 1:50m) used by the location check. `uploads/`: uploaded photographs and PDFs (git-ignored). | |
+| `frontend/` | **The site the team is building on.** A 3D globe (D3, no API key, no build step). Passport-style sign-in (demo: any institutional email is accepted until accounts exist), field-passport profile, pin previews, project pages with a full-screen photo viewer and narration, filters, UN SDG colours, news layer, researcher mode, projection toggle, live latitude/longitude and country name under the cursor, and the admin upload. On localhost it loads from the backend; without it, it falls back to built-in sample data. Search by meaning is a **placeholder** with prepared example output. | `cd frontend && python -m http.server 8080`, then open http://localhost:8080 |
 | `docs/requirements/` | Partner requirement documents: interactive map, admin and security, project summary. | |
+| `docs/diagrams/` | Architecture, class and component diagrams, drawn in draw.io. Empty for now. | |
+| `docs/reference/figma-app/` | The partner's original Figma Make prototype (React + Vite, mock data). Kept for reference; not the product. | `cd docs/reference/figma-app && npm install && npm run dev` |
+| `docker-compose.yml` | PostgreSQL 16 with PostGIS 3.4 for the backend. | `docker compose up -d` |
 
-The model-based AI pipelines, JWT auth, ChromaDB and Alembic migrations described below are not built yet. The AI module folders exist in `backend/app/ai/` as empty placeholders. What runs today is the baseline in `backend/app/services/text.py`: an extractive summarizer and a keyword extractor, with no model downloads.
+The model-based AI pipelines, JWT auth, ChromaDB and Alembic migrations described below are not built yet. The AI module folders exist in `backend/inference/app/ai/` as empty placeholders.
 
-Project photographs in `frontend/src/assets/` and `mockup/globe/img/` belong to their authors and are included for development only (converted to JPEG to keep the repository small).
+Project photographs in `frontend/img/` and `docs/reference/figma-app/src/assets/` belong to their authors and are included for development only (converted to JPEG to keep the repository small).
 
 ## Table of contents
 
@@ -117,46 +120,40 @@ A retrieval-augmented research assistant. A student asks a question in natural l
 | File storage | Local filesystem in development, object storage in production |
 | Auth | JWT sessions, bcrypt password hashing, institutional email allowlist |
 | AI | PyTorch, Hugging Face Transformers, OpenCLIP, sentence-transformers |
-| Testing | pytest (backend), Vitest and React Testing Library (frontend) |
+| Testing | pytest (backend). The frontend is checked with headless-browser scripts; a test runner is planned. |
 
 PostGIS handles bounding-box queries so the map can request only the projects inside the current viewport. ChromaDB stores vectors and URIs rather than the original images, which live in file storage.
 
 ## Repository structure
 
-Target layout. Folders marked *(planned)* do not exist yet.
+The backend follows the stages of the work: explore the data, prepare it, train models, serve results.
 
 ```
 .
 ├── backend/
-│   ├── app/
-│   │   ├── main.py              FastAPI application and router setup
-│   │   ├── api/                 Route handlers (projects, documents, authors, ai today; auth, admin planned)
-│   │   ├── core/                Config and security (admin token today, JWT planned)
-│   │   ├── db/                  SQLAlchemy models, session, table and PostGIS setup (migrations planned)
-│   │   ├── scripts/             Seed script for the sample dataset
-│   │   ├── ai/
-│   │   │   ├── tagging/         Category and SDG classifier
-│   │   │   ├── summarization/   Preview and key-findings summaries
-│   │   │   ├── embeddings/      CLIP and text embedding pipelines
-│   │   │   ├── geo/             Location extraction and geocoding
-│   │   │   └── news/            GDELT ingestion and regional scoring
-│   │   └── services/            Shared logic: file storage, upload checks, text (summary, keywords, PDF), geo
-│   ├── tests/                   Unit and integration tests
-│   └── requirements.txt
-├── frontend/
-│   ├── src/
-│   │   ├── app/components/      Map, filter bar, drawer, popups, pages
-│   │   ├── app/data/            Mock data (until the API exists)
-│   │   ├── assets/              Project photographs (development only)
-│   │   └── styles/
-│   └── package.json
-├── mockup/globe/                Standalone 3D globe prototype
-├── notebooks/                   (planned) Exploratory data analysis and model experiments
-├── data/
-│   ├── uploads/                 Uploaded photographs and PDFs (git-ignored, created on first run)
-│   └── samples/                 Small sample dataset for development
+│   ├── eda/                     Exploratory data analysis notebooks
+│   ├── preprocessing/           Cleaning and preparing data for models
+│   ├── model_training/          Training and evaluation scripts, saved models
+│   ├── inference/               The FastAPI application
+│   │   ├── app/
+│   │   │   ├── main.py          Application and router setup
+│   │   │   ├── api/             Route handlers (projects, documents, authors, ai, geo today; auth planned)
+│   │   │   ├── core/            Config and security (admin token today, JWT planned)
+│   │   │   ├── db/              SQLAlchemy models, session, table and PostGIS setup (migrations planned)
+│   │   │   ├── scripts/         Seed the sample dataset, build the country outlines
+│   │   │   ├── ai/              Placeholders for the model-backed modules (tagging, summarization, embeddings, geo, news)
+│   │   │   └── services/        File storage, upload checks, text (summary, keywords, PDF), geo, countries
+│   │   ├── tests/               Unit and integration tests
+│   │   └── requirements.txt
+│   └── data/
+│       ├── samples/             Small sample dataset for development
+│       ├── geo/                 Country outlines for the location check
+│       └── uploads/             Uploaded photographs and PDFs (git-ignored, created on first run)
+├── frontend/                    The 3D globe site (static: index.html, outlines, images)
 ├── docs/
-│   └── requirements/            Partner requirement documents
+│   ├── requirements/            Partner requirement documents
+│   ├── diagrams/                draw.io diagrams
+│   └── reference/figma-app/     The partner's original Figma prototype
 └── docker-compose.yml           PostgreSQL + PostGIS
 ```
 
@@ -165,7 +162,7 @@ Target layout. Folders marked *(planned)* do not exist yet.
 ### Prerequisites
 
 - Python 3.11 or later
-- Node.js 20 or later
+- Node.js 20 or later (only for the Figma reference app)
 - Docker and Docker Compose (for PostgreSQL and ChromaDB)
 - A Google Maps API key (see below)
 
@@ -178,17 +175,15 @@ cd the-charter
 # Optional: start PostgreSQL + PostGIS (without it the backend uses a local SQLite file)
 docker compose up -d
 
-# Backend
-cd backend
+# Backend API
+cd backend/inference
 python -m venv .venv
 source .venv/bin/activate        # Windows PowerShell: .venv\Scripts\Activate.ps1   Git Bash: source .venv/Scripts/activate
 pip install -r requirements.txt
 cp .env.example .env             # then edit; delete the DATABASE_URL line to use SQLite
 python -m app.scripts.seed       # create tables and load the sample dataset (safe to rerun)
 
-# Frontend
-cd ../frontend
-npm install
+# Frontend: nothing to install, it is a static site
 ```
 
 ### Google Maps API key
@@ -199,9 +194,9 @@ Restrict the key to your development and deployment domains before committing an
 
 ## Environment variables
 
-Copy `.env.example` to `.env` in both `backend/` and `frontend/`, then fill in the values.
+Copy `backend/inference/.env.example` to `backend/inference/.env`, then fill in the values. The frontend has no environment file yet.
 
-**backend/.env**
+**backend/inference/.env**
 
 Used today:
 
@@ -210,7 +205,7 @@ DATABASE_URL=postgresql+psycopg://charter:charter@localhost:5432/charter   # uns
 ENV=development                  # development | production
 ADMIN_TOKEN=dev-admin-token      # sent as the X-Admin-Token header; required when ENV=production
 CORS_ORIGINS=http://localhost:5173,http://localhost:3031,http://localhost:8080
-UPLOAD_DIR=../data/uploads       # unset: <repo>/data/uploads; served by the API at /files
+UPLOAD_DIR=../data/uploads       # unset: backend/data/uploads; served by the API at /files
 MAX_IMAGE_MB=25                  # per photograph (JPEG, PNG or WebP)
 MAX_PDF_MB=50                    # per project PDF
 ```
@@ -225,24 +220,17 @@ ALLOWED_EMAIL_DOMAINS=example.edu,partner.org
 GDELT_POLL_INTERVAL_HOURS=6
 ```
 
-**frontend/.env**
-
-```
-VITE_API_BASE_URL=http://localhost:8000
-VITE_GOOGLE_MAPS_API_KEY=<your restricted key>
-```
-
 ## Running the application
 
 ```bash
-# Backend (from backend/)
+# Backend (from backend/inference/)
 uvicorn app.main:app --reload --port 8000
 
 # Frontend (from frontend/)
-npm run dev
+python -m http.server 8080
 ```
 
-The app runs at http://localhost:5173. Interactive API documentation is at http://localhost:8000/docs, and http://localhost:8000/health reports which database is in use.
+The site runs at http://localhost:8080. To use that port, add `http://localhost:8080` to `CORS_ORIGINS` if it is not already there. Interactive API documentation is at http://localhost:8000/docs, and http://localhost:8000/health reports which database is in use.
 
 Main endpoints: `GET /api/projects` (filters `category`, `sdg`, `year_from`, `year_to`, `q`, `bbox=minLng,minLat,maxLng,maxLat`), `GET /api/projects/near?lat=&lng=&km=`, `GET /api/projects/{id}`, `GET /api/authors`, `GET /api/authors/{id}`. Admin only, with the `X-Admin-Token` header: `POST /api/projects` and `PATCH /api/projects/{id}/verify`.
 
@@ -267,7 +255,7 @@ python -m app.ai.embeddings.build_index
 
 ```bash
 # Backend unit and integration tests (temporary SQLite database)
-cd backend && pytest
+cd backend/inference && pytest
 
 # Same suite against PostGIS, including the postgres-marked test. Use a throwaway database: tables are recreated.
 docker exec thecharter-db-1 createdb -U charter charter_test
@@ -275,14 +263,11 @@ DATABASE_URL=postgresql://charter:charter@localhost:5432/charter_test pytest
 
 # With coverage
 pytest --cov=app --cov-report=term-missing
-
-# Frontend
-cd frontend && npm run test
 ```
 
 Test layers:
 
-- **Unit tests** cover individual functions, AI pipeline stages and React components
+- **Unit tests** cover individual functions and AI pipeline stages
 - **Integration tests** cover API endpoints against a test database, including upload, search and auth flows
 - **End-user testing** is run with a small group of students before the final demonstration, with findings recorded in `docs/user-testing.md`
 
@@ -352,4 +337,4 @@ Course: COMP 385 AI Capstone, Centennial College.
 
 Code in this repository is coursework produced for COMP 385 at Centennial College in collaboration with an external partner. Ownership and licensing are governed by the agreement with the partner.
 
-Photographs, project descriptions and research documents belong to their respective authors and are not covered by any code license in this repository. The sample dataset in `data/samples/` is for development only and must not be redistributed.
+Photographs, project descriptions and research documents belong to their respective authors and are not covered by any code license in this repository. The sample dataset in `backend/data/samples/` is for development only and must not be redistributed.
