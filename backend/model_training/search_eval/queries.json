@@ -1,0 +1,32 @@
+[
+  {"type": "exact", "q": "Lake Kivu", "relevant": [23]},
+  {"type": "exact", "q": "Darién Gap", "relevant": [27]},
+  {"type": "exact", "q": "Finance Bill 2024", "relevant": [25]},
+  {"type": "exact", "q": "cool burning", "relevant": [28]},
+  {"type": "exact", "q": "high-speed train", "relevant": [18]},
+  {"type": "exact", "q": "Day of the Dead", "relevant": [17]},
+  {"type": "exact", "q": "Title 42", "relevant": [26]},
+  {"type": "exact", "q": "asylum seekers", "relevant": [26]},
+
+  {"type": "paraphrase", "q": "people forced to leave their home country", "relevant": [26, 27]},
+  {"type": "paraphrase", "q": "honouring ancestors who have passed away", "relevant": [17]},
+  {"type": "paraphrase", "q": "young people demonstrating against the government", "relevant": [25]},
+  {"type": "paraphrase", "q": "fishermen losing their income", "relevant": [23]},
+  {"type": "paraphrase", "q": "using fire to stop bigger bushfires", "relevant": [28]},
+  {"type": "paraphrase", "q": "rich and poor travelling differently", "relevant": [18]},
+  {"type": "paraphrase", "q": "dangerous journey through the rainforest", "relevant": [27]},
+  {"type": "paraphrase", "q": "families separated at the frontier", "relevant": [26, 27]},
+  {"type": "paraphrase", "q": "environmental damage to a lake", "relevant": [23]},
+  {"type": "paraphrase", "q": "traditional ecological knowledge of Aboriginal people", "relevant": [28]},
+
+  {"type": "spanish", "q": "personas que huyen de su país", "relevant": [26, 27]},
+  {"type": "spanish", "q": "pescadores y cambio climático", "relevant": [23]},
+  {"type": "spanish", "q": "protestas de jóvenes contra los impuestos", "relevant": [25]},
+  {"type": "spanish", "q": "ritual para recordar a los muertos", "relevant": [17]},
+  {"type": "spanish", "q": "trenes y desigualdad", "relevant": [18]},
+  {"type": "spanish", "q": "incendios forestales y conocimiento indígena", "relevant": [28]},
+
+  {"type": "off-topic", "q": "chocolate cake recipe", "relevant": []},
+  {"type": "off-topic", "q": "quantum computing", "relevant": []},
+  {"type": "off-topic", "q": "football transfer news", "relevant": []}
+]

@@ -10,6 +10,7 @@ from app.core.security import require_admin
 from app.db.models import Document, Project
 from app.db.session import get_db
 from app.schemas import DocumentOut
+from app.services.search_index import reindex_project
 from app.services.storage import LocalStorage, get_storage, safe_filename
 from app.services.text import extract_keywords, extract_pdf_text, summarize
 from app.services.uploads import is_pdf, read_limited
@@ -78,6 +79,7 @@ def upload_document(
     except Exception:
         storage.delete(path)
         raise
+    reindex_project(db, project_id)
     db.refresh(document)
     return document
 
@@ -92,8 +94,9 @@ def delete_document(document_id: int, db: DB, storage: Storage) -> Response:
     document = db.get(Document, document_id)
     if document is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Document not found")
-    path = document.path
+    path, project_id = document.path, document.project_id
     db.delete(document)
     db.commit()
+    reindex_project(db, project_id)
     storage.delete(path)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

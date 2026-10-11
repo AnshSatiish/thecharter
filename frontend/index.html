@@ -247,7 +247,9 @@ button:not(:disabled):active{transform:translateY(1px)}
 .examples{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
 .examples button{border:0;background:none;color:#6b3fd1;font-size:12px;padding:2px 0;text-decoration:underline;text-underline-offset:2px;margin-right:8px}
 .qstatus{font-size:12px;color:var(--muted);margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.ai.live{border-style:solid}
 .why{color:#6b3fd1 !important;font-weight:600}
+.whyq{font-style:italic;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .upload-btn{white-space:nowrap;border:1px solid var(--orange);background:transparent;color:var(--orange);border-radius:4px;padding:6px 12px;font-size:12px;font-weight:700;letter-spacing:.06em}
 .upload-btn:hover{background:var(--orange);color:#fff}
 
@@ -765,7 +767,10 @@ const sdgNum = s => +String(s).replace(/\D/g,"");
 const sdgTile = s => { const n=sdgNum(s), [name,c]=SDGS[n] ?? ["","#666"]; return `<span class="sdgt" style="background:${c}"><b>${n}</b>${name}</span>`; };
 const CHECK = '<svg class="check" viewBox="0 0 24 24" aria-label="Curated"><path fill="#1d8cf0" d="M12 1.5l2.6 1.9 3.2-.2 1 3 2.7 1.8-1 3 1 3-2.7 1.8-1 3-3.2-.2L12 22.5l-2.6-1.9-3.2.2-1-3L2.5 16l1-3-1-3 2.7-1.8 1-3 3.2.2z"/><path d="m7.8 12.2 2.8 2.8 5.6-5.8" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-// Placeholder for semantic search. The real version embeds the query and ranks projects by vector similarity (ChromaDB).
+// Search runs on the backend when it is up (backend/inference/app/services/search.py): full-text search for
+// "Keywords", and for "By meaning" a sentence embedding model that ranks projects by how close their text is to
+// the query. Without the backend, keywords are matched in the page and "By meaning" falls back to this small
+// prepared map, which is labelled as a placeholder.
 const CONCEPTS = [
   {label:"death and ritual", words:["grief","mourn","death","dead","dying","funeral","ancest","ritual","ceremon","spirit","festival","mask","sacred","religio","muert"], ids:["17"]},
   {label:"Indigenous knowledge", words:["indigen","native","tradition","first nations","aborigin","ancestral"], ids:["17","28"]},
@@ -809,17 +814,29 @@ const state = {
 
 function visibleItems(){
   const q = state.q.trim().toLowerCase();
-  const hits = q && state.semantic ? meaningHits(q) : {};
+  const res = currentSearch();
+  const hits = q && state.semantic && !apiLive ? meaningHits(q) : {};   // prepared stand-in, only without the backend
   const why = {};
   const list = PROJECTS.filter(p => {
     if (!(state.cats.has(p.cat) && p.year>=state.y0 && p.year<=state.y1 &&
       (!state.sdgs.size || p.sdgs.some(s=>state.sdgs.has(s))))) return false;
     if (!q) return true;
-    if ([p.title,p.author,p.loc,p.aff,p.desc,p.summary,...p.kw,...(p.caps ?? [])].join(" ").toLowerCase().includes(q)) return true;
-    if (apiHits.has(p.id)) { why[p.id]="Found in the project document"; return true; }
-    if (hits[p.id]) { why[p.id]="Related by meaning: "+hits[p.id].join(", "); return true; }
+    const inPage = [p.title,p.author,p.loc,p.aff,p.desc,p.summary,...p.kw,...(p.caps ?? [])].join(" ").toLowerCase().includes(q);
+    const h = res?.hits.get(p.id);
+    if (h) {
+      if (h.matched_by.includes("semantic") && h.passage) why[p.id] = { meaning:true,
+        label:`Related by meaning · similarity ${h.similarity.toFixed(2)}`,
+        passage:(h.passage_document ? `From “${h.passage_document}”: ` : "") + h.passage };
+      else if (!inPage && p.docs?.length) why[p.id] = {label:"Found in the project document"};
+      return true;
+    }
+    if (res?.semantic) return false;          // by meaning: the backend's ranking is the whole answer
+    if (inPage) return true;
+    if (hits[p.id]) { why[p.id] = {meaning:true, label:"Related by meaning: "+hits[p.id].join(", ")}; return true; }
     return false;
   });
+  // Best match first when the backend ranked them; anything matched only in the page follows.
+  if (res) { const rank = p => res.hits.get(p.id)?.rank ?? 1e9; list.sort((a,b)=>rank(a)-rank(b)); }
   lastWhy = why;
   if (!state.researchers) return list.map(p=>({kind:"project", id:"p"+p.id, p, lng:p.lng, lat:p.lat, why:why[p.id]}));
   // researcher mode: same filters, show the people behind the work
@@ -828,33 +845,41 @@ function visibleItems(){
 }
 
 let lastWhy = {};
-let apiHits = new Set(), qTimer = null;
-// The backend's keyword search also reads the text of uploaded PDFs, which the page does not hold.
+let apiSearch = null, qTimer = null;
+// The backend's answer, if it is for what is in the search box right now.
+const currentSearch = () => apiSearch && apiSearch.q===state.q.trim() && apiSearch.semantic===state.semantic ? apiSearch : null;
+// "Keywords" asks for full-text matches (these also cover the text of uploaded PDFs, which the page does not hold).
+// "By meaning" asks for hybrid results: the sentence model's ranking merged with the keyword matches.
 function searchApi(){
   clearTimeout(qTimer);
-  const q=state.q.trim();
-  if (!apiLive || !q) { apiHits=new Set(); return; }
+  const q=state.q.trim(), semantic=state.semantic;
+  if (!apiLive || !q) { apiSearch=null; return; }
   qTimer=setTimeout(async()=>{
-    try { const r=await fetch(`${API_BASE}/api/projects?q=${encodeURIComponent(q)}`); if (!r.ok) return;
-      const ids=(await r.json()).map(p=>String(p.id)); if (state.q.trim()!==q) return;
-      apiHits=new Set(ids); refresh(); } catch {}
+    try { const r=await fetch(`${API_BASE}/api/projects/search?q=${encodeURIComponent(q)}&mode=${semantic?"hybrid":"keyword"}&limit=50`); if (!r.ok) return;
+      const body=await r.json(); if (state.q.trim()!==q || state.semantic!==semantic) return;
+      apiSearch={ q, semantic, model:body.model, keywordOnly: semantic && body.mode_used==="keyword",
+        hits:new Map(body.results.map((h,i)=>[String(h.project.id), {rank:i, matched_by:h.matched_by, similarity:h.similarity,
+          passage:h.passage, passage_document:h.passage_document}])) };
+      refresh(); } catch {}
   }, 250);
 }
 // ---------- filter UI ----------
 document.getElementById("examples").innerHTML = EXAMPLES.map(e=>`<button type="button">${e}</button>`).join("");
 document.getElementById("examples").addEventListener("click", e => { const b=e.target.closest("button"); if(!b) return;
-  const q=document.getElementById("q"); q.value=b.textContent; state.q=b.textContent; setSmode(true); refresh();
+  const q=document.getElementById("q"); q.value=b.textContent; state.q=b.textContent; setSmode(true); refresh(); searchApi();
   document.getElementById("drawer").classList.add("open"); });
 function setSmode(on){ state.semantic=on; document.getElementById("examples").hidden=!on;
   document.querySelectorAll(".smode button").forEach(b=>b.setAttribute("aria-pressed", (b.dataset.smode==="meaning")===on)); }
-document.querySelectorAll(".smode button").forEach(b=>b.onclick=()=>{ setSmode(b.dataset.smode==="meaning"); refresh(); });
+document.querySelectorAll(".smode button").forEach(b=>b.onclick=()=>{ setSmode(b.dataset.smode==="meaning"); refresh(); searchApi(); });
 function renderQStatus(){
   const el=document.getElementById("qstatus");
-  if (!state.q.trim()) { el.innerHTML = state.semantic ? '<span class="ai">AI · placeholder</span> Describe a topic in your own words.' : "Searches titles, places, authors, keywords, photo narration and project documents."; return; }
-  const byMeaning=Object.values(lastWhy).filter(w=>w.startsWith("Related")).length, total=items.length;
-  el.innerHTML = state.semantic
-    ? `<span class="ai">AI · placeholder</span> ${total} result${total===1?"":"s"}, ${byMeaning} found by meaning`
-    : `${total} keyword match${total===1?"":"es"}`;
+  const badge = apiLive ? '<span class="ai live">AI</span>' : '<span class="ai">AI · placeholder</span>';
+  if (!state.q.trim()) { el.innerHTML = state.semantic ? badge+" Describe a topic in your own words." : "Searches titles, places, authors, keywords, photo narration and project documents."; return; }
+  const byMeaning=Object.values(lastWhy).filter(w=>w.meaning).length, total=items.length, res=currentSearch();
+  if (!state.semantic) el.innerHTML = `${total} keyword match${total===1?"":"es"}`;
+  else if (apiLive && !res) el.innerHTML = badge+" Searching by meaning…";
+  else if (res?.keywordOnly) el.innerHTML = badge+` The language model is not ready, so these are keyword matches only (${total}).`;
+  else el.innerHTML = badge+` ${total} result${total===1?"":"s"}, ${byMeaning} found by meaning`;
 }
 const catsEl = document.getElementById("cats");
 const sdgEl = document.getElementById("sdgs");
@@ -886,12 +911,12 @@ for (const id of ["y0","y1"]) {
     if (state.y0>state.y1){ const o=id==="y0" ? "y1" : "y0"; state[o]=state[id]; document.getElementById(o).value=state[id]; }
     refresh(); });
 }
-document.getElementById("q").addEventListener("input", e=>{ state.q=e.target.value; apiHits=new Set(); refresh(); searchApi(); });
+document.getElementById("q").addEventListener("input", e=>{ state.q=e.target.value; refresh(); searchApi(); });
 document.getElementById("reset").addEventListener("click", ()=>{
   state.q=""; document.getElementById("q").value="";
   state.cats=new Set(Object.keys(CATS)); state.sdgs.clear(); state.y0=years[0]; state.y1=years.at(-1);
   document.querySelectorAll(".cat").forEach(b=>b.setAttribute("aria-pressed","true"));
-  document.querySelectorAll(".sdgc").forEach(b=>b.setAttribute("aria-pressed","false")); syncSdgSel(); apiHits=new Set();
+  document.querySelectorAll(".sdgc").forEach(b=>b.setAttribute("aria-pressed","false")); syncSdgSel(); apiSearch=null;
   document.getElementById("y0").value=state.y0; document.getElementById("y1").value=state.y1; refresh();
 });
 
@@ -1162,14 +1187,15 @@ function renderList(){
   document.getElementById("count").textContent=items.length;
   document.getElementById("drawerTitle").textContent = state.researchers ? `Researchers (${items.length})` : `Projects (${items.length})`;
   const list=document.getElementById("list");
-  if (!items.length){ list.innerHTML = state.q.trim() && !state.semantic
-      ? '<p class="empty">No keyword matches. Try another word, or switch to “By meaning”.</p>'
-      : '<p class="empty">Nothing matches these filters. Clear a filter to see more.</p>'; return; }
+  if (!items.length){ list.innerHTML = !state.q.trim() ? '<p class="empty">Nothing matches these filters. Clear a filter to see more.</p>'
+      : !state.semantic ? '<p class="empty">No keyword matches. Try another word, or switch to “By meaning”.</p>'
+      : apiLive && !currentSearch() ? '<p class="empty">Searching…</p>'
+      : '<p class="empty">Nothing in the library is close to that. Try describing the topic another way.</p>'; return; }
   list.innerHTML=items.map((d,i)=>{ const p=d.p;
     const th = d.kind==="project" ? `<span class="th" style="background-image:url('${img(p)}')"></span>`
       : `<span class="th" style="background:${d.journalist?"#F68B1F":"#111"}">${esc(initials(p.author))}</span>`;
     return `<button class="item" type="button" data-i="${i}">${th}<span><h4>${esc(d.kind==="project"?p.title:p.author)}</h4>
-      <p>${esc(d.kind==="project"?p.author+" · "+p.year:(d.journalist?"Journalist":"Academic")+" · "+p.aff)}</p><p>${esc(p.loc)}</p>${d.why?`<p class="why">${esc(d.why)}</p>`:""}</span></button>`;}).join("");
+      <p>${esc(d.kind==="project"?p.author+" · "+p.year:(d.journalist?"Journalist":"Academic")+" · "+p.aff)}</p><p>${esc(p.loc)}</p>${d.why?`<p class="why">${esc(d.why.label)}</p>${d.why.passage?`<p class="whyq">${esc(d.why.passage)}</p>`:""}`:""}</span></button>`;}).join("");
 }
 document.getElementById("list").addEventListener("click",e=>{ const b=e.target.closest(".item"); if(!b) return;
   if (innerWidth<760) drawer.classList.remove("open"); select(items[+b.dataset.i]); });
@@ -1688,7 +1714,7 @@ async function loadFromApi(){
     const r=await fetch(`${API_BASE}/api/projects`); if (!r.ok) throw new Error(r.status);
     const data=await r.json();
     PROJECTS.splice(0, PROJECTS.length, ...data.map(fromApi));
-    apiLive=true; buildFilters(); refresh();
+    apiLive=true; buildFilters(); refresh(); searchApi();
     src.innerHTML=`<span class="dot live"></span>Live from the API · ${data.length} projects`;
   } catch {
     apiLive=false; src.innerHTML='<span class="dot"></span>Sample data · API offline';

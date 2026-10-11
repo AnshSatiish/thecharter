@@ -6,6 +6,7 @@ a disposable database (the tables are dropped and recreated).
 import os
 import shutil
 import tempfile
+import zlib
 from collections.abc import Iterator
 from pathlib import Path
 
@@ -21,11 +22,35 @@ os.environ["ADMIN_TOKEN"] = "test-admin-token"
 
 from fastapi.testclient import TestClient  # noqa: E402
 
+from app.ai.embeddings import normalize, set_embedder  # noqa: E402
 from app.core.config import get_settings  # noqa: E402
 from app.db.models import Base  # noqa: E402
 from app.db.session import engine  # noqa: E402
 from app.main import app  # noqa: E402
 from app.scripts.seed import seed  # noqa: E402
+from app.services.search import query_terms  # noqa: E402
+
+
+
+class HashingEmbedder:
+    """Stand-in for the sentence model: a bag of word stems hashed into a unit vector.
+
+    Tests must not download a model. Texts that share word stems get similar vectors,
+    which is enough to exercise indexing, ranking and the API around the real model.
+    """
+
+    name = "test-hashing"
+    dim = 384
+
+    def embed(self, texts: list[str]) -> list[list[float]]:
+        vectors = []
+        for text in texts:
+            vector = [0.0] * self.dim
+            for word in query_terms(text):
+                vector[zlib.crc32(word[:5].encode()) % self.dim] += 1.0
+            vectors.append(normalize(vector))
+        return vectors
+
 
 ADMIN = {"X-Admin-Token": "test-admin-token"}
 IS_POSTGRES = get_settings().is_postgres
@@ -33,6 +58,7 @@ IS_POSTGRES = get_settings().is_postgres
 
 @pytest.fixture
 def client() -> Iterator[TestClient]:
+    set_embedder(HashingEmbedder())
     Base.metadata.drop_all(engine)
     seed(engine)
     shutil.rmtree(UPLOAD_DIR, ignore_errors=True)

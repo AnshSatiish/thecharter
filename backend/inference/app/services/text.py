@@ -6,6 +6,7 @@ and are compared against it. Works on English and Spanish text.
 """
 import io
 import re
+import unicodedata
 from collections import Counter
 
 METHOD = "extractive-baseline"
@@ -26,6 +27,12 @@ STOPWORDS = frozenset(_EN.split()) | frozenset(_ES.split())
 _WORD = re.compile(r"[^\W\d_]+(?:['’-][^\W\d_]+)*")
 _SENTENCE_END = re.compile(r"(?<=[.!?…])[\"”’)\]]*\s+(?=[\"“‘(\[¿¡]*[A-ZÁÉÍÓÚÑÜ\d])")
 _PHRASE_BREAK = re.compile(r"[.,;:!?…()\[\]{}\"“”«»¿¡|/\n]+|\s[-–—]\s")
+
+
+def fold(text: str) -> str:
+    """Lower-case and strip accents, so "Darien" finds "Darién"."""
+    decomposed = unicodedata.normalize("NFKD", text or "")
+    return "".join(c for c in decomposed if not unicodedata.combining(c)).lower()
 
 
 def _is_content(word: str) -> bool:

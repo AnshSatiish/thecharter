@@ -67,6 +67,7 @@ class Project(Base):
     documents: Mapped[list["Document"]] = relationship(
         back_populates="project", cascade="all, delete-orphan", lazy="selectin", order_by="Document.id"
     )
+    chunks: Mapped[list["SearchChunk"]] = relationship(cascade="all, delete-orphan")
 
     __table_args__ = (
         CheckConstraint(f"category IN {CATEGORIES}", name="ck_project_category"),
@@ -93,3 +94,23 @@ class Document(Base):
     uploaded_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), default=lambda: dt.datetime.now(dt.timezone.utc))
 
     project: Mapped[Project] = relationship(back_populates="documents")
+    chunks: Mapped[list["SearchChunk"]] = relationship(cascade="all, delete-orphan")
+
+
+class SearchChunk(Base):
+    """A short passage of a project or of one of its PDFs, with its sentence embedding.
+
+    Semantic search compares the query's embedding with these. `embedding` is a plain JSON list so the
+    schema runs on SQLite; on PostgreSQL with pgvector, init_db adds an indexed `embedding_vec` copy.
+    """
+
+    __tablename__ = "search_chunks"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    project_id: Mapped[int] = mapped_column(ForeignKey("projects.id", ondelete="CASCADE"), index=True)
+    document_id: Mapped[int | None] = mapped_column(ForeignKey("documents.id", ondelete="CASCADE"), index=True)
+    source: Mapped[str] = mapped_column(String(20))  # "project" or "document"
+    position: Mapped[int] = mapped_column(default=0)
+    text: Mapped[str] = mapped_column(Text)
+    embedding: Mapped[list[float]] = mapped_column(JSON)
+    model: Mapped[str] = mapped_column(String(200))

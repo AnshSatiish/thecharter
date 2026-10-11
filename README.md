@@ -13,15 +13,15 @@ COMP 385 AI Capstone Project, Centennial College. Built for an external partner.
 | `backend/eda/` | Exploratory data analysis: notebooks that describe the data before any modelling. Empty until partner data arrives. | |
 | `backend/preprocessing/` | Cleaning and preparing data for models. Empty for now; PDF text extraction currently lives in the API (`inference/app/services/text.py`). | |
 | `backend/model_training/` | Training and evaluating models. Empty for now; the current summarizer and keyword extractor are rule-based baselines that need no training. | |
-| `backend/inference/` | The FastAPI application that serves results. Projects with filters (category, SDG, year, keyword, map bounding box), nearby search, authors, admin upload and verification, photo and PDF uploads with file storage, the baseline summarizer and keyword extraction, and the location check. Runs on SQLite with no setup, or PostgreSQL + PostGIS. Tested with pytest. Admin auth is a shared token for now (JWT planned). | `cd backend/inference && python -m app.scripts.seed && uvicorn app.main:app --reload --port 8000` (after install, see below) |
+| `backend/inference/` | The FastAPI application that serves results. Projects with filters (category, SDG, year, keyword, map bounding box), nearby search, authors, admin upload and verification, photo and PDF uploads with file storage, keyword, semantic and hybrid search (`GET /api/projects/search`), the baseline summarizer and keyword extraction, and the location check. Runs on SQLite with no setup, or PostgreSQL with PostGIS and pgvector. Tested with pytest. Admin auth is a shared token for now (JWT planned). | `cd backend/inference && python -m app.scripts.seed && uvicorn app.main:app --reload --port 8000` (after install, see below) |
 | `backend/data/` | `samples/`: 7 sample projects loaded by the seed script. `geo/`: country outlines (Natural Earth 1:50m) used by the location check. `uploads/`: uploaded photographs and PDFs (git-ignored). | |
-| `frontend/` | **The site the team is building on.** A 3D globe (D3, no API key, no build step). Passport-style sign-in (demo: any institutional email is accepted until accounts exist), field-passport profile, pin previews, project pages with a full-screen photo viewer and narration, filters, UN SDG colours, news layer, researcher mode, projection toggle, live latitude/longitude and country name under the cursor, and the admin upload. On localhost it loads from the backend; without it, it falls back to built-in sample data. Search by meaning is a **placeholder** with prepared example output. | `cd frontend && python -m http.server 8080`, then open http://localhost:8080 |
+| `frontend/` | **The site the team is building on.** A 3D globe (D3, no API key, no build step). Passport-style sign-in (demo: any institutional email is accepted until accounts exist), field-passport profile, pin previews, project pages with a full-screen photo viewer and narration, filters, UN SDG colours, news layer, researcher mode, projection toggle, live latitude/longitude and country name under the cursor, and the admin upload. On localhost it loads from the backend; without it, it falls back to built-in sample data. With the backend running, "By meaning" is real semantic search and shows the passage that matched; without it, it falls back to a labelled placeholder with prepared examples. | `cd frontend && python -m http.server 8080`, then open http://localhost:8080 |
 | `docs/requirements/` | Partner requirement documents: interactive map, admin and security, project summary. | |
 | `docs/diagrams/` | Architecture, class and component diagrams, drawn in draw.io. Empty for now. | |
 | `docs/reference/figma-app/` | The partner's original Figma Make prototype (React + Vite, mock data). Kept for reference; not the product. | `cd docs/reference/figma-app && npm install && npm run dev` |
 | `docker-compose.yml` | PostgreSQL 16 with PostGIS 3.4 for the backend. | `docker compose up -d` |
 
-The model-based AI pipelines, JWT auth, ChromaDB and Alembic migrations described below are not built yet. The AI module folders exist in `backend/inference/app/ai/` as empty placeholders.
+Semantic search over text is built (`backend/inference/app/ai/embeddings/`). The other model-based AI pipelines (tagging, abstractive summaries, image search, news), JWT auth and Alembic migrations described below are not built yet; their folders in `backend/inference/app/ai/` are empty placeholders.
 
 Project photographs in `frontend/img/` and `docs/reference/figma-app/src/assets/` belong to their authors and are included for development only (converted to JPEG to keep the repository small).
 
@@ -93,9 +93,17 @@ Models: transformer text classifier for tagging, BART or PEGASUS for summarizati
 
 Search by meaning rather than exact keywords. A query such as "grief rituals in rural communities" returns relevant projects even when none of those words appear in the text.
 
-Images are embedded with CLIP and text with a sentence embedding model, both indexed in ChromaDB. The same index powers the **View similar** feature on each project page.
+**Built: text.** Each project's title, description, summary, photo narration and PDF text is cut into short passages. A pretrained multilingual sentence model (`paraphrase-multilingual-MiniLM-L12-v2`, open source, runs on the server with ONNX Runtime, no API key and no cost) turns every passage into a 384-number vector. A query is embedded the same way and compared with the passages by cosine similarity; the project's best passage is returned with the result, so the user can see why it matched. Vectors are stored in PostgreSQL with pgvector (HNSW index), or compared in Python on SQLite. A Spanish query finds English projects and the reverse.
 
-Note on model choice: CLIP has a short text context window, so it handles images and short captions while a dedicated text embedding model handles descriptions and documents.
+Three modes are served by `GET /api/projects/search?q=...&mode=keyword|semantic|hybrid`:
+
+- `keyword`: PostgreSQL full-text search with stemming, field weights (title, then keywords and place, then text, then PDFs) and ranking.
+- `semantic`: ranked by meaning as described above.
+- `hybrid` (default): both lists merged with reciprocal rank fusion, so exact names still rank first and paraphrases are still found.
+
+The comparison of the three modes is in `backend/model_training/search_eval/` (see Evaluation).
+
+**Planned: images.** Images embedded with CLIP alongside the text vectors, which also powers the **View similar** feature on each project page. CLIP has a short text context window, so it handles images and short captions while the sentence model handles descriptions and documents.
 
 ### 3. News hotspot layer
 
@@ -116,13 +124,13 @@ A retrieval-augmented research assistant. A student asks a question in natural l
 | Frontend | React, Google Maps JavaScript API |
 | Backend | FastAPI (Python) |
 | Relational database | PostgreSQL with PostGIS |
-| Vector database | ChromaDB (persistent mode) |
+| Vector search | pgvector inside PostgreSQL (no separate vector database) |
 | File storage | Local filesystem in development, object storage in production |
 | Auth | JWT sessions, bcrypt password hashing, institutional email allowlist |
-| AI | PyTorch, Hugging Face Transformers, OpenCLIP, sentence-transformers |
+| AI | sentence-transformers model on ONNX Runtime (fastembed) for search today; PyTorch, Hugging Face Transformers and OpenCLIP planned for the other pipelines |
 | Testing | pytest (backend). The frontend is checked with headless-browser scripts; a test runner is planned. |
 
-PostGIS handles bounding-box queries so the map can request only the projects inside the current viewport. ChromaDB stores vectors and URIs rather than the original images, which live in file storage.
+PostGIS handles bounding-box queries so the map can request only the projects inside the current viewport. pgvector keeps the passage vectors next to the projects they belong to, so one database answers map, keyword and meaning queries.
 
 ## Repository structure
 
@@ -141,8 +149,8 @@ The backend follows the stages of the work: explore the data, prepare it, train 
 │   │   │   ├── core/            Config and security (admin token today, JWT planned)
 │   │   │   ├── db/              SQLAlchemy models, session, table and PostGIS setup (migrations planned)
 │   │   │   ├── scripts/         Seed the sample dataset, build the country outlines
-│   │   │   ├── ai/              Placeholders for the model-backed modules (tagging, summarization, embeddings, geo, news)
-│   │   │   └── services/        File storage, upload checks, text (summary, keywords, PDF), geo, countries
+│   │   │   ├── ai/              Sentence embeddings for semantic search; placeholders for the other modules (tagging, summarization, geo, news)
+│   │   │   └── services/        Search (keyword, semantic, hybrid) and its indexes, file storage, upload checks, text, geo, countries
 │   │   ├── tests/               Unit and integration tests
 │   │   └── requirements.txt
 │   └── data/
@@ -163,7 +171,7 @@ The backend follows the stages of the work: explore the data, prepare it, train 
 
 - Python 3.11 or later
 - Node.js 20 or later (only for the Figma reference app)
-- Docker and Docker Compose (for PostgreSQL and ChromaDB)
+- Docker and Docker Compose (for PostgreSQL with PostGIS and pgvector)
 - A Google Maps API key (see below)
 
 ### Installation
@@ -208,12 +216,15 @@ CORS_ORIGINS=http://localhost:5173,http://localhost:3031,http://localhost:8080
 UPLOAD_DIR=../data/uploads       # unset: backend/data/uploads; served by the API at /files
 MAX_IMAGE_MB=25                  # per photograph (JPEG, PNG or WebP)
 MAX_PDF_MB=50                    # per project PDF
+SEMANTIC_SEARCH=true             # false: keyword search only, the model is never loaded
+EMBEDDING_MODEL=sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+EMBEDDING_CACHE_DIR=~/.cache/charter-models   # where the model is downloaded once (about 220 MB)
+SEMANTIC_MIN_SCORE=0.28          # passages below this cosine similarity are treated as unrelated
 ```
 
 Planned, not read by the code yet:
 
 ```
-CHROMA_PERSIST_DIR=./data/chroma
 JWT_SECRET=<generate a long random string>
 JWT_EXPIRY_MINUTES=60
 ALLOWED_EMAIL_DOMAINS=example.edu,partner.org
@@ -245,11 +256,17 @@ Uploads and text (admin only unless noted):
 
 Uploaded files are served at `/files/...`. The `q` filter on `GET /api/projects` also searches narration, summaries and the text of uploaded PDFs.
 
-To build the embedding index after loading data *(planned, not implemented yet)*:
+Search:
+
+- `GET /api/projects/search?q=...&mode=hybrid&limit=20` (public): best matches first. Each result has the project, how it was found (`matched_by`), and for a match by meaning the `passage` that matched and its `similarity`.
+
+The search indexes are updated whenever a project or one of its PDFs is saved, and by the seed script. To rebuild them for every project (after changing `EMBEDDING_MODEL`, or on a database filled before search existed):
 
 ```bash
-python -m app.ai.embeddings.build_index
+python -m app.scripts.reindex
 ```
+
+The first run downloads the sentence model. If the model cannot be loaded, saving still works and hybrid search returns keyword results.
 
 ## Testing
 
@@ -279,7 +296,7 @@ Each AI component is measured rather than assumed to work.
 |---|---|---|
 | Category and SDG tagging | Macro F1 on a held-out set | To be set after baseline |
 | Summarization | ROUGE-1, ROUGE-L, plus curator rating | To be set after baseline |
-| Semantic search | Recall@5 on a hand-built query set | To be set after baseline |
+| Semantic search | Hit@1, Recall@3 and MRR on a hand-built query set, against the keyword baseline | First run on the 7 sample projects: keyword 0.62 / 0.67 / 0.66, semantic and hybrid 1.00 / 1.00 / 1.00 (`backend/model_training/search_eval/results.md`). Too few projects to be a final number; rerun on partner data. |
 | Location extraction | Percentage of pins placed correctly without edit | To be set after baseline |
 | News shading | Agreement with curator-selected regions | To be set after baseline |
 | Curation time | Minutes per project, before and after | Reduction against the manual baseline |

@@ -14,6 +14,7 @@ from app.db.session import get_db, is_postgres
 from app.schemas import Category, ProjectIn, ProjectNearOut, ProjectOut, ProjectPatch
 from app.services.authors import get_or_create_author
 from app.services.geo import haversine_km, parse_bbox
+from app.services.search_index import reindex_project
 from app.services.storage import LocalStorage, get_storage, safe_filename
 from app.services.uploads import image_extension, read_limited
 
@@ -144,6 +145,7 @@ def create_project(body: ProjectIn, db: DB) -> Project:
     project = Project(**data, verified=False, author=author)
     db.add(project)
     db.commit()
+    reindex_project(db, project.id)
     db.refresh(project)
     return project
 
@@ -168,6 +170,7 @@ def update_project(project_id: int, body: ProjectPatch, db: DB) -> Project:
     for field, value in changes.items():
         setattr(project, field, value)
     db.commit()
+    reindex_project(db, project.id)
     db.refresh(project)
     return project
 
@@ -211,5 +214,6 @@ def upload_images(
         for p in paths:
             storage.delete(p)
         raise
+    reindex_project(db, project.id)
     db.refresh(project)
     return project

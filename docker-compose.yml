@@ -1,6 +1,8 @@
 services:
   db:
-    image: postgis/postgis:16-3.4
+    # PostGIS plus pgvector; see backend/db/Dockerfile
+    build: ./backend/db
+    image: thecharter-db:16
     environment:
       POSTGRES_DB: charter
       POSTGRES_USER: charter

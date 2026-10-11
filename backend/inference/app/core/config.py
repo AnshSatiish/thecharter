@@ -20,8 +20,17 @@ class Settings(BaseSettings):
     upload_dir: Path = BACKEND_ROOT / "data" / "uploads"
     max_image_mb: int = 25
     max_pdf_mb: int = 50
+    # Semantic search: an open-source sentence embedding model that runs on this machine (no API key, no cost).
+    semantic_search: bool = True
+    embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    embedding_dim: int = 384
+    embedding_cache_dir: Path = Path.home() / ".cache" / "charter-models"
+    # A passage is unrelated when its cosine similarity is below this, or below this share of the best result's.
+    # Tuned on the sample projects: off-topic queries peak near 0.22, related passages start near 0.29.
+    semantic_min_score: float = 0.28
+    semantic_relative_cut: float = 0.65
 
-    @field_validator("upload_dir")
+    @field_validator("upload_dir", "embedding_cache_dir")
     @classmethod
     def _absolute_upload_dir(cls, v: Path) -> Path:
         return v.expanduser().resolve()

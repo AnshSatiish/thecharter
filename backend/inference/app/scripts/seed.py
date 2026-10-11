@@ -1,6 +1,7 @@
 """Load the sample dataset: `python -m app.scripts.seed` (run from backend/).
 
 Creates tables first. Idempotent: projects are upserted by id, authors deduplicated by name.
+Also builds the search indexes (the first run downloads the sentence model, about 220 MB).
 """
 import datetime as dt
 import json
@@ -13,6 +14,7 @@ from sqlalchemy.orm import Session
 from app.db.init_db import init_db
 from app.db.models import Project
 from app.services.authors import get_or_create_author
+from app.services.search_index import reindex_all
 
 SAMPLE_FILE = Path(__file__).resolve().parents[3] / "data" / "samples" / "projects.json"
 PROJECT_FIELDS = (
@@ -42,6 +44,7 @@ def seed(engine: Engine, path: Path = SAMPLE_FILE) -> int:
             for table in ("projects", "authors"):
                 db.execute(text(f"SELECT setval(pg_get_serial_sequence('{table}', 'id'), COALESCE((SELECT MAX(id) FROM {table}), 1))"))
             db.commit()
+        reindex_all(db)
     return len(records)
 
 
