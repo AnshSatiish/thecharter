@@ -1,0 +1,25 @@
+<mxfile host="app.diagrams.net"><diagram name="Use case diagram" id="Use-case-diagram">
+  <mxGraphModel dx="1000" dy="700" grid="1" gridSize="10" page="1" pageWidth="900" pageHeight="560">
+    <root>
+      <mxCell id="0"/>
+      <mxCell id="1" parent="0"/>
+      <mxCell id="sys" value="The Charter" style="rounded=1;arcSize=2;dashed=1;fillColor=none;strokeColor=#8a8a86;verticalAlign=top;align=left;spacingLeft=8;fontStyle=1;fontColor=#52514e;html=1;" vertex="1" parent="1"><mxGeometry x="190" y="20" width="520" height="520" as="geometry"/></mxCell>
+      <mxCell id="user" value="End user&lt;br&gt;(student, researcher)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="70.0" y="180" width="30" height="60" as="geometry"/></mxCell>
+      <mxCell id="admin" value="Administrator&lt;br&gt;(curator, editor)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="800.0" y="180" width="30" height="60" as="geometry"/></mxCell>
+      <mxCell id="uc1" value="&lt;b&gt;UC1&lt;/b&gt;&lt;br&gt;Explore and filter projects" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f4f7fb;strokeColor=#2a78d6;fontColor=#0b0b0b;fontSize=12;" vertex="1" parent="1"><mxGeometry x="215" y="75" width="215" height="78" as="geometry"/></mxCell>
+      <mxCell id="uc2" value="&lt;b&gt;UC2&lt;/b&gt;&lt;br&gt;Semantic research search" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fdece4;strokeColor=#eb6834;fontColor=#0b0b0b;fontSize=12;" vertex="1" parent="1"><mxGeometry x="215" y="235" width="215" height="78" as="geometry"/></mxCell>
+      <mxCell id="uc3" value="&lt;b&gt;UC3&lt;/b&gt;&lt;br&gt;Community and dashboard" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f4f7fb;strokeColor=#2a78d6;fontColor=#0b0b0b;fontSize=12;" vertex="1" parent="1"><mxGeometry x="215" y="395" width="215" height="78" as="geometry"/></mxCell>
+      <mxCell id="uc4" value="&lt;b&gt;UC4&lt;/b&gt;&lt;br&gt;Manage and curate content" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f4f7fb;strokeColor=#2a78d6;fontColor=#0b0b0b;fontSize=12;" vertex="1" parent="1"><mxGeometry x="470" y="55" width="215" height="78" as="geometry"/></mxCell>
+      <mxCell id="uc5" value="&lt;b&gt;UC5&lt;/b&gt;&lt;br&gt;AI summarization" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fdece4;strokeColor=#eb6834;fontColor=#0b0b0b;fontSize=12;" vertex="1" parent="1"><mxGeometry x="470" y="173" width="215" height="78" as="geometry"/></mxCell>
+      <mxCell id="uc6" value="&lt;b&gt;UC6&lt;/b&gt;&lt;br&gt;Verify a project" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f4f7fb;strokeColor=#2a78d6;fontColor=#0b0b0b;fontSize=12;" vertex="1" parent="1"><mxGeometry x="470" y="291" width="215" height="78" as="geometry"/></mxCell>
+      <mxCell id="uc7" value="&lt;b&gt;UC7&lt;/b&gt;&lt;br&gt;Manage News regions" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f4f7fb;strokeColor=#2a78d6;fontColor=#0b0b0b;fontSize=12;" vertex="1" parent="1"><mxGeometry x="470" y="409" width="215" height="78" as="geometry"/></mxCell>
+      <mxCell id="e0" value="" style="html=1;rounded=0;strokeColor=#3d3d3a;fontSize=10;fontColor=#52514e;endArrow=none;" edge="1" parent="1" source="user" target="uc1"><mxGeometry relative="1" as="geometry"/></mxCell>
+      <mxCell id="e1" value="" style="html=1;rounded=0;strokeColor=#3d3d3a;fontSize=10;fontColor=#52514e;endArrow=none;" edge="1" parent="1" source="user" target="uc2"><mxGeometry relative="1" as="geometry"/></mxCell>
+      <mxCell id="e2" value="" style="html=1;rounded=0;strokeColor=#3d3d3a;fontSize=10;fontColor=#52514e;endArrow=none;" edge="1" parent="1" source="user" target="uc3"><mxGeometry relative="1" as="geometry"/></mxCell>
+      <mxCell id="e3" value="" style="html=1;rounded=0;strokeColor=#3d3d3a;fontSize=10;fontColor=#52514e;endArrow=none;" edge="1" parent="1" source="admin" target="uc4"><mxGeometry relative="1" as="geometry"/></mxCell>
+      <mxCell id="e4" value="" style="html=1;rounded=0;strokeColor=#3d3d3a;fontSize=10;fontColor=#52514e;endArrow=none;" edge="1" parent="1" source="admin" target="uc5"><mxGeometry relative="1" as="geometry"/></mxCell>
+      <mxCell id="e5" value="" style="html=1;rounded=0;strokeColor=#3d3d3a;fontSize=10;fontColor=#52514e;endArrow=none;" edge="1" parent="1" source="admin" target="uc6"><mxGeometry relative="1" as="geometry"/></mxCell>
+      <mxCell id="e6" value="" style="html=1;rounded=0;strokeColor=#3d3d3a;fontSize=10;fontColor=#52514e;endArrow=none;" edge="1" parent="1" source="admin" target="uc7"><mxGeometry relative="1" as="geometry"/></mxCell>
+    </root>
+  </mxGraphModel>
+</diagram></mxfile>

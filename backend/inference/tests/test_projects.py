@@ -129,18 +129,10 @@ def test_create_project(client):
     assert created["id"] in ids(client.get("/api/projects", params={"q": "salmon"}))
 
 
-def test_create_new_author_and_spanish_original(client):
-    body = {
-        **NEW_PROJECT,
-        "author_name": "Lucía Hernández",
-        "author_role": "academic",
-        "original_language": "es",
-        "title_original": "Redes del mar Salish",
-        "description_original": "Cómo se adaptan las comunidades costeras.",
-    }
+def test_create_new_author(client):
+    body = {**NEW_PROJECT, "author_name": "Lucy Hart", "author_role": "academic"}
     created = client.post("/api/projects", json=body, headers=ADMIN).json()
-    assert created["original_language"] == "es"
-    assert created["title_original"] == "Redes del mar Salish"
+    assert created["original_language"] == "en"
     assert created["author"]["role"] == "academic"
     assert len(client.get("/api/authors").json()) == 8
 

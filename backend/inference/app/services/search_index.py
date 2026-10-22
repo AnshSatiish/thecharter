@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 
 from app.ai.embeddings import EmbedderUnavailable, get_embedder
 from app.ai.embeddings.chunking import chunk_text
+from app.core.config import get_settings
 from app.db.models import Project, SearchChunk
 from app.db.session import is_postgres
 from app.services.text import fold
@@ -46,10 +47,12 @@ def passages(project: Project) -> list[tuple[str, int | None, str]]:
     """(source, document id, text) for every passage to embed, without repeats."""
     head = ". ".join(p for p in (project.title, project.location_name, ", ".join(project.keywords or [])) if p)
     found: list[tuple[str, int | None, str]] = [("project", None, head)]
+    words = get_settings().embedding_chunk_words
     for block in (project.description, project.summary, *(project.captions or [])):
-        found += [("project", None, chunk) for chunk in chunk_text(block or "")]
+        found += [("project", None, chunk) for chunk in chunk_text(block or "", max_words=words)]
     for document in project.documents:
-        found += [("document", document.id, chunk) for chunk in chunk_text(document.text, max_chunks=MAX_DOCUMENT_CHUNKS)]
+        found += [("document", document.id, chunk)
+                  for chunk in chunk_text(document.text, max_words=words, max_chunks=MAX_DOCUMENT_CHUNKS)]
     seen: set[str] = set()
     return [p for p in found if p[2].strip() and not (p[2] in seen or seen.add(p[2]))]
 

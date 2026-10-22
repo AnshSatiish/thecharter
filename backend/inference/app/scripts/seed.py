@@ -1,7 +1,7 @@
 """Load the sample dataset: `python -m app.scripts.seed` (run from backend/).
 
 Creates tables first. Idempotent: projects are upserted by id, authors deduplicated by name.
-Also builds the search indexes (the first run downloads the sentence model, about 220 MB).
+Also builds the search indexes (the first run downloads the sentence model, about 66 MB).
 """
 import datetime as dt
 import json

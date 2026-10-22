@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560" font-family="Arial, Helvetica, sans-serif" font-size="12">
+<defs><marker id="arr" markerWidth="9" markerHeight="8" refX="8" refY="4" orient="auto-start-reverse"><path d="M0,0 L9,4 L0,8 z" fill="#3d3d3a"/></marker></defs>
+<rect width="900" height="560" fill="white"/>
+<rect x="190" y="20" width="520" height="520" fill="none" stroke="#8a8a86" stroke-dasharray="6 4" rx="6"/>
+<text x="200" y="38" font-weight="bold" fill="#52514e">The Charter</text>
+<line x1="130.0" y1="208.0" x2="258.4" y2="145.3" stroke="#3d3d3a" stroke-width="1.2"/>
+<line x1="130.0" y1="238.3" x2="226.8" y2="256.3" stroke="#3d3d3a" stroke-width="1.2"/>
+<line x1="130.0" y1="268.7" x2="280.7" y2="398.1" stroke="#3d3d3a" stroke-width="1.2"/>
+<line x1="770.0" y1="204.2" x2="635.0" y2="126.9" stroke="#3d3d3a" stroke-width="1.2"/>
+<line x1="770.0" y1="226.6" x2="682.7" y2="220.0" stroke="#3d3d3a" stroke-width="1.2"/>
+<line x1="770.0" y1="248.9" x2="647.7" y2="300.5" stroke="#3d3d3a" stroke-width="1.2"/>
+<line x1="770.0" y1="271.3" x2="617.0" y2="411.7" stroke="#3d3d3a" stroke-width="1.2"/>
+<circle cx="85.0" cy="190" r="9" fill="white" stroke="#0b0b0b" stroke-width="1.3"/>
+<path d="M85.0,199 V224 M70.0,208 H100.0 M85.0,224 L72.0,242 M85.0,224 L98.0,242" stroke="#0b0b0b" stroke-width="1.3" fill="none"/>
+<text x="85.0" y="260" text-anchor="middle" font-weight="bold" fill="#0b0b0b">End user</text>
+<text x="85.0" y="274" text-anchor="middle" font-weight="bold" fill="#0b0b0b">(student, researcher)</text>
+<circle cx="815.0" cy="190" r="9" fill="white" stroke="#0b0b0b" stroke-width="1.3"/>
+<path d="M815.0,199 V224 M800.0,208 H830.0 M815.0,224 L802.0,242 M815.0,224 L828.0,242" stroke="#0b0b0b" stroke-width="1.3" fill="none"/>
+<text x="815.0" y="260" text-anchor="middle" font-weight="bold" fill="#0b0b0b">Administrator</text>
+<text x="815.0" y="274" text-anchor="middle" font-weight="bold" fill="#0b0b0b">(curator, editor)</text>
+<ellipse cx="322.5" cy="114.0" rx="107.5" ry="39.0" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4"/>
+<text x="322.5" y="111.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC1</text>
+<text x="322.5" y="125.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Explore and filter projects</text>
+<ellipse cx="322.5" cy="274.0" rx="107.5" ry="39.0" fill="#fdece4" stroke="#eb6834" stroke-width="1.4"/>
+<text x="322.5" y="271.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC2</text>
+<text x="322.5" y="285.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Semantic research search</text>
+<ellipse cx="322.5" cy="434.0" rx="107.5" ry="39.0" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4"/>
+<text x="322.5" y="431.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC3</text>
+<text x="322.5" y="445.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Community and dashboard</text>
+<ellipse cx="577.5" cy="94.0" rx="107.5" ry="39.0" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4"/>
+<text x="577.5" y="91.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC4</text>
+<text x="577.5" y="105.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Manage and curate content</text>
+<ellipse cx="577.5" cy="212.0" rx="107.5" ry="39.0" fill="#fdece4" stroke="#eb6834" stroke-width="1.4"/>
+<text x="577.5" y="209.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC5</text>
+<text x="577.5" y="223.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">AI summarization</text>
+<ellipse cx="577.5" cy="330.0" rx="107.5" ry="39.0" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4"/>
+<text x="577.5" y="327.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC6</text>
+<text x="577.5" y="341.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Verify a project</text>
+<ellipse cx="577.5" cy="448.0" rx="107.5" ry="39.0" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4"/>
+<text x="577.5" y="445.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC7</text>
+<text x="577.5" y="459.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Manage News regions</text>
+</svg>

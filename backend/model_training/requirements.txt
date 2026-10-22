@@ -1,0 +1,9 @@
+# Model training and evaluation, on top of ../inference/requirements.txt
+-r ../inference/requirements.txt
+sentence-transformers>=3.0
+scikit-learn>=1.5
+rouge-score>=0.1.2
+matplotlib>=3.9
+datasets>=3,<4.4
+huggingface-hub>=0.34,<1.0
+accelerate>=0.30

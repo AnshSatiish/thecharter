@@ -169,12 +169,16 @@ class ProjectPatch(BaseModel):
 
 class SummarizeIn(BaseModel):
     text: str = Field(max_length=500_000)
-    max_sentences: int = Field(default=3, ge=1, le=10)
+    max_sentences: int = Field(default=3, ge=1, le=10, description="Extractive method only")
+    method: Literal["ai", "extractive"] = Field(
+        default="extractive", description="ai: the summarization model writes a draft. extractive: the word-frequency baseline."
+    )
 
 
 class SummaryOut(BaseModel):
     summary: str
     method: str
+    fallback: bool = Field(default=False, description="True when AI was asked for but unavailable, so the baseline answered")
 
 
 class KeywordsIn(BaseModel):
@@ -196,3 +200,4 @@ class PdfExtractOut(BaseModel):
     summary: str
     keywords: list[str]
     has_text: bool
+    text: str = Field(description="The extracted text, so the form can ask for an AI summary of it")

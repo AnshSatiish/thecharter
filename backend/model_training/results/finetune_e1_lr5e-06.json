@@ -1,0 +1,130 @@
+{
+  "base": "BAAI/bge-small-en-v1.5",
+  "chunk_words": 40,
+  "epochs": 1,
+  "lr": 5e-06,
+  "loss": "MultipleNegativesRankingLoss",
+  "batch_size": 16,
+  "folds": [
+    {
+      "fold": 1,
+      "test_queries": 20,
+      "train_pairs": 462,
+      "minutes": 2.1,
+      "pretrained": {
+        "hit1": 0.95,
+        "list_f1": 0.1818181818181818,
+        "mrr": 0.9666666666666666,
+        "recall3": 1.0
+      },
+      "fine_tuned": {
+        "hit1": 0.9,
+        "list_f1": 0.1818181818181818,
+        "mrr": 0.9416666666666667,
+        "recall3": 1.0
+      }
+    },
+    {
+      "fold": 2,
+      "test_queries": 21,
+      "train_pairs": 462,
+      "minutes": 1.9,
+      "pretrained": {
+        "hit1": 0.9523809523809523,
+        "list_f1": 0.1818181818181818,
+        "mrr": 0.9761904761904762,
+        "recall3": 1.0
+      },
+      "fine_tuned": {
+        "hit1": 0.9047619047619048,
+        "list_f1": 0.1818181818181818,
+        "mrr": 0.9523809523809523,
+        "recall3": 1.0
+      }
+    },
+    {
+      "fold": 3,
+      "test_queries": 19,
+      "train_pairs": 478,
+      "minutes": 2.0,
+      "pretrained": {
+        "hit1": 1.0,
+        "list_f1": 0.1818181818181818,
+        "mrr": 1.0,
+        "recall3": 1.0
+      },
+      "fine_tuned": {
+        "hit1": 1.0,
+        "list_f1": 0.1818181818181818,
+        "mrr": 1.0,
+        "recall3": 1.0
+      }
+    },
+    {
+      "fold": 4,
+      "test_queries": 21,
+      "train_pairs": 478,
+      "minutes": 2.0,
+      "pretrained": {
+        "hit1": 1.0,
+        "list_f1": 0.1818181818181818,
+        "mrr": 1.0,
+        "recall3": 1.0
+      },
+      "fine_tuned": {
+        "hit1": 1.0,
+        "list_f1": 0.1818181818181818,
+        "mrr": 1.0,
+        "recall3": 1.0
+      }
+    },
+    {
+      "fold": 5,
+      "test_queries": 19,
+      "train_pairs": 480,
+      "minutes": 2.0,
+      "pretrained": {
+        "hit1": 1.0,
+        "list_f1": 0.1818181818181818,
+        "mrr": 1.0,
+        "recall3": 1.0
+      },
+      "fine_tuned": {
+        "hit1": 1.0,
+        "list_f1": 0.1818181818181818,
+        "mrr": 1.0,
+        "recall3": 1.0
+      }
+    }
+  ],
+  "summary": {
+    "pretrained": {
+      "hit1": {
+        "mean": 0.9804761904761904,
+        "sd": 0.026747326990445013
+      },
+      "recall3": {
+        "mean": 1.0,
+        "sd": 0.0
+      },
+      "mrr": {
+        "mean": 0.9885714285714287,
+        "sd": 0.01600736791806824
+      }
+    },
+    "fine_tuned": {
+      "hit1": {
+        "mean": 0.9609523809523809,
+        "sd": 0.05349465398088997
+      },
+      "recall3": {
+        "mean": 1.0,
+        "sd": 0.0
+      },
+      "mrr": {
+        "mean": 0.9788095238095238,
+        "sd": 0.0292624762623877
+      }
+    }
+  }
+}

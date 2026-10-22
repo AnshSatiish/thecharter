@@ -1,28 +1,32 @@
-# Model training
+# Model training and evaluation
 
-Training and evaluation scripts, and the saved models they produce.
-
-## Search evaluation (`search_eval/`)
-
-Semantic search uses a pretrained sentence model as it is; nothing is trained yet. `search_eval/evaluate_search.py` measures it against the keyword baseline:
+Every AI choice in the application is made here, by measurement, and every number in the progress report comes from a file in `results/` or `figures/`.
 
 ```bash
-cd search_eval
-..\..\.venv\Scripts\python evaluate_search.py
+pip install torch --index-url https://download.pytorch.org/whl/cpu
+pip install -r requirements.txt
 ```
 
-It loads the sample projects, runs every query in `queries.json` through keyword, semantic and hybrid search, and writes `results.md`. The queries are of four kinds: exact names, paraphrases that avoid the project's own words, Spanish, and off-topic (which should return nothing). To add a query, add a line to `queries.json` with the ids of the projects a person judges relevant.
+Run each script from this folder with the backend's environment, for example `..\.venv\Scripts\python compare_models.py`.
 
-The next step here is fine-tuning the sentence model on the partner's projects once there are enough of them, and comparing it with the pretrained model using the same script.
+| Script | What it does | Output | Time on a laptop CPU |
+|---|---|---|---|
+| `compare_models.py` | Compares keyword full-text search, TF-IDF and three pretrained embedding models (all-MiniLM-L6-v2, paraphrase-multilingual-MiniLM-L12-v2, bge-small-en-v1.5), each alone and in hybrid with keyword search. Passage length and cut-offs are tuned by 5-fold cross-validation over the queries. | `results/model_comparison.*`, `figures/model_comparison.png` | about 3 minutes |
+| `finetune_embeddings.py` | Fine-tunes the chosen model on pairs built from the corpus (title, keywords or place with the project's own passages), with 5-fold cross-validation over projects so each test fold is unseen. `--epochs` and `--lr` set the training; `--save` keeps a model in `models/` (not committed). | `results/finetune_e<epochs>_lr<rate>.*` | 10 to 20 minutes |
+| `evaluate_summarizers.py` | Compares two extractive baselines with four pretrained summarization models (flan-t5-small, flan-t5-base, a t5-small summarizer, distilbart-cnn-6-6) by ROUGE against the reference summaries, with beam width and length tuned by 5-fold cross-validation over the reports. `--plot-only` redraws the figure. | `results/summarization.*`, `figures/summarization.png` | 20 to 30 minutes |
+| `search_eval/evaluate_search.py` | Runs every query through the application's own search code with its final settings. | `search_eval/results.md` | about 1 minute |
+| `common.py` | Shared set-up: a temporary database with the 7 partner samples and the 30 synthetic projects, passages cut by the API's code, the query folds and the measures. | | |
 
-## Not started
+## Data
 
-The summarizer and keyword extractor the API uses today are rule-based baselines (`../inference/app/services/text.py`) that need no training. They give the "before" numbers for the evaluation table in the main README.
+- `../data/samples/projects.json`: the partner's 7 sample projects.
+- `../data/synthetic/projects.json`: 30 synthetic projects written by the team to the partner's record format, 6 per category, each with a field report (stored as the project's document, like an uploaded PDF) and a reference summary. Marked `"synthetic": true`; never loaded into the site.
+- `search_eval/queries.json`: 122 judged queries (38 exact names, 70 paraphrases, 5 topics, 9 off-topic), each with the ids of the projects a person judged relevant.
 
-Planned, in the order of the roadmap:
+## What the experiments decided
 
-- Category and SDG classifier (OSDG Community Dataset, fine-tuned on partner data): macro F1 on a held-out set
-- Abstractive summarizer (BART or PEGASUS) compared against the extractive baseline: ROUGE-1, ROUGE-L, curator rating
-- Image embeddings (CLIP) for search, and a fine-tuned text model: same measures as `search_eval/`
+- Search model: **bge-small-en-v1.5**, the most accurate and the smallest of the three models; passages of 40 words, minimum similarity 0.575, relative cut-off 0.95. These are the defaults in `../inference/app/core/config.py`.
+- Fine-tuning did not improve the pretrained model on unseen projects (two settings tried), so the pretrained weights are used.
+- Summarizer: **distilbart-cnn-6-6**, greedy decoding, up to 60 new tokens. The FLAN-T5 models invented facts in their summaries, which is why every summary is a draft the administrator confirms.
 
-Keep large model files out of git; store them outside the repository or with Git LFS.
+All results come from a corpus that is mostly synthetic and from queries written by the team. Rerun the scripts when the partner's full data arrives.

@@ -22,13 +22,22 @@ class Settings(BaseSettings):
     max_pdf_mb: int = 50
     # Semantic search: an open-source sentence embedding model that runs on this machine (no API key, no cost).
     semantic_search: bool = True
-    embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    embedding_model: str = "BAAI/bge-small-en-v1.5"
     embedding_dim: int = 384
+    # Longest passage, in words, cut from project text for embedding (tuned by cross-validation).
+    embedding_chunk_words: int = 40
     embedding_cache_dir: Path = Path.home() / ".cache" / "charter-models"
     # A passage is unrelated when its cosine similarity is below this, or below this share of the best result's.
-    # Tuned on the sample projects: off-topic queries peak near 0.22, related passages start near 0.29.
-    semantic_min_score: float = 0.28
-    semantic_relative_cut: float = 0.65
+    # Both chosen by 5-fold cross-validation over the judged queries (backend/model_training/compare_models.py).
+    semantic_min_score: float = 0.575
+    semantic_relative_cut: float = 0.95
+    # AI summarization: an open-source sequence-to-sequence model run with PyTorch on this machine (no API, no cost).
+    # Model and generation settings chosen by cross-validation (backend/model_training/evaluate_summarizers.py).
+    ai_summary: bool = True
+    summary_model: str = "sshleifer/distilbart-cnn-6-6"
+    summary_prefix: str = ""
+    summary_max_new_tokens: int = 60
+    summary_num_beams: int = 1
 
     @field_validator("upload_dir", "embedding_cache_dir")
     @classmethod

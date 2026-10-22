@@ -41,6 +41,9 @@ class Broken:
     def embed(self, texts):
         raise EmbedderUnavailable("model missing")
 
+    def embed_query(self, text):
+        raise EmbedderUnavailable("model missing")
+
 
 # Keyword
 

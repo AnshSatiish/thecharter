@@ -16,6 +16,10 @@ if not os.environ.get("DATABASE_URL", "").startswith("postgres"):
     _tmp = Path(tempfile.mkdtemp(prefix="charter-test-")) / "test.db"
     os.environ["DATABASE_URL"] = f"sqlite:///{_tmp.as_posix()}"
 os.environ.setdefault("ENV", "test")
+# The stand-in embedder below spreads similarities differently from the real model, so the tests
+# use cut-offs that suit it rather than the tuned production values.
+os.environ["SEMANTIC_MIN_SCORE"] = "0.28"
+os.environ["SEMANTIC_RELATIVE_CUT"] = "0.65"
 UPLOAD_DIR = Path(tempfile.mkdtemp(prefix="charter-uploads-"))
 os.environ["UPLOAD_DIR"] = str(UPLOAD_DIR)
 os.environ["ADMIN_TOKEN"] = "test-admin-token"
@@ -23,6 +27,7 @@ os.environ["ADMIN_TOKEN"] = "test-admin-token"
 from fastapi.testclient import TestClient  # noqa: E402
 
 from app.ai.embeddings import normalize, set_embedder  # noqa: E402
+from app.ai.summarization import set_summarizer  # noqa: E402
 from app.core.config import get_settings  # noqa: E402
 from app.db.models import Base  # noqa: E402
 from app.db.session import engine  # noqa: E402
@@ -51,6 +56,18 @@ class HashingEmbedder:
             vectors.append(normalize(vector))
         return vectors
 
+    def embed_query(self, text: str) -> list[float]:
+        return self.embed([text])[0]
+
+
+class StubSummarizer:
+    """Stand-in for the summarization model: returns the first sentence, marked so tests can tell."""
+
+    name = "test-stub"
+
+    def summarize(self, text: str) -> str:
+        return "Draft: " + text.split(". ")[0].strip()
+
 
 ADMIN = {"X-Admin-Token": "test-admin-token"}
 IS_POSTGRES = get_settings().is_postgres
@@ -59,6 +76,7 @@ IS_POSTGRES = get_settings().is_postgres
 @pytest.fixture
 def client() -> Iterator[TestClient]:
     set_embedder(HashingEmbedder())
+    set_summarizer(StubSummarizer())
     Base.metadata.drop_all(engine)
     seed(engine)
     shutil.rmtree(UPLOAD_DIR, ignore_errors=True)

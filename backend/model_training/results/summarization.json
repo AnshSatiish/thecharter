@@ -1,0 +1,205 @@
+{
+  "documents": 30,
+  "methods": {
+    "Lead-2 (first two sentences)": {
+      "rouge1": {
+        "mean": 0.3032154054799411,
+        "sd": 0.015557301158820742
+      },
+      "rouge2": {
+        "mean": 0.0475610478618186,
+        "sd": 0.011544258652367323
+      },
+      "rougeL": {
+        "mean": 0.18021235080914935,
+        "sd": 0.006163708452182234
+      },
+      "chosen": null,
+      "kind": "baseline",
+      "seconds_per_doc": 0.003,
+      "example": "Every monsoon season, herds of Asian elephants move between forest patches that are now separated by tea estates, rice fields and highways. The animals follow corridors their herds have used for generations, and those corridors now run through villages."
+    },
+    "Word-frequency extractive (current baseline)": {
+      "rouge1": {
+        "mean": 0.3165374849133662,
+        "sd": 0.03947260542379887
+      },
+      "rouge2": {
+        "mean": 0.06126949899572296,
+        "sd": 0.03315156159462505
+      },
+      "rougeL": {
+        "mean": 0.20169046635762156,
+        "sd": 0.03292576887023794
+      },
+      "chosen": null,
+      "kind": "baseline",
+      "seconds_per_doc": 0.003,
+      "example": "Every monsoon season, herds of Asian elephants move between forest patches that are now separated by tea estates, rice fields and highways. The animals follow corridors their herds have used for generations, and those corridors now run through villages."
+    },
+    "flan-t5-small": {
+      "rouge1": {
+        "mean": 0.22694490407585613,
+        "sd": 0.036480525895443705
+      },
+      "rouge2": {
+        "mean": 0.026392828207616476,
+        "sd": 0.015158126628115233
+      },
+      "rougeL": {
+        "mean": 0.13329956536774384,
+        "sd": 0.013909015664290522
+      },
+      "chosen": [
+        [
+          4,
+          60
+        ],
+        [
+          4,
+          60
+        ],
+        [
+          4,
+          60
+        ],
+        [
+          1,
+          60
+        ],
+        [
+          1,
+          60
+        ]
+      ],
+      "kind": "pretrained AI model",
+      "model": "google/flan-t5-small",
+      "parameters_m": 77,
+      "seconds_per_doc": 2.24,
+      "example": "A herd of elephants in a remote region of China has been rescued by a community watch group."
+    },
+    "t5-small (summarization)": {
+      "rouge1": {
+        "mean": 0.30020517733564456,
+        "sd": 0.03549800057508719
+      },
+      "rouge2": {
+        "mean": 0.05544573339948618,
+        "sd": 0.02307560038845575
+      },
+      "rougeL": {
+        "mean": 0.19313555109718578,
+        "sd": 0.014938102138306467
+      },
+      "chosen": [
+        [
+          1,
+          90
+        ],
+        [
+          1,
+          90
+        ],
+        [
+          1,
+          90
+        ],
+        [
+          4,
+          90
+        ],
+        [
+          4,
+          90
+        ]
+      ],
+      "kind": "pretrained AI model",
+      "model": "Falconsai/text_summarization",
+      "parameters_m": 61,
+      "seconds_per_doc": 3.19,
+      "example": "Every monsoon season, Asian elephants move between forest patches separated by tea estates, rice fields and highways. The animals follow corridors their herds have used for generations, and those corridors now run through villages. When a herd enters, families lose a season of rice in a single night. Elephants are also killed, by trains, by electrified fences and by"
+    },
+    "distilbart-cnn-6-6": {
+      "rouge1": {
+        "mean": 0.33869326485985873,
+        "sd": 0.019625297936301148
+      },
+      "rouge2": {
+        "mean": 0.08016480482200086,
+        "sd": 0.019883249802790263
+      },
+      "rougeL": {
+        "mean": 0.21679835649309318,
+        "sd": 0.017510768835683144
+      },
+      "chosen": [
+        [
+          1,
+          90
+        ],
+        [
+          1,
+          60
+        ],
+        [
+          1,
+          60
+        ],
+        [
+          1,
+          60
+        ],
+        [
+          1,
+          60
+        ]
+      ],
+      "kind": "pretrained AI model",
+      "model": "sshleifer/distilbart-cnn-6-6",
+      "parameters_m": 230,
+      "seconds_per_doc": 5.4,
+      "example": "Every monsoon season, herds of Asian elephants move between forest patches that are now separated by tea estates, rice fields and highways . Forest officials have mapped the main crossing points and asked estates to leave strips of land unplanted . The photographs show the watchers, the damaged homes and the herds moving at dusk ."
+    },
+    "flan-t5-base": {
+      "rouge1": {
+        "mean": 0.23204354225499269,
+        "sd": 0.018792560638222437
+      },
+      "rouge2": {
+        "mean": 0.022050534586840517,
+        "sd": 0.007348417591407753
+      },
+      "rougeL": {
+        "mean": 0.13947486219414715,
+        "sd": 0.016046225702255296
+      },
+      "chosen": [
+        [
+          1,
+          60
+        ],
+        [
+          4,
+          60
+        ],
+        [
+          1,
+          60
+        ],
+        [
+          4,
+          60
+        ],
+        [
+          4,
+          60
+        ]
+      ],
+      "kind": "pretrained AI model",
+      "model": "google/flan-t5-base",
+      "parameters_m": 248,
+      "seconds_per_doc": 4.29,
+      "example": "Photographs taken by a community watch group in Thailand show how people and elephants can share a landscape that they both need."
+    }
+  }
+}

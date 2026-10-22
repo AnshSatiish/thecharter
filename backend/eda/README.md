@@ -1,12 +1,11 @@
 # Exploratory data analysis
 
-Notebooks that describe the data before any modelling.
+Scripts that describe the data before any modelling.
 
-Nothing here yet: the only data so far is the 7 sample projects in `../data/samples/projects.json`. Once the partner's projects arrive, this is where to answer:
+`eda_sample_projects.py` analyses the 7 sample projects in `../data/samples/projects.json`: size and completeness, category and SDG balance, text lengths, languages, keywords, coverage, and how close the projects are to each other in meaning. It writes `eda_summary.json` and three figures in `figures/`.
 
-- How many projects, by category, SDG, year and region?
-- How long are the descriptions and PDFs, and in which languages?
-- How many photographs per project, and how complete are the narrations?
-- Which fields are missing or inconsistent?
+```bash
+..\.venv\Scripts\python eda_sample_projects.py
+```
 
-Suggested first notebook: `01_sample_projects.ipynb`.
+It needs matplotlib (`pip install matplotlib`) on top of the backend requirements. Rerun it when the partner's full dataset arrives; the numbers so far describe the sample only.

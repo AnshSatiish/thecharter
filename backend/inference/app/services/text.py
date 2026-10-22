@@ -2,7 +2,7 @@
 
 Pure Python, no model downloads. This is the measurable baseline: BART or PEGASUS
 summaries and embedding-based search replace it later (see the README roadmap),
-and are compared against it. Works on English and Spanish text.
+and are compared against it.
 """
 import io
 import re
@@ -17,12 +17,7 @@ here hers him his how i if in into is it its just may me might more most must my
 other our out over own same she should so some such than that the their them then there these they this those through
 to too under until up upon us very was we were what when where which while who whom why will with would you your
 one two many much new however within without across among per via"""
-_ES = """a al algo algunas algunos ante antes aquel aquella como con contra cual cuando de del desde donde dos durante
-e el ella ellas ellos en entre era eran es esa esas ese eso esos esta estaba estaban estas este esto estos fue fueron
-ha han hasta hay la las le les lo los mas más me mi mientras muy ni no nos nosotros o otra otras otro otros para pero
-poco por porque que qué quien quienes se según ser si sí sin sobre su sus también tanto te tiene tienen todo todos tras
-tu un una uno unas unos y ya yo son está están sido así cada cuyo cuya"""
-STOPWORDS = frozenset(_EN.split()) | frozenset(_ES.split())
+STOPWORDS = frozenset(_EN.split())
 
 _WORD = re.compile(r"[^\W\d_]+(?:['’-][^\W\d_]+)*")
 _SENTENCE_END = re.compile(r"(?<=[.!?…])[\"”’)\]]*\s+(?=[\"“‘(\[¿¡]*[A-ZÁÉÍÓÚÑÜ\d])")

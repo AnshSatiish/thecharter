@@ -21,6 +21,8 @@ htmlcov/
 # Local data
 backend/data/uploads/
 backend/data/chroma/
+# Trained models are recreated by the scripts in backend/model_training
+backend/model_training/models/
 *.db
 
 # OS / editor

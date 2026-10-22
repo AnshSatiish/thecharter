@@ -1,0 +1,139 @@
+{
+  "projects": 7,
+  "authors": 7,
+  "categories": {
+    "anthropology": 1,
+    "news": 3,
+    "wildlife": 2,
+    "urban": 1
+  },
+  "categories_without_projects": [
+    "border"
+  ],
+  "sdg_tags": {
+    "SDG1": 3,
+    "SDG2": 1,
+    "SDG3": 2,
+    "SDG8": 1,
+    "SDG9": 1,
+    "SDG10": 6,
+    "SDG11": 5,
+    "SDG13": 2,
+    "SDG14": 1,
+    "SDG15": 1,
+    "SDG16": 4
+  },
+  "sdgs_per_project_mean": 3.9,
+  "sdgs_never_used": [
+    "SDG4",
+    "SDG5",
+    "SDG6",
+    "SDG7",
+    "SDG12",
+    "SDG17"
+  ],
+  "years": {
+    "2022": 1,
+    "2024": 6
+  },
+  "original_language": {
+    "en": 7
+  },
+  "author_roles": {
+    "academic": 2,
+    "journalist": 5
+  },
+  "description_words": {
+    "min": 22,
+    "median": 32,
+    "max": 40
+  },
+  "photos_per_project": {
+    "4": 7
+  },
+  "caption_words": {
+    "captions": 28,
+    "min": 11,
+    "median": 35,
+    "max": 114
+  },
+  "keywords_per_project": {
+    "min": 8,
+    "max": 11
+  },
+  "distinct_keywords": 59,
+  "keywords_shared_by_projects": {
+    "migration": 3,
+    "venezuela": 2,
+    "human rights": 2,
+    "displacement": 2,
+    "climate change": 2
+  },
+  "missing_or_empty_fields": {
+    "summary": 7
+  },
+  "projects_with_pdf": 0,
+  "latitude_range": [
+    -12.4,
+    35.8617
+  ],
+  "southern_hemisphere_projects": 3,
+  "passages": {
+    "total": 63,
+    "per_project_min": 6,
+    "per_project_max": 17
+  },
+  "project_similarity": {
+    "min": 0.56,
+    "mean": 0.67,
+    "max": 0.8,
+    "closest_pair": [
+      26,
+      27
+    ],
+    "furthest_pair": [
+      25,
+      27
+    ]
+  },
+  "synthetic": {
+    "projects": 30,
+    "categories": {
+      "wildlife": 6,
+      "anthropology": 6,
+      "urban": 6,
+      "border": 6,
+      "news": 6
+    },
+    "countries": 22,
+    "years": {
+      "2021": 1,
+      "2022": 7,
+      "2023": 11,
+      "2024": 8,
+      "2025": 3
+    },
+    "report_words": {
+      "min": 125,
+      "median": 143,
+      "max": 157
+    },
+    "reference_summary_words": {
+      "min": 29,
+      "median": 35,
+      "max": 42
+    },
+    "sdgs_used": 16,
+    "queries": {
+      "total": 122,
+      "with_answer": 113,
+      "by_type": {
+        "exact": 38,
+        "off-topic": 9,
+        "paraphrase": 70,
+        "topic": 5
+      },
+      "multi_relevant": 13
+    }
+  }
+}

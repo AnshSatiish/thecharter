@@ -9,13 +9,6 @@ EN = (
     "A local guide recommended a restaurant. "
     "Researchers warn that fishing communities could lose their income if the lake keeps warming."
 )
-ES = (
-    "El Tapón del Darién es una selva densa entre Colombia y Panamá. "
-    "Miles de migrantes cruzan la selva cada mes en busca de una vida mejor. "
-    "Ayer llovió mucho por la tarde. "
-    "Los migrantes enfrentan ríos crecidos, robos y enfermedades dentro de la selva. "
-    "Las organizaciones humanitarias piden rutas seguras para los migrantes que cruzan el Darién."
-)
 
 
 def test_split_sentences():
@@ -32,12 +25,6 @@ def test_summarize_english_keeps_order_and_drops_filler():
     positions = [EN.index(s) for s in sentences]
     assert positions == sorted(positions)
 
-
-def test_summarize_spanish():
-    summary = summarize(ES, max_sentences=2)
-    assert len(split_sentences(summary)) == 2
-    assert "llovió" not in summary
-    assert "migrantes" in summary
 
 
 def test_summarize_short_and_empty_text():
@@ -59,11 +46,6 @@ def test_keywords_english():
     words = [w for k in lowered for w in k.split()]
     assert len(words) == len(set(words))
 
-
-def test_keywords_spanish():
-    lowered = [k.lower() for k in extract_keywords(ES, top_k=4)]
-    assert "migrantes" in lowered and "selva" in lowered
-    assert not {"los", "una", "para", "que"} & set(lowered)
 
 
 def test_keywords_edge_cases():

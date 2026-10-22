@@ -220,6 +220,25 @@ def test_ai_summarize_and_keywords(client):
     assert client.post("/api/ai/summarize", json={}).status_code == 422
 
 
+def test_ai_summarize_with_the_model(client):
+    body = client.post("/api/ai/summarize", json={"text": "Lake Kivu is warming. Fishers report smaller catches.", "method": "ai"}).json()
+    assert body == {"summary": "Draft: Lake Kivu is warming", "method": "ai:test-stub", "fallback": False}
+
+
+def test_ai_summarize_falls_back_without_the_model(client):
+    from app.ai.summarization import SummarizerUnavailable, set_summarizer
+
+    class Broken:
+        name = "broken"
+
+        def summarize(self, text):
+            raise SummarizerUnavailable("no model")
+
+    set_summarizer(Broken())
+    body = client.post("/api/ai/summarize", json={"text": "One sentence here. Another one.", "method": "ai"}).json()
+    assert body["fallback"] is True and body["method"] == "extractive-baseline" and body["summary"]
+
+
 # Edits
 
 def test_patch_project(client):

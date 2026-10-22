@@ -122,7 +122,7 @@ def semantic_search(db: Session, q: str, limit: int = 20) -> list[Hit]:
     if not q.strip():
         return []
     embedder = get_embedder()
-    query = embedder.embed([q.strip()])[0]
+    query = embedder.embed_query(q.strip())
 
     if has_pgvector(db):
         nearest = min(limit * 10, 1000)  # several passages can belong to one project

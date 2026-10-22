@@ -1,9 +1,10 @@
 """Sentence embeddings for semantic search.
 
-A pretrained multilingual sentence model turns a passage into a vector; passages with similar
-meanings get similar vectors, in English or Spanish. The model is open source and runs on this
-machine through ONNX Runtime (fastembed), so there is no API key and no cost. It is downloaded
-once (about 220 MB) into EMBEDDING_CACHE_DIR.
+A pretrained sentence model turns a passage into a vector; passages with similar meanings get
+similar vectors. The model (bge-small-en-v1.5) was chosen against two lexical baselines and two
+other models by cross-validation (backend/model_training/compare_models.py). It is open source and
+runs on this machine through ONNX Runtime (fastembed), so there is no API key and no cost. It is
+downloaded once (about 66 MB) into EMBEDDING_CACHE_DIR.
 """
 import math
 import threading
@@ -20,7 +21,10 @@ class Embedder(Protocol):
     name: str
 
     def embed(self, texts: list[str]) -> list[list[float]]:
-        """One unit-length vector per text."""
+        """One unit-length vector per passage."""
+
+    def embed_query(self, text: str) -> list[float]:
+        """A unit-length vector for a search query (some models encode queries differently)."""
 
 
 def normalize(vector: list[float]) -> list[float]:
@@ -49,7 +53,10 @@ class FastEmbedEmbedder:
     def embed(self, texts: list[str]) -> list[list[float]]:
         if not texts:
             return []
-        return [normalize(v.tolist()) for v in self._load().embed(texts)]
+        return [normalize(v.tolist()) for v in self._load().passage_embed(texts)]
+
+    def embed_query(self, text: str) -> list[float]:
+        return normalize(next(iter(self._load().query_embed([text]))).tolist())
 
 
 _embedder: Embedder | None = None
