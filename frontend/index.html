@@ -362,6 +362,10 @@ body.locked .stage{inset:0}
 .gfld input:focus{outline:2px solid #1f3b44;outline-offset:1px;border-color:#1f3b44}
 .gfld input[aria-invalid="true"]{border-color:#b3261e}
 .gerr{min-height:18px;margin:-4px 0 8px;font-size:12.5px;color:#b3261e}
+.grole{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;margin:0 0 14px;background:#e8e0cd;border-radius:8px}
+.grole button{border:0;border-radius:6px;background:none;padding:9px 8px;font-size:13.5px;font-weight:600;color:#4a443d}
+.grole button[aria-checked="true"]{background:#fffdf8;color:#1f3b44;box-shadow:0 1px 3px rgba(31,59,68,.18)}
+.upload-btn[hidden]{display:none}
 .gkeep{display:flex;align-items:center;gap:8px;font-size:13px;color:#4a443d;margin-bottom:14px}
 .gkeep input{width:16px;height:16px;accent-color:#1f3b44}
 .gbtn{width:100%;border:0;border-radius:6px;background:var(--red-strong);color:#fff;font-weight:700;font-size:15px;padding:12px;letter-spacing:.02em}
@@ -545,13 +549,16 @@ body.locked .stage{inset:0}
       <form id="gSignin" novalidate>
         <h2 id="gateTitle">Sign in</h2>
         <p class="sub">Use the email your university or newsroom gave you.</p>
+        <div class="grole" id="gRole" role="radiogroup" aria-label="Sign in as">
+          <button type="button" role="radio" aria-checked="true" data-role="student">Student</button>
+          <button type="button" role="radio" aria-checked="false" data-role="admin">Administrator</button></div>
         <label class="gfld" for="gEmail">Institutional email<input id="gEmail" type="email" autocomplete="username" placeholder="name@university.edu" required></label>
         <label class="gfld" for="gPass">Password<input id="gPass" type="password" autocomplete="current-password" required></label>
         <p class="gerr" id="gErr" role="alert"></p>
         <label class="gkeep" for="gKeep"><input id="gKeep" type="checkbox" checked>Keep me signed in on this device</label>
         <button class="gbtn" type="submit" id="gSubmit">Enter the map</button>
         <div class="glinks"><button type="button" data-view="gForgot">Forgot password?</button><button type="button" data-view="gRequest">Request access</button></div>
-        <p class="gnote">Demo sign-in. Any institutional email and password are accepted until accounts are connected. Your password is not stored.</p>
+        <p class="gnote" id="gNote">Students can explore, search and save projects. Demo sign-in: any institutional email and password are accepted until student accounts are connected. Your password is not stored.</p>
       </form>
 
       <form id="gForgot" novalidate hidden>
@@ -586,7 +593,7 @@ body.locked .stage{inset:0}
   <nav class="nav" aria-label="Sections">
     <a href="#" id="navMap" aria-current="page">Map</a><button type="button" id="navProjects">Projects</button><span title="Not built yet">Community</span><span title="Not built yet">New entries</span><span title="Not built yet">Sponsors</span><span title="Not built yet">Events</span>
   </nav>
-  <div style="display:flex;gap:10px;align-items:center"><button class="upload-btn" id="adminOpen" type="button">+ Upload<span class="wide"> project</span></button><button class="user" id="userBtn" type="button" aria-label="Open my profile">PROFILE</button></div>
+  <div style="display:flex;gap:10px;align-items:center"><button class="upload-btn" id="adminOpen" type="button" hidden>+ Upload<span class="wide"> project</span></button><button class="user" id="userBtn" type="button" aria-label="Open my profile">PROFILE</button></div>
 </header>
 
 <main class="stage" id="stage">
@@ -1437,7 +1444,7 @@ const SAMPLE = {
 };
 const $=id=>document.getElementById(id);
 let adminState={sample:false};
-$("adminOpen").onclick=()=>{ if (!adminEl.hidden) return; rememberFocus("admin"); closePages(); drawer.classList.remove("open"); adminEl.hidden=false; syncHeader(); adminEl.scrollTop=0; syncHeader(); $("loadSample").focus(); };
+$("adminOpen").onclick=()=>{ if (!adminEl.hidden || !isAdmin) return; rememberFocus("admin"); closePages(); drawer.classList.remove("open"); adminEl.hidden=false; syncHeader(); adminEl.scrollTop=0; syncHeader(); $("loadSample").focus(); };
 $("adminClose").onclick=()=>{ adminEl.hidden=true; syncHeader(); draw(); restoreFocus("admin"); };
 
 // One row per photo: the picture, and the narration the admin writes for it.
@@ -1630,9 +1637,7 @@ async function renderSbAuth(){
   }
   const { data } = await sb.from("admins").select("user_id").eq("user_id", session.user.id);
   sbAdmin=!!data?.length;
-  box.innerHTML=`<p>${sbAdmin ? "Signed in as administrator" : "Signed in, but this account is not an administrator"}: <strong>${esc(session.user.email)}</strong></p>
-    <div class="row"><button class="btn" type="button" id="sbOut">Sign out</button></div>`;
-  $("sbOut").onclick=async()=>{ await sb.auth.signOut(); renderSbAuth(); };
+  box.innerHTML=`<p>${sbAdmin ? "Signed in as administrator" : "Signed in, but this account is not an administrator"}: <strong>${esc(session.user.email)}</strong></p>`;
 }
 $("adminOpen").addEventListener("click", renderSbAuth);
 
@@ -1709,7 +1714,7 @@ const INSTITUTIONS = [
 ];
 const KNOWN = [
   {match:/^(ansh|asatish|satish)/i, given:"Ansh", surname:"Satish", degree:"Software Engineering Technology (Artificial Intelligence)",
-    field:"Artificial Intelligence", role:"Student",
+    field:"Artificial Intelligence",
     bio:"AI student at Centennial College, building The Charter: a 3D globe of verified photojournalism with search by meaning and AI summaries.",
     interests:["Artificial Intelligence","Photojournalism","Semantic search","Maps"]},
 ];
@@ -1880,10 +1885,33 @@ const gate=$("gate"), SESSION_KEY="charter.session";
 const validEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim());
 const cap = s => s ? s[0].toUpperCase()+s.slice(1).toLowerCase() : s;
 const readSession = () => { try { return JSON.parse(localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY)); } catch { return null; } };
-function applyUser(email){
+// Two views: students explore, search and save; administrators also upload. The upload itself is enforced by
+// Supabase (row-level security allows writes only from accounts in the admins table), not by hiding the button.
+let isAdmin=false;
+function applyUser(email, role){
   // name and institution come from the email (first.last@school → First Last, School) until the holder edits them
   loadProfile(email);
+  isAdmin = role==="admin";
+  ME.role = isAdmin ? "Administrator" : ME.role;
   $("userBtn").textContent=ME.given.toUpperCase();
+  $("adminOpen").hidden=!isAdmin;
+  if (!isAdmin && !adminEl.hidden) $("adminClose").click();
+}
+let gRole="student";
+$("gRole").onclick=e=>{ const b=e.target.closest("[data-role]"); if (!b) return; gRole=b.dataset.role;
+  $("gRole").querySelectorAll("[data-role]").forEach(x=>x.setAttribute("aria-checked", x===b));
+  $("gNote").textContent = gRole==="admin"
+    ? "Administrators sign in with their Charter account. Only accounts on the administrator list can upload projects."
+    : "Students can explore, search and save projects. Demo sign-in: any institutional email and password are accepted until student accounts are connected. Your password is not stored.";
+  $("gErr").textContent=""; };
+// An administrator signs in to Supabase for real; the account must be in the admins table.
+async function adminSignIn(email, pass){
+  if (!sb) return null; // local development without Supabase: the backend's admin token is used instead
+  const { data, error } = await sb.auth.signInWithPassword({ email, password:pass });
+  if (error) return "That email and password did not work.";
+  const { data:rows } = await sb.from("admins").select("user_id").eq("user_id", data.user.id);
+  if (!rows?.length) { await sb.auth.signOut(); return "This account is not an administrator. Sign in as a student instead."; }
+  return null;
 }
 function lock(){
   document.body.classList.add("locked"); gate.hidden=false; gate.classList.remove("leaving","stamped");
@@ -1901,16 +1929,23 @@ function unlock(animate){
 function showGateView(id){ ["gSignin","gForgot","gRequest"].forEach(v=>$(v).hidden=v!==id);
   const first=$(id).querySelector("input"); if (first && !gate.hidden) first.focus(); }
 gate.addEventListener("click",e=>{ const b=e.target.closest("[data-view]"); if (b) showGateView(b.dataset.view); });
-$("gSignin").addEventListener("submit",e=>{
+$("gSignin").addEventListener("submit",async e=>{
   e.preventDefault();
   const email=$("gEmail").value.trim(), pass=$("gPass").value;
   const badEmail=!validEmail(email), badPass=!pass;
   $("gEmail").setAttribute("aria-invalid",badEmail); $("gPass").setAttribute("aria-invalid",badPass);
   $("gErr").textContent = badEmail ? "Enter your institutional email, like name@university.edu." : badPass ? "Enter your password." : "";
   if (badEmail) return $("gEmail").focus(); if (badPass) return $("gPass").focus();
-  try { ($("gKeep").checked ? localStorage : sessionStorage).setItem(SESSION_KEY, JSON.stringify({email})); } catch {}
-  $("gPass").value=""; $("gSubmit").disabled=true;
-  applyUser(email); unlock(true);
+  $("gSubmit").disabled=true;
+  if (gRole==="admin"){
+    $("gSubmit").textContent="Checking…";
+    const err=await adminSignIn(email, pass);
+    $("gSubmit").textContent="Enter the map";
+    if (err) { $("gErr").textContent=err; $("gSubmit").disabled=false; return; }
+  } else if (sb) await sb.auth.signOut(); // a student session never carries upload rights
+  try { ($("gKeep").checked ? localStorage : sessionStorage).setItem(SESSION_KEY, JSON.stringify({email, role:gRole})); } catch {}
+  $("gPass").value="";
+  applyUser(email, gRole); unlock(true);
 });
 $("gForgot").addEventListener("submit",e=>{
   e.preventDefault(); const v=$("gFEmail").value.trim(), bad=!validEmail(v);
@@ -1928,6 +1963,7 @@ $("gRequest").addEventListener("submit",e=>{
 });
 function signOut(){
   try { localStorage.removeItem(SESSION_KEY); sessionStorage.removeItem(SESSION_KEY); } catch {}
+  if (sb) sb.auth.signOut();
   closeProfile(); showRoute(false); adminEl.hidden=true; syncHeader(); closeStory(); lock();
 }
 
@@ -2112,7 +2148,11 @@ fetch("countries-110m.json").then(r=>r.json()).then(world=>{
 }).catch(()=>{ document.querySelector(".hint").textContent="Country shapes failed to load. Pins still work."; });
 addEventListener("resize",resize);
 if (innerWidth<760) setPanel(false);
-{ const s=readSession(); if (s?.email && validEmail(s.email)) applyUser(s.email); else { document.body.classList.add("locked"); gate.hidden=false; $("gEmail").focus(); } }
+{ const s=readSession(); if (s?.email && validEmail(s.email)) {
+    applyUser(s.email, s.role);
+    // an administrator view needs a live Supabase session; if it has expired, fall back to the student view
+    if (s.role==="admin" && sb) sb.auth.getSession().then(({ data }) => { if (!data.session) applyUser(s.email, "student"); });
+  } else { document.body.classList.add("locked"); gate.hidden=false; $("gEmail").focus(); } }
 resize(); refresh(); requestAnimationFrame(loop);
 loadFromApi();
 </script>
