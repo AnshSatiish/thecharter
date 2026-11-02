@@ -1,0 +1,39 @@
+PROJECT TO UPLOAD LIVE IN THE DEMO (synthetic example; delete it from Supabase after rehearsing)
+
+Files in this folder
+  after-the-white-winter-report.pdf                        -> step 1 "Project document (PDF)"
+  photo-1-winter-camp.jpg, photo-2-hay-delivery.jpg,
+  photo-3-spring.jpg                                        -> step 2 "Photographs and narration"
+
+STEP 1  Summary (paste into the Summary box that appears under the PDF)
+  A dzud, a winter too harsh for animals to reach the grass, killed millions of livestock in Mongolia in 2024. The project follows herding families through the winter and the spring, when some rebuild their herds and others leave for the city.
+
+STEP 2  Narration (one per photo)
+  Photo 1 (winter camp):    The family's winter camp in Arkhangai after the first heavy snow. The animals are kept close to the wooden shelter at night.
+  Photo 2 (hay delivery):   Emergency hay arrives from the provincial centre. Neighbours carry the bales to their own herds before the next storm.
+  Photo 3 (spring):         In April the herd is a fraction of its autumn size. The family is deciding whether to stay or move to Ulaanbaatar.
+
+STEP 3  Author
+  Name:          Oyuna Batbayar (example)
+  Affiliation:   Steppe Light Collective
+  Website:       (leave empty)
+
+STEP 4  Title and description
+  Title:         After the White Winter
+  Description:   Herding families in central Mongolia fight to keep their animals alive through a dzud, an extreme winter that buries the pasture under snow and ice. When spring comes, many have lost most of their herds and must choose between rebuilding and moving to the city.
+
+STEP 5  Skip on the live site
+
+STEP 6  Location and details
+  Category:      Anthropology
+  Place name:    Arkhangai Province, Mongolia
+  Date:          2024-03-15
+  Latitude:      47.5000
+  Longitude:     101.4500
+  UN SDGs:       1 No poverty, 2 Zero hunger, 13 Climate action
+
+STEP 7  Approve and publish
+
+AFTER PUBLISHING, show the AI search finding it (click "By meaning"):
+  herders losing their animals in a harsh winter
+  families leaving the countryside for the city
