@@ -454,6 +454,13 @@ body.locked .stage{inset:0}
 .feat-card strong{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13.5px;line-height:1.3;font-weight:600;margin-top:2px}
 .feat-card small{display:block;font-size:11.5px;color:#6f675f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
 .pp-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.card-acts{display:flex;gap:8px;align-items:stretch}
+.card-acts .open{flex:1}
+.card .save,.save-btn{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:13px}
+.card .save{border:1px solid var(--line);background:#fff;color:var(--text);border-radius:6px;padding:0 12px}
+.card .save[aria-pressed="true"],.save-btn[aria-pressed="true"]{background:#1f3b44;border-color:#1f3b44;color:#fff}
+.card .save[aria-pressed="true"] path,.save-btn[aria-pressed="true"] path{fill:currentColor}
+.pp-empty{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:8px 0 0;font-size:14px;color:var(--muted)}
 .ppedit{display:grid;gap:12px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:18px}
 .ppedit[hidden]{display:none}
 .pp-in .crumbs .end{display:flex;gap:8px}
@@ -1288,7 +1295,7 @@ function select(d){
         <h3>${esc(p.title)}</h3>
         <div class="meta">${esc(p.loc)} · ${p.year}</div>
         ${p.verified?"":'<div class="pending">Curation pending. Details not yet checked.</div>'}
-        <button class="open" type="button">Open project</button>
+        <div class="card-acts"><button class="open" type="button">Open project</button>${saveBtn(p,"save")}</div>
       </div></div>`;
     card.querySelector(".open").onclick=()=>openStory(p);
   } else {
@@ -1361,7 +1368,7 @@ function openStory(p){
   rememberFocus("story"); adminEl.hidden=true; syncHeader(); profileEl.hidden=true;
   const c=CATS[p.cat];
   const pics=Array.from({length:p.imgs},(_,i)=>`<figure><button class="shot" type="button" data-i="${i}" aria-label="View photograph ${i+1} full screen"><img src="${img(p,i)}" alt="Photograph ${i+1} from ${esc(p.title)}" loading="lazy"></button>${p.caps?.[i] ? `<figcaption>${esc(p.caps[i])}</figcaption>` : ""}</figure>`).join("");
-  story.innerHTML=`<nav class="crumbs" aria-label="You are here"><button type="button" class="home" id="storyClose">Map</button><span aria-hidden="true">/</span><span aria-current="page">Project</span></nav>
+  story.innerHTML=`<nav class="crumbs" aria-label="You are here"><button type="button" class="home" id="storyClose">Map</button><span aria-hidden="true">/</span><span aria-current="page">Project</span><span class="end">${saveBtn(p,"btn save-btn")}</span></nav>
     <div class="hero" style="background-image:url('${imgFull(p)}')"></div>
     <article class="story-in">
       <h2>${esc(p.title)}</h2>
@@ -1741,30 +1748,54 @@ function loadProfile(email){
   ME.no=`TC${since.slice(2,4)}${since.slice(5,7)}${String(h).padStart(3,"0")}`;
   ME.home=homeFor(ME.based) ?? CITIES.toronto;
 }
-const SAVED = [
-  {id:"17", code:"MEX", country:"Mexico", continent:"North America", on:"2024-11-02"},
-  {id:"25", code:"KEN", country:"Kenya", continent:"Africa", on:"2025-01-19"},
-];
-// Projects the holder uploads get a stamp too (kept in this browser per email until profile endpoints exist).
-const STAMPS_KEY = () => "charter.stamps."+(ME.email || "").toLowerCase();
+// Stamps: projects the holder saves (students and administrators) and projects an administrator uploads.
+// Kept in this browser per email until profile endpoints exist.
+const listKey = kind => `charter.${kind}.${(ME.email || "").toLowerCase()}`;
+const readList = kind => { try { return JSON.parse(localStorage.getItem(listKey(kind))) ?? []; } catch { return []; } };
+const writeList = (kind, list) => { try { localStorage.setItem(listKey(kind), JSON.stringify(list)); } catch {} };
 const COUNTRY_CODES = { mongolia:["MNG","Asia"], bangladesh:["BGD","Asia"], india:["IND","Asia"], china:["CHN","Asia"], japan:["JPN","Asia"],
   canada:["CAN","North America"], "united states":["USA","North America"], usa:["USA","North America"], mexico:["MEX","North America"],
   brazil:["BRA","South America"], peru:["PER","South America"], colombia:["COL","South America"], kenya:["KEN","Africa"], nigeria:["NGA","Africa"],
   rwanda:["RWA","Africa"], ghana:["GHA","Africa"], "côte d'ivoire":["CIV","Africa"], france:["FRA","Europe"], "united kingdom":["GBR","Europe"],
   australia:["AUS","Oceania"] };
+// Places whose last comma part is not a country name.
+const PLACE_CODES = [[/colombia-panama/i,"Colombia · Panama","COL"], [/rwanda\/drc/i,"Rwanda · DR Congo","RWA"], [/us-mexico border/i,"Mexico · US border","MEX"]];
 const continentAt = (lat,lng) => lng<-30 ? (lat>12 ? "North America" : "South America") : lng<60 ? (lat>35 ? "Europe" : "Africa") : lat<-10 ? "Oceania" : "Asia";
-function uploadStamps(){
-  let list=[]; try { list=JSON.parse(localStorage.getItem(STAMPS_KEY())) ?? []; } catch {}
-  return list.map(s=>{ const p=PROJECTS.find(x=>x.id===s.id); if (!p) return null;
-    const country=(p.loc || "").split(",").pop().trim() || "Field entry", hit=COUNTRY_CODES[country.toLowerCase()];
-    return { id:s.id, on:s.on, country, code:hit?.[0] ?? country.replace(/[^A-Za-z]/g,"").slice(0,3).toUpperCase(), continent:hit?.[1] ?? continentAt(p.lat,p.lng) };
-  }).filter(Boolean);
+function stampInfo(p){
+  const place=PLACE_CODES.find(([re])=>re.test(p.loc || ""));
+  const country=place?.[1] ?? ((p.loc || "").split(",").pop().trim() || "Field entry"), hit=COUNTRY_CODES[country.toLowerCase()];
+  return { country, code:place?.[2] ?? hit?.[0] ?? country.replace(/[^A-Za-z]/g,"").slice(0,3).toUpperCase(), continent:hit?.[1] ?? continentAt(p.lat,p.lng) };
+}
+const isSaved = id => readList("saved").some(s=>s.id===id);
+function toggleSaved(id){
+  const list=readList("saved"), on=!list.some(s=>s.id===id);
+  writeList("saved", on ? [...list, { id, on:new Date().toISOString().slice(0,10) }] : list.filter(s=>s.id!==id));
+  return on;
 }
 function addUploadStamp(id){
-  let list=[]; try { list=JSON.parse(localStorage.getItem(STAMPS_KEY())) ?? []; } catch {}
-  if (!list.some(s=>s.id===id)) list.push({ id, on:new Date().toISOString().slice(0,10) });
-  try { localStorage.setItem(STAMPS_KEY(), JSON.stringify(list)); } catch {}
+  const list=readList("uploads");
+  if (!list.some(s=>s.id===id)) writeList("uploads", [...list, { id, on:new Date().toISOString().slice(0,10) }]);
 }
+// One stamp per project; an upload wins over a save of the same project.
+function stampEntries(){
+  const rows=new Map();
+  for (const s of readList("saved")) rows.set(s.id, {...s, how:"saved"});
+  if (isAdmin) for (const s of readList("uploads")) rows.set(s.id, {...s, how:"uploaded"});
+  return [...rows.values()].map(s=>{ const p=PROJECTS.find(x=>x.id===s.id); return p ? {...s, ...stampInfo(p), p} : null; })
+    .filter(Boolean).sort((a,b)=>a.on.localeCompare(b.on));
+}
+// A Save button: on the map preview card and on the project page.
+const saveLabel = on => on ? "Saved" : "Save";
+function saveBtn(p, cls){
+  const on=isSaved(p.id);
+  return `<button type="button" class="${cls}" data-save="${esc(p.id)}" aria-pressed="${on}"><svg class="ic ic-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v16l-5-4-5 4z"/></svg><span>${saveLabel(on)}</span></button>`;
+}
+document.addEventListener("click", e=>{
+  const b=e.target.closest("[data-save]"); if (!b) return;
+  const on=toggleSaved(b.dataset.save);
+  document.querySelectorAll(`[data-save="${CSS.escape(b.dataset.save)}"]`).forEach(x=>{ x.setAttribute("aria-pressed", on); x.querySelector("span").textContent=saveLabel(on); });
+  if (routeLegs) showRoute(true);
+});
 const MONTHS=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
 const pdate = iso => { const [y,m,d]=iso.split("-"); return `${d} ${MONTHS[+m-1]} ${y}`; };
 // ICAO 9303 check digit (weights 7-3-1): the machine-readable zone is computed, not decorative.
@@ -1777,20 +1808,20 @@ function mrzLines(p){
   const l2=(`${doc}${mrzCheck(doc)}${p.country}${issued}${mrzCheck(issued)}<${expires}${mrzCheck(expires)}`+clean(p.degree.replace(/^Master in /,""))).padEnd(43,"<").slice(0,43);
   return [l1, l2+mrzCheck(l2)];
 }
-const savedEntries = () => [...SAVED, ...uploadStamps()].map(s=>({...s, p:PROJECTS.find(x=>x.id===s.id)})).filter(s=>s.p).sort((a,b)=>a.on.localeCompare(b.on));
+const savedEntries = stampEntries;
 const INK = Object.fromEntries(Object.entries(CATS).map(([k,c])=>[k,c.ink]));
 function stampSVG(e,i){
   const ink=INK[e.p.cat]||INK.news, id="s"+i, top=esc(e.country.toUpperCase().slice(0,20)), coord=fmtLL(e.p.lat,e.p.lng);
   const T=(x,y,size,txt,extra="")=>`<text x="${x}" y="${y}" text-anchor="middle" fill="${ink}" stroke="none" font-family="'IBM Plex Mono',monospace" font-size="${size}" ${extra}>${txt}</text>`;
   const code=`<text x="100" y="80" text-anchor="middle" fill="${ink}" stroke="none" font-family="'Cormorant Garamond',serif" font-weight="700" font-size="32">${e.code}</text>`;
   const shapes=[
-    `<circle cx="100" cy="75" r="68" stroke-width="3.2"/><circle cx="100" cy="75" r="62" stroke-width="1.2"/>${T(100,42,9,top,'font-weight="600" letter-spacing="2"')}${code}${T(100,99,8.5,pdate(e.on))}${T(100,115,7,"THE CHARTER · ENTRY")}`,
-    `<rect x="14" y="16" width="172" height="118" rx="10" stroke-width="3.2"/><rect x="21" y="23" width="158" height="104" rx="6" stroke-width="1.2"/>${T(100,44,10,"ENTRY · ADMITTED",'font-weight="600" letter-spacing="3"')}${code}<line x1="34" y1="92" x2="166" y2="92" stroke-width="1.2"/>${T(100,106,9,pdate(e.on))}${T(100,119,7.5,coord)}`,
+    `<circle cx="100" cy="75" r="68" stroke-width="3.2"/><circle cx="100" cy="75" r="62" stroke-width="1.2"/>${T(100,42,9,top,'font-weight="600" letter-spacing="2"')}${code}${T(100,99,8.5,pdate(e.on))}${T(100,115,7,e.how==="uploaded" ? "UPLOADED · THE CHARTER" : "THE CHARTER · ENTRY")}`,
+    `<rect x="14" y="16" width="172" height="118" rx="10" stroke-width="3.2"/><rect x="21" y="23" width="158" height="104" rx="6" stroke-width="1.2"/>${T(100,44,10,e.how==="uploaded" ? "UPLOADED" : "ENTRY · ADMITTED",'font-weight="600" letter-spacing="3"')}${code}<line x1="34" y1="92" x2="166" y2="92" stroke-width="1.2"/>${T(100,106,9,pdate(e.on))}${T(100,119,7.5,coord)}`,
     `<polygon points="62,10 138,10 186,50 186,100 138,140 62,140 14,100 14,50" stroke-width="3.2"/><polygon points="65,18 135,18 178,53 178,97 135,132 65,132 22,97 22,53" stroke-width="1.2"/>${T(100,42,9,top,'font-weight="600" letter-spacing="2"')}${code}${T(100,100,8.5,pdate(e.on))}${T(100,116,7,esc(CATS[e.p.cat].label.toUpperCase().slice(0,26)))}`,
     `<ellipse cx="100" cy="75" rx="88" ry="60" stroke-width="3.2"/><ellipse cx="100" cy="75" rx="81" ry="53" stroke-width="1.2"/>${T(100,46,9,top,'font-weight="600" letter-spacing="2"')}${code}${T(100,101,8.5,pdate(e.on))}${T(100,114,7,coord)}`,
   ];
   const tilt=(Math.abs([...e.p.id].reduce((h,c)=>(h*31+c.charCodeAt(0))|0,7))%26)-13;
-  return `<button class="stamp" type="button" data-id="${e.p.id}" style="transform:rotate(${tilt}deg)" aria-label="${esc(e.p.title)}, saved ${pdate(e.on)}. Open project.">
+  return `<button class="stamp" type="button" data-id="${e.p.id}" style="transform:rotate(${tilt}deg)" aria-label="${esc(e.p.title)}, ${e.how} ${pdate(e.on)}. Show on the globe.">
     <svg viewBox="0 0 200 150"><defs><filter id="ink-${id}" x="-5%" y="-5%" width="110%" height="110%">
       <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="${i*7+3}" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.6" result="d"/>
       <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="3" seed="${i+3}" result="patch"/>
@@ -1811,6 +1842,25 @@ function openProfile(){
   const es=savedEntries(), [m1,m2]=mrzLines(ME), full=`${ME.given} ${ME.surname}`;
   const stops=[ME.home, ...es.map(e=>[e.p.lng,e.p.lat])];
   const km=Math.round(stops.slice(1).reduce((s,to,i)=>s+d3.geoDistance(stops[i],to)*6371,0));
+  const tile=p=>`<button class="feat-card" type="button" data-id="${p.id}">
+        <img src="${img(p)}" alt="" loading="lazy"><div><b style="color:${INK[p.cat]||INK.news}">${esc(CATS[p.cat].label)}</b><strong>${esc(p.title)}</strong><small>${esc(p.loc)}${p.verified ? "" : " · curation pending"}</small></div></button>`;
+  const savedN=es.filter(e=>e.how==="saved").length, uploads=es.filter(e=>e.how==="uploaded").map(e=>e.p);
+  let shelf;
+  if (isAdmin){
+    shelf=`<section aria-labelledby="featH"><div class="feat-h"><h2 id="featH">Your uploads</h2><span>${uploads.length ? "Newest first, with curation status" : ""}</span></div>
+      ${uploads.length ? `<div class="feat-row">${uploads.reverse().map(tile).join("")}</div>`
+        : '<p class="pp-empty">Nothing uploaded yet. <button type="button" class="btn" id="ppUpload">Upload a project</button></p>'}</section>`;
+  } else {
+    // Suggestions: unsaved projects in the categories the student saves most, then the newest.
+    const cats=es.reduce((m,e)=>m.set(e.p.cat,(m.get(e.p.cat) ?? 0)+1), new Map());
+    const pool=PROJECTS.filter(p=>!es.some(e=>e.p.id===p.id));
+    const picks=[...pool].sort((a,b)=>(cats.get(b.cat) ?? 0)-(cats.get(a.cat) ?? 0) || b.date.localeCompare(a.date)).slice(0,4);
+    shelf=picks.length ? `<section aria-labelledby="featH"><div class="feat-h"><h2 id="featH">${es.length ? "Suggested for you" : "Start exploring"}</h2><span>${es.length ? "Close to what you save" : "Newest in the library"}</span></div>
+      <div class="feat-row">${picks.map(tile).join("")}</div></section>` : "";
+  }
+  const stats = isAdmin
+    ? [["Uploaded", uploads.length], ["Saved", savedN], ["Countries", new Set(es.map(e=>e.code)).size], ["Route length", `${km.toLocaleString()} km`]]
+    : [["Saved projects", es.length], ["Countries", new Set(es.map(e=>e.code)).size], ["Continents", new Set(es.map(e=>e.continent)).size], ["Route length", `${km.toLocaleString()} km`]];
   const check='<svg width="15" height="15" viewBox="0 0 24 24" aria-label="Verified institutional email" style="vertical-align:-2px"><path fill="#1d8cf0" d="M12 1.5l2.6 1.9 3.2-.2 1 3 2.7 1.8-1 3 1 3-2.7 1.8-1 3-3.2-.2L12 22.5l-2.6-1.9-3.2.2-1-3L2.5 16l1-3-1-3 2.7-1.8 1-3 3.2.2z"/><path d="m7.8 12.2 2.8 2.8 5.6-5.8" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   profileEl.innerHTML=`<div class="pp-in">
     <nav class="crumbs" aria-label="You are here"><button type="button" class="home" id="ppClose">Map</button><span aria-hidden="true">/</span><span aria-current="page">My profile</span>
@@ -1844,17 +1894,14 @@ function openProfile(){
         <div class="mrz mono" aria-label="Machine readable zone"><p>${esc(m1)}</p><p>${esc(m2)}</p></div>
       </div>
       <div class="pg entries">
-        <div class="ent-h"><h2>Entries</h2><span class="pp-sub">VISAS · SAVED PROJECTS · PAGE 07</span></div>
-        <p style="margin:4px 0 0;font-size:13px;color:#6f675f">Each project you save or upload gets a stamp. Click one to see it on the globe.</p>
-        <div class="stamps">${es.map(stampSVG).join("")}<div class="stamp-next"><div class="mono">NEXT ENTRY<br>save or upload<br>a project</div></div></div>
+        <div class="ent-h"><h2>Entries</h2><span class="pp-sub">${isAdmin ? "VISAS · UPLOADED AND SAVED" : "VISAS · SAVED PROJECTS"} · PAGE 07</span></div>
+        <p style="margin:4px 0 0;font-size:13px;color:#6f675f">${isAdmin ? "Each project you upload or save gets a stamp." : "Each project you save gets a stamp."} Click one to see it on the globe.</p>
+        <div class="stamps">${es.map(stampSVG).join("")}<div class="stamp-next"><div class="mono">${es.length ? "NEXT ENTRY" : "FIRST ENTRY"}<br>${isAdmin ? "upload or save<br>a project" : "save a project<br>from the map"}</div></div></div>
       </div>
     </div></section>
-    <section aria-labelledby="featH"><div class="feat-h"><h2 id="featH">Featured projects</h2><span>Newest in the library</span></div>
-      <div class="feat-row">${[...PROJECTS].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,4).map(p=>`<button class="feat-card" type="button" data-id="${p.id}">
-        <img src="${img(p)}" alt="" loading="lazy"><div><b style="color:${INK[p.cat]||INK.news}">${esc(CATS[p.cat].label)}</b><strong>${esc(p.title)}</strong><small>${esc(p.loc)}</small></div></button>`).join("")}</div></section>
-    <dl class="pp-stats"><div><dt>Entries</dt><dd>${es.length}</dd></div><div><dt>Countries</dt><dd>${new Set(es.map(e=>e.code)).size}</dd></div>
-      <div><dt>Continents</dt><dd>${new Set(es.map(e=>e.continent)).size}</dd></div><div><dt>Route length</dt><dd>${km.toLocaleString()} km</dd></div></dl>
-    <div class="pp-actions"><button class="btn primary" type="button" id="showRoute">Show my route on the globe</button></div>
+    ${shelf}
+    <dl class="pp-stats">${stats.map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl>
+    <div class="pp-actions">${es.length ? '<button class="btn primary" type="button" id="showRoute">Show my route on the globe</button>' : ""}</div>
   </div>`;
   profileEl.hidden=false; profileEl.scrollTop=0; closeCard(); syncHeader();
   $("ppClose").onclick=closeProfile; $("ppClose").focus();
@@ -1871,9 +1918,10 @@ function openProfile(){
     applyUser(ME.email); if (routeLegs) showRoute(true);
     closeProfile(); openProfile();
   };
-  $("showRoute").onclick=()=>{ closeProfile(); showRoute(true); };
-  profileEl.querySelector(".feat-row").onclick=e=>{ const b=e.target.closest(".feat-card"); if(!b) return;
-    closeProfile(); const p=PROJECTS.find(x=>x.id===b.dataset.id); if(p) openStory(p); };
+  if ($("showRoute")) $("showRoute").onclick=()=>{ closeProfile(); showRoute(true); };
+  if ($("ppUpload")) $("ppUpload").onclick=()=>{ closeProfile(); $("adminOpen").click(); };
+  profileEl.querySelectorAll(".feat-row").forEach(row=>row.onclick=e=>{ const b=e.target.closest(".feat-card"); if(!b) return;
+    closeProfile(); const p=PROJECTS.find(x=>x.id===b.dataset.id); if(p) openStory(p); });
   profileEl.querySelector(".stamps").onclick=e=>{ const b=e.target.closest(".stamp"); if(!b) return;
     closeProfile(); const d=items.find(x=>x.p.id===b.dataset.id); if(d) select(d); };
 }
@@ -1971,7 +2019,7 @@ function signOut(){
 var routeLegs=null; // var: draw() can run before this line executes
 function showRoute(on){
   routeLegs = on ? (()=>{ const s=[ME.home, ...savedEntries().map(e=>[e.p.lng,e.p.lat])]; return s.slice(1).map((to,i)=>[s[i],to]); })() : null;
-  $("routeTxt").textContent=`Showing ${ME.given}'s route · ${savedEntries().length} saved projects`;
+  $("routeTxt").textContent=`Showing ${ME.given}'s route · ${savedEntries().length} ${isAdmin ? "projects" : "saved projects"}`;
   $("routechip").hidden=!on; state.auto=false;
   if (on) flyTo(ME.home); else draw();
 }
