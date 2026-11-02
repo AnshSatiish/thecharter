@@ -244,6 +244,23 @@ button:not(:disabled):active{transform:translateY(1px)}
 .examples button{border:0;background:none;color:#6b3fd1;font-size:12px;padding:2px 0;text-decoration:underline;text-underline-offset:2px;margin-right:8px}
 .qstatus{font-size:12px;color:var(--muted);margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .why{color:#6b3fd1 !important;font-weight:600}
+.aistat{margin-top:10px;border:1px solid #d9cdf7;background:linear-gradient(180deg,#f7f3ff,#fffdf9);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:7px}
+.aistat .h{display:flex;align-items:center;flex-wrap:wrap;gap:6px 7px;font-size:13px;font-weight:700;color:#4b2aa8}
+.aistat .h .t{white-space:nowrap}
+.aistat .h svg{width:15px;height:15px;flex:none}
+.aistat .tag{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5b33c4;background:#ebe4ff;border-radius:999px;padding:2px 8px;white-space:nowrap}
+.aistat .m{font-size:12px;color:#4a4237;line-height:1.45;display:flex;align-items:center;gap:7px}
+.aistat .m .dot{width:8px;height:8px;border-radius:50%;background:#b9a2f5;flex:none}
+.aistat.ready .m .dot{background:#1f9d55;box-shadow:0 0 0 3px rgba(31,157,85,.16)}
+.aistat.failed .m .dot{background:#c8351b}
+.aibar{height:4px;border-radius:2px;background:#e6defb;overflow:hidden}
+.aibar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#7c4dff,#6b3fd1);transition:width .25s}
+.aistat.indexing .aibar i{width:100%;animation:aipulse 1s ease-in-out infinite alternate}
+@keyframes aipulse{from{opacity:.35}to{opacity:1}}
+.aistat.ready .aibar,.aistat.failed .aibar,.aistat.idle .aibar{display:none}
+.smode button svg{width:12px;height:12px;vertical-align:-1px;margin-right:4px;color:#6b3fd1}
+.simbar{display:inline-block;width:56px;height:5px;border-radius:3px;background:#e6defb;vertical-align:middle;margin-left:7px;overflow:hidden}
+.simbar i{display:block;height:100%;background:#6b3fd1;border-radius:3px}
 .whyq{font-style:italic;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .upload-btn{white-space:nowrap;border:1px solid var(--orange);background:transparent;color:var(--orange);border-radius:4px;padding:6px 12px;font-size:12px;font-weight:700;letter-spacing:.06em}
 .upload-btn:hover{background:var(--orange);color:#fff}
@@ -591,7 +608,12 @@ body.locked .stage{inset:0}
         </label>
         <div class="smode" role="group" aria-label="Search type">
           <button type="button" data-smode="keywords" aria-pressed="true">Keywords</button>
-          <button type="button" data-smode="meaning" aria-pressed="false">By meaning</button>
+          <button type="button" data-smode="meaning" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2l1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9zM19 14l.9 2.6 2.6.9-2.6.9L19 21l-.9-2.6-2.6-.9 2.6-.9zM5 15l.7 1.8 1.8.7-1.8.7L5 20l-.7-1.8L2.5 17.5l1.8-.7z"/></svg>By meaning</button>
+        </div>
+        <div class="aistat idle" id="aiStat" hidden role="status" aria-live="polite">
+          <div class="h"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2l1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9zM19 14l.9 2.6 2.6.9-2.6.9L19 21l-.9-2.6-2.6-.9 2.6-.9zM5 15l.7 1.8 1.8.7-1.8.7L5 20l-.7-1.8L2.5 17.5l1.8-.7z"/></svg><span class="t">AI semantic search</span><span class="tag">Runs in your browser</span></div>
+          <div class="m" id="aiMsg"><span class="dot"></span><span>Model bge-small-en-v1.5</span></div>
+          <div class="aibar"><i id="aiBar"></i></div>
         </div>
         <div class="examples" id="examples" hidden></div>
         <div class="qstatus" id="qstatus"></div>
@@ -823,7 +845,7 @@ const state = {
 function visibleItems(){
   const q = state.q.trim().toLowerCase();
   const res = currentSearch();
-  const hits = q && state.semantic && !apiLive ? meaningHits(q) : {};   // prepared stand-in, only without the backend
+  const hits = q && state.semantic && !apiLive && ai.state==="failed" ? meaningHits(q) : {};   // stand-in only if the model cannot run
   const why = {};
   const list = PROJECTS.filter(p => {
     if (!(state.cats.has(p.cat) && p.year>=state.y0 && p.year<=state.y1 &&
@@ -833,7 +855,7 @@ function visibleItems(){
     const h = res?.hits.get(p.id);
     if (h) {
       if (h.matched_by.includes("semantic") && h.passage) why[p.id] = { meaning:true,
-        label:`Related by meaning · similarity ${h.similarity.toFixed(2)}`,
+        label:`Related by meaning · similarity ${h.similarity.toFixed(2)}`, sim:h.similarity,
         passage:(h.passage_document ? `From “${h.passage_document}”: ` : "") + h.passage };
       else if (!inPage && p.docs?.length) why[p.id] = {label:"Found in the project document"};
       return true;
@@ -861,7 +883,8 @@ const currentSearch = () => apiSearch && apiSearch.q===state.q.trim() && apiSear
 function searchApi(){
   clearTimeout(qTimer);
   const q=state.q.trim(), semantic=state.semantic;
-  if (!apiLive || !q) { apiSearch=null; return; }
+  if (!q) { apiSearch=null; return; }
+  if (!apiLive) { if (semantic && AI_OK) qTimer=setTimeout(()=>browserSearch(q), 200); return; }
   qTimer=setTimeout(async()=>{
     try { const r=await fetch(`${API_BASE}/api/projects/search?q=${encodeURIComponent(q)}&mode=${semantic?"hybrid":"keyword"}&limit=50`); if (!r.ok) return;
       const body=await r.json(); if (state.q.trim()!==q || state.semantic!==semantic) return;
@@ -871,19 +894,124 @@ function searchApi(){
       refresh(); } catch {}
   }, 250);
 }
+// ---------- search by meaning in the browser ----------
+// Without the backend (the deployed site), "By meaning" runs the embedding model the backend uses,
+// bge-small-en-v1.5, inside the visitor's browser with Transformers.js: no server and no key. The model
+// (34 MB) downloads once and the browser keeps it. Every project is cut into passages of whole sentences,
+// the passages and the query are embedded, and each project scores the cosine similarity of its best passage.
+var AI_OK = typeof WebAssembly === "object";
+const AI_MODEL = "Xenova/bge-small-en-v1.5", AI_LABEL = "bge-small-en-v1.5";
+const AI_QUERY = "Represent this sentence for searching relevant passages: ";   // bge's instruction for queries
+const AI_MIN = 0.55, AI_REL = 0.9;   // a passage counts if it scores at least 0.55 and within 90% of the best one (set on the sample projects: off-topic queries peak near 0.50)
+var ai = { state:"idle", extractor:null, index:null, key:"", promise:null, progress:0, mb:0, total:34, passages:0, lastMs:0 };
+function aiStat(){
+  const box=document.getElementById("aiStat");
+  box.hidden = !(state.semantic && !apiLive && AI_OK);
+  box.className="aistat "+ai.state;
+  const msg = {
+    idle: `Model ${AI_LABEL}. It loads when you search (${ai.total} MB, once).`,
+    loading: `Downloading the model… ${ai.mb.toFixed(0)} of ${ai.total.toFixed(0)} MB`,
+    indexing: `Reading ${PROJECTS.length} projects into vectors…`,
+    ready: `${AI_LABEL} ready · ${ai.passages} passages from ${PROJECTS.length} projects${ai.lastMs ? ` · last search ${Math.round(ai.lastMs)} ms` : ""}`,
+    failed: "The AI model could not run in this browser, so results use a simple stand-in.",
+  }[ai.state];
+  document.getElementById("aiMsg").innerHTML=`<span class="dot"></span><span>${esc(msg)}</span>`;
+  document.getElementById("aiBar").style.width = ai.state==="loading" ? Math.round(ai.progress*100)+"%" : "";
+}
+function aiSentences(text){
+  return String(text||"").replace(/\s+/g," ").split(/(?<=[.!?…])\s+(?=["“‘(A-Z0-9])/).map(s=>s.trim()).filter(Boolean);
+}
+function aiChunks(text, max=40){
+  const out=[]; let cur=[], n=0;
+  for (const s of aiSentences(text)){
+    const w=s.split(" ").length;
+    if (cur.length && n+w>max){ out.push(cur.join(" ")); const last=cur.at(-1); cur = last.split(" ").length+w<=max ? [last] : []; n=cur.join(" ").split(" ").filter(Boolean).length; }
+    cur.push(s); n+=w;
+  }
+  if (cur.length) out.push(cur.join(" "));
+  return out;
+}
+function aiPassages(p){
+  const head=[p.title, p.loc, (p.kw||[]).join(", ")].filter(Boolean).join(". ");
+  const all=[head, ...[p.desc, p.summary, ...(p.caps||[])].flatMap(b=>aiChunks(b))];
+  return [...new Set(all.filter(s=>s && s.trim()))];
+}
+async function aiEmbed(texts){ return (await ai.extractor(texts, { pooling:"cls", normalize:true })).tolist(); }
+function aiLoad(){
+  if (ai.promise) return ai.promise;
+  ai.promise=(async()=>{
+    ai.state="loading"; aiStat();
+    const { pipeline, env } = await import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.0.2");
+    env.allowLocalModels=false;
+    const files={};
+    ai.extractor = await pipeline("feature-extraction", AI_MODEL, { dtype:"q8", progress_callback:e=>{
+      if (e.status==="progress" && e.total){ files[e.file]=[e.loaded, e.total];
+        const sum=Object.values(files).reduce((a,[l,t])=>[a[0]+l, a[1]+t],[0,0]);
+        ai.progress=sum[0]/sum[1]; ai.mb=sum[0]/1048576; ai.total=Math.max(ai.total, sum[1]/1048576); aiStat(); } } });
+    ai.state="indexing"; aiStat();
+    await aiIndex();
+    ai.state="ready"; aiStat();
+  })().catch(err=>{ console.warn("AI search unavailable:", err); ai.state="failed"; aiStat(); refresh(); });
+  return ai.promise;
+}
+async function aiIndex(){
+  const key=PROJECTS.map(p=>p.id+":"+p.title).join("|");
+  if (ai.index && ai.key===key) return;
+  const rows=PROJECTS.flatMap(p=>aiPassages(p).map((text,i)=>({ id:p.id, text, head:i===0 })));
+  const vectors=[];
+  for (let i=0; i<rows.length; i+=16) vectors.push(...await aiEmbed(rows.slice(i, i+16).map(r=>r.text)));
+  rows.forEach((r,i)=>r.v=vectors[i]);
+  ai.index=rows; ai.key=key; ai.passages=rows.length;
+}
+async function browserSearch(q){
+  if (ai.state!=="ready"){ aiLoad().then(()=>{ if (ai.state==="ready" && state.q.trim()===q && state.semantic) browserSearch(q); }); return; }
+  await aiIndex();
+  const t0=performance.now();
+  const [qv]=await aiEmbed([AI_QUERY+q]);
+  const best=new Map();
+  for (const r of ai.index){
+    let s=0; for (let k=0; k<qv.length; k++) s+=qv[k]*r.v[k];
+    const b=best.get(r.id) ?? { s:-1, body:-1 };
+    if (s>b.s) b.s=s;
+    if (!r.head && s>b.body){ b.body=s; b.text=r.text; }
+    if (b.text===undefined) b.text=r.text;
+    best.set(r.id, b);
+  }
+  const ranked=[...best].sort((a,b)=>b[1].s-a[1].s);
+  const floor=Math.max(AI_MIN, (ranked[0]?.[1].s ?? 0)*AI_REL);
+  ai.lastMs=performance.now()-t0;
+  if (state.q.trim()!==q || !state.semantic) return;
+  const hits=new Map();
+  ranked.filter(([,b])=>b.s>=floor).forEach(([id,b],i)=>hits.set(id, { rank:i, matched_by:["semantic"], similarity:b.s, passage:b.text }));
+  // Hybrid, as on the backend: projects that contain the words typed join after the matches by meaning.
+  const ql=q.toLowerCase();
+  for (const p of PROJECTS){
+    if (hits.has(p.id)) continue;
+    if ([p.title,p.author,p.loc,p.aff,p.desc,p.summary,...p.kw,...(p.caps ?? [])].join(" ").toLowerCase().includes(ql))
+      hits.set(p.id, { rank:hits.size, matched_by:["keyword"] });
+  }
+  apiSearch={ q, semantic:true, model:AI_LABEL, keywordOnly:false, hits, browser:true };
+  refresh(); aiStat();
+}
+
 // ---------- filter UI ----------
 document.getElementById("examples").innerHTML = EXAMPLES.map(e=>`<button type="button">${e}</button>`).join("");
 document.getElementById("examples").addEventListener("click", e => { const b=e.target.closest("button"); if(!b) return;
   const q=document.getElementById("q"); q.value=b.textContent; state.q=b.textContent; setSmode(true); refresh(); searchApi();
   document.getElementById("drawer").classList.add("open"); });
 function setSmode(on){ state.semantic=on; document.getElementById("examples").hidden=!on;
+  aiStat(); if (on && !apiLive && AI_OK) aiLoad();
   document.querySelectorAll(".smode button").forEach(b=>b.setAttribute("aria-pressed", (b.dataset.smode==="meaning")===on)); }
 document.querySelectorAll(".smode button").forEach(b=>b.onclick=()=>{ setSmode(b.dataset.smode==="meaning"); refresh(); searchApi(); });
+// Start fetching the model as soon as someone points at "By meaning", so it is ready by the time they type.
+document.querySelector('.smode [data-smode="meaning"]').addEventListener("pointerenter", ()=>{ if (!apiLive && AI_OK) aiLoad(); }, { once:true });
 function renderQStatus(){
   const el=document.getElementById("qstatus");
-  if (!state.q.trim()) { el.innerHTML = state.semantic ? "Describe a topic in your own words." : "Searches titles, places, authors, keywords, photo narration and project documents."; return; }
+  if (!state.q.trim()) { el.innerHTML = state.semantic ? "Describe a topic in your own words, for example one of these:" : "Searches titles, places, authors, keywords, photo narration and project documents."; return; }
   const byMeaning=Object.values(lastWhy).filter(w=>w.meaning).length, total=items.length, res=currentSearch();
   if (!state.semantic) el.innerHTML = `${total} keyword match${total===1?"":"es"}`;
+  else if (!apiLive && AI_OK && ai.state!=="failed" && !res) el.innerHTML = ai.state==="ready" ? "Searching by meaning…" : "Getting the AI model ready…";
+  else if (res?.browser) el.innerHTML = `${total} result${total===1?"":"s"}, ${byMeaning} found by meaning · ranked in ${Math.round(ai.lastMs)} ms`;
   else if (apiLive && !res) el.innerHTML = "Searching by meaning…";
   else if (res?.keywordOnly) el.innerHTML = `The language model is not ready, so these are keyword matches only (${total}).`;
   else el.innerHTML = `${total} result${total===1?"":"s"}, ${byMeaning} found by meaning`;
@@ -1202,7 +1330,7 @@ function renderList(){
     const th = d.kind==="project" ? `<span class="th" style="background-image:url('${img(p)}')"></span>`
       : `<span class="th" style="background:${d.journalist?"#F68B1F":"#111"}">${esc(initials(p.author))}</span>`;
     return `<button class="item" type="button" data-i="${i}">${th}<span><h4>${esc(d.kind==="project"?p.title:p.author)}</h4>
-      <p>${esc(d.kind==="project"?p.author+" · "+p.year:(d.journalist?"Journalist":"Academic")+" · "+p.aff)}</p><p>${esc(p.loc)}</p>${d.why?`<p class="why">${esc(d.why.label)}</p>${d.why.passage?`<p class="whyq">${esc(d.why.passage)}</p>`:""}`:""}</span></button>`;}).join("");
+      <p>${esc(d.kind==="project"?p.author+" · "+p.year:(d.journalist?"Journalist":"Academic")+" · "+p.aff)}</p><p>${esc(p.loc)}</p>${d.why?`<p class="why">${esc(d.why.label)}${d.why.sim!=null?`<span class="simbar" aria-hidden="true"><i style="width:${Math.round(Math.max(0,Math.min(1,d.why.sim))*100)}%"></i></span>`:""}</p>${d.why.passage?`<p class="whyq">${esc(d.why.passage)}</p>`:""}`:""}</span></button>`;}).join("");
 }
 document.getElementById("list").addEventListener("click",e=>{ const b=e.target.closest(".item"); if(!b) return;
   if (innerWidth<760) drawer.classList.remove("open"); select(items[+b.dataset.i]); });
