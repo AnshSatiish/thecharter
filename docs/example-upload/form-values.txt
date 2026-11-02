@@ -1,0 +1,37 @@
+EXAMPLE PROJECT TO UPLOAD (synthetic, for testing; delete it from Supabase before the demo)
+
+Files in this folder
+  photo-1-mudflat.jpg, photo-2-nursery.jpg   -> step "Photographs"
+  roots-against-the-storm-report.pdf          -> step "Project document (PDF)"
+
+Author
+  Name:          Rafiq Hossain (example)
+  Affiliation:   Eastbay Media Collective
+  Website:       (leave empty)
+
+Title
+  Roots Against the Storm (example upload)
+
+Description
+  Women in coastal villages plant mangrove seedlings to rebuild a living barrier against cyclones and storm surges. The forest also shelters crab collectors and honey gatherers, who work close to the territory of Bengal tigers.
+
+Narration for photo 1 (mudflat)
+  Low tide on the mudflats: rows of mangrove seedlings planted by the nursery group, with the old forest edge behind them.
+
+Narration for photo 2 (nursery)
+  The village nursery, where seedlings grow in bags under shade cloth until they are strong enough for the mudflats.
+
+Summary (step "Project document", write it in the Summary box)
+  Coastal communities in the Sundarbans are replanting mangroves that protect their villages from cyclone storm surges. The forest also supports crab and honey collectors who work at risk near Bengal tigers.
+
+Category
+  Wildlife & human interaction
+
+UN SDGs (pick these)
+  13 Climate action, 14 Life below water, 15 Life on land
+
+Location
+  Place name:    Sundarbans, Khulna, Bangladesh
+  Latitude:      22.0000
+  Longitude:     89.1800
+  Date:          2022-08-21
