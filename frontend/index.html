@@ -1292,7 +1292,7 @@ function draw(){
   ctx.beginPath(); path(graticule); ctx.strokeStyle="rgba(255,255,255,.08)"; ctx.lineWidth=.7; ctx.stroke();
   if (geo){
     // shallow-water halo around coasts
-    ctx.beginPath(); path(geo.land); ctx.strokeStyle="rgba(150,222,214,.45)"; ctx.lineWidth=Math.max(4,5*Math.sqrt(state.k)); ctx.lineJoin="round"; ctx.stroke();
+    ctx.beginPath(); path(geo.land); ctx.strokeStyle="rgba(150,222,214,.45)"; ctx.lineWidth=Math.min(9,Math.max(4,5*Math.sqrt(state.k))); ctx.lineJoin="round"; ctx.stroke();
     for (const f of geo.countries){ ctx.beginPath(); path(f); ctx.fillStyle=LAND[hash(f.properties.name)%LAND.length]; ctx.fill(); }
     ctx.beginPath(); path(geo.land); ctx.strokeStyle="rgba(120,80,40,.35)"; ctx.lineWidth=.8; ctx.stroke();
     ctx.beginPath(); path(geo.borders);
@@ -1364,22 +1364,27 @@ function drawPlaces(){
   }
   ctx.save(); ctx.textBaseline="middle"; ctx.lineJoin="round";
   if (PLACES){
-    const maxRank = k<1.3 ? 1 : k<1.8 ? 2 : k<2.6 ? 3 : k<3.6 ? 4 : k<5 ? 6 : 8;
-    ctx.font="500 11.5px 'Instrument Sans', system-ui, sans-serif"; ctx.textAlign="left";
+    // few cities from far away, more only as you get close; a roomy gap around every label
+    const maxRank = k<1.6 ? 0 : k<2.6 ? 1 : k<4 ? 2 : k<6.5 ? 3 : k<10 ? 4 : 6;
+    const cap = k<1.6 ? 18 : k<4 ? 32 : 48, pad=10;
     let n=0;
-    for (const [name,lng,lat,rank,cap] of PLACES){
+    ctx.textAlign="left";
+    for (const [name,lng,lat,rank,isCap] of PLACES){
       if (rank>maxRank) break;
       if (!isVisible([lng,lat])) continue;
       const [x,y]=projection([lng,lat]);
       if (x<8 || y<8 || x>W-8 || y>H-8) continue;
+      ctx.font = isCap ? "600 11.5px 'Instrument Sans', system-ui, sans-serif" : "500 11px 'Instrument Sans', system-ui, sans-serif";
       const w=ctx.measureText(name).width;
-      if (!free(x-5,y-8,w+14,16)) continue;
-      ctx.beginPath(); ctx.arc(x,y,cap?3.4:2.4,0,7); ctx.fillStyle="#fbf8f2"; ctx.fill();
-      ctx.lineWidth=1.3; ctx.strokeStyle="rgba(30,26,22,.9)"; ctx.stroke();
-      if (cap){ ctx.beginPath(); ctx.arc(x,y,1.3,0,7); ctx.fillStyle="#1e1a16"; ctx.fill(); }
-      ctx.lineWidth=3.2; ctx.strokeStyle="rgba(16,22,28,.72)"; ctx.strokeText(name,x+7,y);
-      ctx.fillStyle="#fbf8f2"; ctx.fillText(name,x+7,y);
-      if (++n>=180) break;
+      if (!free(x-6-pad,y-8-pad/2,w+16+pad*2,16+pad)) continue;
+      // marker: a small ink dot with a paper ring; capitals get a square
+      ctx.fillStyle="rgba(251,246,236,.95)"; ctx.strokeStyle="#2a211a"; ctx.lineWidth=1.4;
+      if (isCap){ ctx.fillRect(x-3.5,y-3.5,7,7); ctx.strokeRect(x-3.5,y-3.5,7,7); ctx.fillStyle="#2a211a"; ctx.fillRect(x-1.5,y-1.5,3,3); }
+      else { ctx.beginPath(); ctx.arc(x,y,2.6,0,7); ctx.fill(); ctx.stroke(); }
+      // label: dark ink with a soft paper halo, like a printed atlas
+      ctx.lineWidth=3.5; ctx.strokeStyle="rgba(251,246,236,.82)"; ctx.strokeText(name,x+8,y);
+      ctx.fillStyle="#2a211a"; ctx.fillText(name,x+8,y);
+      if (++n>=cap) break;
     }
   }
   if (COUNTRY_LABELS){
@@ -2335,15 +2340,30 @@ async function loadFromApi(){
 
 // ---------- interaction: drag = rotate, wheel/pinch = zoom ----------
 let last={x:0,y:0,k:1}, syncing=false;
-const zoom=d3.zoom().scaleExtent([0.7,8]).clickDistance(4)
+const MAX_K=14;
+const zoom=d3.zoom().scaleExtent([0.7,MAX_K]).clickDistance(4)
   .on("start",()=>{ state.auto=false; })
   .on("zoom",e=>{
     if (syncing) return;
     const t=e.transform;
-    if (Math.abs(t.k-last.k)>1e-6){ state.k=t.k; }
+    if (Math.abs(t.k-last.k)>1e-6){
+      // zoom toward the point under the cursor: keep that place under the cursor while the scale changes
+      const se=e.sourceEvent, ptr = se && se.type==="wheel" && state.proj==="globe" ? d3.pointer(se, canvas) : null;
+      const before = ptr ? projection.invert(ptr) : null;
+      state.k=t.k;
+      if (before && isFinite(before[0]) && isFinite(before[1])){
+        for (let i=0; i<2; i++){
+          setupProjection(); const now=projection.invert(ptr);
+          if (!now || !isFinite(now[0]) || !isFinite(now[1])) break;
+          state.rot[0]+=now[0]-before[0]; state.rot[1]=Math.max(-85,Math.min(85,state.rot[1]+now[1]-before[1]));
+        }
+      }
+    }
     else {
-      const dx=t.x-last.x, dy=t.y-last.y, s=0.28/state.k;
-      state.rot[0]+=dx*s;
+      // on the globe, one pixel of drag moves the map one pixel at the centre, at any zoom
+      const dx=t.x-last.x, dy=t.y-last.y, s = state.proj==="globe" ? 180/(Math.PI*projection.scale()) : 0.28/state.k;
+      // a degree of longitude is shorter away from the equator, so sideways drags scale with the latitude in view
+      state.rot[0]+=dx*s/(state.proj==="globe" ? Math.max(0.35, Math.cos(state.rot[1]*Math.PI/180)) : 1);
       if (state.proj==="globe") state.rot[1]=Math.max(-85,Math.min(85,state.rot[1]-dy*s));
       else state.panY=Math.max(-H*state.k*0.6,Math.min(H*state.k*0.6,state.panY+dy));
     }
@@ -2359,7 +2379,7 @@ canvas.addEventListener("click",e=>{
 });
 document.getElementById("zin").onclick=()=>zoomBy(1.5);
 document.getElementById("zout").onclick=()=>zoomBy(1/1.5);
-function zoomBy(f){ const a=state.k, b=Math.max(0.7,Math.min(8,a*f));
+function zoomBy(f){ const a=state.k, b=Math.max(0.7,Math.min(MAX_K,a*f));
   d3.transition().duration(300).tween("z",()=>tt=>{ state.k=a+(b-a)*tt; lastMove=performance.now(); syncZoom(); draw(); }); }
 
 // ---------- loop ----------
