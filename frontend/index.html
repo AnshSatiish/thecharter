@@ -63,6 +63,8 @@ button:not(:disabled):active{transform:translateY(1px)}
 .nav a[aria-current]{color:#14191e;background:#f3efe8}
 .nav button{font:inherit;background:none;border:0;color:rgba(255,255,255,.72);font-size:13.5px;font-weight:500;letter-spacing:.005em;padding:6px 14px;border-radius:999px;transition:background .15s,color .15s}
 .nav button:hover{color:#fff;background:rgba(255,255,255,.08)}
+.nav button[aria-current]{color:#14191e;background:#f3efe8}
+.menu-btn{display:none;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;border-radius:999px;width:40px;height:40px;place-items:center;padding:0}
 .nav span{color:rgba(255,255,255,.38);font-size:13.5px;font-weight:500;padding:6px 14px;cursor:default}
 .user:hover{background:var(--red-ink)}
 .user[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink),0 0 0 4px #fff}
@@ -463,6 +465,88 @@ body.locked .stage{inset:0}
 }
 @media (prefers-reduced-motion:reduce){.gate.stamped .gstamp{transform:rotate(-11deg)}}
 
+/* ---------- site pages: New entries, Community, Events, Sponsors ---------- */
+.sp{position:fixed;inset:56px 0 0 0;z-index:24;background:#f3eee4;overflow-y:auto;color:var(--text);color-scheme:light;animation:fade .25s ease}
+.sp-in{max-width:1120px;margin:0 auto;padding:24px 16px 80px;display:flex;flex-direction:column;gap:26px}
+.sp-head .page-h{font-size:clamp(30px,4vw,44px);margin-top:6px}
+.lede2{font-size:15.5px;line-height:1.55;color:var(--muted);max-width:64ch;margin:8px 0 0}
+.sp-h2{font-family:var(--serif);font-weight:500;font-size:22px;color:#1f3b44;margin:0 0 12px;display:flex;align-items:center;gap:12px}
+.sp-h2::after{content:"";flex:1;height:1px;background:var(--line)}
+.sp-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:0}
+.sp-stats div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.sp-stats dt{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--label)}
+.sp-stats dd{margin:4px 0 0;font-family:var(--serif);font-size:30px;font-weight:500;color:#1f3b44;font-variant-numeric:lining-nums tabular-nums}
+.chipbar{display:flex;flex-wrap:wrap;gap:8px}
+.chipbar button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font-size:13px;font-weight:500;color:var(--text);transition:background .15s,border-color .15s}
+.chipbar button span{color:var(--muted);margin-left:4px;font-variant-numeric:tabular-nums}
+.chipbar button[aria-pressed="true"]{background:#1f3b44;border-color:#1f3b44;color:#fff}
+.chipbar button[aria-pressed="true"] span{color:#c9d6d9}
+.ent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.ecard{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:transform .25s ease,box-shadow .25s ease}
+.ecard:hover{transform:translateY(-3px);box-shadow:0 16px 34px -18px rgba(31,29,27,.45)}
+.ecard-img{position:relative;display:block;border:0;padding:0;background:#ddd;aspect-ratio:3/2;overflow:hidden}
+.ecard-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
+.ecard:hover .ecard-img img{transform:scale(1.04)}
+.cat-tag{position:absolute;left:10px;top:10px;color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:5px}
+.ecard .b{padding:12px 14px 14px;display:flex;flex-direction:column;gap:5px;flex:1}
+.ecard h3{font-family:var(--serif);font-size:19px;font-weight:500;line-height:1.18;margin:2px 0}
+.ecard h3 button,.plist button{border:0;background:none;padding:0;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.ecard h3 button:hover,.plist button:hover{text-decoration:underline;text-underline-offset:3px}
+.sp .m{margin:0;font-size:12.5px;line-height:1.4;color:var(--muted)}
+.badges{display:flex;gap:6px;flex-wrap:wrap}
+.badge{font-size:10.5px;font-weight:600;letter-spacing:.04em;padding:2px 8px;border-radius:999px;border:1px solid transparent}
+.badge.ok{background:#e6f1fd;color:#135ea8}
+.badge.wait{background:#fbf0dc;color:#8a5a12}
+.badge.up{background:#eee8fb;color:#5b33c4}
+.badge.kind{background:#e8eef0;color:#1f3b44;align-self:flex-start;text-transform:capitalize}
+.sp .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:8px}
+.sp .acts .btn{padding:6px 12px;min-height:0;font-size:12.5px;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn.danger{color:#a32914;border-color:#efc8bd}
+.ppl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.pcard{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.pcard .ph{display:flex;gap:12px;align-items:center}
+.pcard .av{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:15px;flex:none}
+.pcard h3{margin:0 0 2px;font-size:16px;font-weight:600}
+.plist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:10px}
+.plist li{display:flex;flex-direction:column;gap:1px;font-size:14px;line-height:1.3}
+.plist li span{font-size:12px;color:var(--muted)}
+.insts{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.insts li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:14px}
+.insts .bar{grid-column:1/-1;height:4px;border-radius:2px;background:#ece5d7;overflow:hidden}
+.insts .bar i{display:block;height:100%;background:#1f3b44;border-radius:2px}
+.insts small{color:var(--muted);font-size:12px;white-space:nowrap}
+.evlist{display:flex;flex-direction:column;gap:12px}
+.evcard{display:grid;grid-template-columns:84px minmax(0,1fr);gap:16px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
+.evlist.past .evcard{opacity:.72}
+.evdate{border-radius:10px;background:#1f3b44;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px;line-height:1.05}
+.evdate b{font-family:var(--serif);font-size:32px;font-weight:500}
+.evdate span{font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
+.evdate small{font-size:11px;color:#b9c6c9;margin-top:2px}
+.evb{display:flex;flex-direction:column;gap:5px;min-width:0}
+.evb h3{font-family:var(--serif);font-size:21px;font-weight:500;margin:0;line-height:1.15}
+.evb p{margin:0;font-size:14px;line-height:1.5;color:#4a443d}
+.sp-emptybox{border:1px dashed #cfc3a8;border-radius:14px;padding:28px 20px;text-align:center;background:rgba(255,255,255,.5)}
+.sp-emptybox .t{font-family:var(--serif);font-size:20px;color:#1f3b44;margin:0 0 6px}
+.sp-emptybox p{margin:0;color:var(--muted);font-size:14px}
+.sp-note{background:#fbf0dc;border:1px solid #ecd3a3;color:#6b4710;border-radius:10px;padding:10px 14px;font-size:13.5px;line-height:1.5}
+.sp-note code{font-family:"IBM Plex Mono",monospace;font-size:12.5px}
+.sp-form{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;gap:12px}
+.sp-form[hidden]{display:none}
+.sp-form .row2{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.sp-form select{font:inherit;font-size:14px;border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:#fff}
+.sp-form .chk{flex-direction:row;align-items:center;gap:8px;font-weight:500}
+.sp-form .msg{margin:0;font-size:13px;color:#a32914;min-height:18px}
+.sp-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.spon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.spon-grid.partners{grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+.scard{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.scard .logo{height:72px;display:flex;align-items:center}
+.scard .logo img{max-height:72px;max-width:100%;object-fit:contain}
+.scard .mono-logo{width:72px;height:72px;border-radius:14px;background:#1f3b44;color:#e3c98f;display:grid;place-items:center;font-family:var(--serif);font-size:28px}
+.scard h3{margin:0;font-size:17px;font-weight:600}
+.scard p{margin:0;font-size:14px;line-height:1.5;color:#4a443d}
+@media (max-width:760px){ .evcard{grid-template-columns:64px minmax(0,1fr);gap:12px} .evdate b{font-size:26px} }
+
 /* ---------- profile: field passport ---------- */
 .pp{position:fixed;inset:56px 0 0 0;z-index:25;background:#efe9dd;overflow-y:auto;color:var(--text);color-scheme:light;animation:fade .25s ease}
 .pp-in{max-width:1080px;margin:0 auto;padding-block:24px 64px;padding-inline:16px;display:flex;flex-direction:column;gap:16px}
@@ -566,6 +650,10 @@ body.locked .stage{inset:0}
 @media (max-width:760px){
   .coords{display:none}
   .nav{display:none}
+  .menu-btn{display:grid;margin-left:auto}
+  .nav.open{display:flex;position:fixed;top:62px;left:12px;right:12px;flex-direction:column;align-items:stretch;gap:2px;margin:0;padding:8px;border-radius:16px;
+    background:rgba(14,18,22,.94);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:0 18px 40px rgba(0,0,0,.45);z-index:40}
+  .nav.open a,.nav.open button{text-align:left;padding:12px 14px;font-size:15px}
   .top{justify-content:space-between}
   .panel{width:auto;right:16px;top:auto;bottom:16px;max-height:62%}
   .panel.closed{transform:translateY(calc(100% + 20px))}
@@ -657,8 +745,9 @@ body.locked .stage{inset:0}
 
 <header class="top">
   <a class="logo" id="homeLink" href="#" aria-label="The Charter, back to the map"><img src="img/charter-logo.png" alt="" width="623" height="113"></a>
-  <nav class="nav" aria-label="Sections">
-    <a href="#" id="navMap" aria-current="page">Map</a><button type="button" id="navProjects">Projects</button><span title="Not built yet">Community</span><span title="Not built yet">New entries</span><span title="Not built yet">Sponsors</span><span title="Not built yet">Events</span>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="navList" aria-label="Menu"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  <nav class="nav" id="navList" aria-label="Sections">
+    <a href="#" id="navMap" aria-current="page">Map</a><button type="button" id="navProjects">Projects</button><button type="button" data-page="community">Community</button><button type="button" data-page="entries">New entries</button><button type="button" data-page="sponsors">Sponsors</button><button type="button" data-page="events">Events</button>
   </nav>
   <div style="display:flex;gap:10px;align-items:center"><button class="upload-btn" id="adminOpen" type="button" hidden>+ Upload<span class="wide"> project</span></button><button class="user" id="userBtn" type="button" aria-label="Open my profile">PROFILE</button></div>
 </header>
@@ -755,6 +844,7 @@ body.locked .stage{inset:0}
 
 <div class="story" id="story" hidden role="dialog" aria-modal="true" aria-label="Project"></div>
 <div class="pp" id="profile" hidden role="dialog" aria-label="My profile"></div>
+<div class="sp" id="sitePage" hidden role="region" aria-label="Page"></div>
 <div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Photo viewer">
   <button class="lb-x" id="lbClose" type="button">Close</button>
   <button class="lb-nav prev" id="lbPrev" type="button" aria-label="Previous photo"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
@@ -1191,13 +1281,20 @@ tog("borders","borders"); tog("places","places"); tog("news","news",()=>document
 const drawer=document.getElementById("drawer");
 const openDrawer=()=>{ closePages(); drawer.classList.add("open"); document.getElementById("drawerClose").focus(); };
 // Pages (project, upload, profile) open under the site header. Only one is open at a time.
+// The section pages (New entries, Community, Events, Sponsors) sit just below them, so a project opened from one
+// returns to it when closed.
+const sitePg=document.getElementById("sitePage");
+let curPage=null;
 function closePages(){
   if (!lbEl.hidden) lbEl.hidden=true;
+  sitePg.hidden=true; curPage=null;
   story.hidden=true; adminEl.hidden=true; syncHeader(); profileEl.hidden=true; syncHeader(); draw();
 }
 function syncHeader(){
-  const home = story.hidden && adminEl.hidden && profileEl.hidden;
+  const home = story.hidden && adminEl.hidden && profileEl.hidden && sitePg.hidden;
   const map=document.getElementById("navMap"); home ? map.setAttribute("aria-current","page") : map.removeAttribute("aria-current");
+  document.querySelectorAll(".nav [data-page]").forEach(b=>{
+    if (!sitePg.hidden && story.hidden && adminEl.hidden && profileEl.hidden && b.dataset.page===curPage) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current"); });
   document.getElementById("adminOpen").setAttribute("aria-pressed", !adminEl.hidden);
   document.getElementById("userBtn").setAttribute("aria-pressed", !profileEl.hidden);
 }
@@ -1623,7 +1720,7 @@ async function loadNearby(p){
     closeStory(); if (d) select(d); };
 }
 function closeStory(){ story.hidden=true; syncHeader(); draw(); restoreFocus("story"); }
-addEventListener("keydown",e=>{ if(e.key==="Escape"){ if(document.body.classList.contains("locked")) return; if(!lbEl.hidden) closeLb(); else if(picking) endPick(); else if(!profileEl.hidden) closeProfile(); else if(!adminEl.hidden) $("adminClose").click(); else if(!story.hidden) closeStory(); else if(drawer.classList.contains("open")) drawer.classList.remove("open"); else closeCard(); }});
+addEventListener("keydown",e=>{ if(e.key==="Escape"){ if(document.body.classList.contains("locked")) return; if(!lbEl.hidden) closeLb(); else if(picking) endPick(); else if(!profileEl.hidden) closeProfile(); else if(!adminEl.hidden) $("adminClose").click(); else if(!story.hidden) closeStory(); else if(!sitePg.hidden) closeSitePage(); else if(drawer.classList.contains("open")) drawer.classList.remove("open"); else closeCard(); }});
 
 // ---------- admin upload (AI steps are placeholders) ----------
 const adminEl=document.getElementById("admin");
@@ -1898,6 +1995,224 @@ async function publishToSupabase(lat,lng){
   }
 }
 
+// ---------- section pages: New entries, Community, Events, Sponsors ----------
+// New entries and Community are built from the projects in the library. Events and Sponsors are lists that
+// administrators keep in Supabase (supabase/pages.sql); they start empty rather than with made-up entries.
+const PAGES = {
+  entries:   { title:"New entries", lede:"The newest work in the library, most recent first. Each project shows whether a curator has checked it yet." },
+  community: { title:"Community",   lede:"The photographers and researchers whose work is in the library, and the institutions they work with." },
+  events:    { title:"Events",      lede:"Exhibitions, talks, screenings and workshops connected to the work in the library." },
+  sponsors:  { title:"Sponsors",    lede:"The Charter is free for students and researchers. These organisations help keep it running." },
+};
+const EVENT_KINDS = { exhibition:"Exhibition", talk:"Talk", workshop:"Workshop", screening:"Screening", fieldwork:"Fieldwork", other:"Event" };
+const safeUrl = u => /^https?:\/\/[^\s"'<>]+$/i.test(u || "") ? u : null;
+let entryFilter="all";
+const listings={ events:null, sponsors:null }, listingErr={};
+
+function openSitePage(name){
+  if (!PAGES[name]) return;
+  rememberFocus("site");
+  if (!lbEl.hidden) lbEl.hidden=true;
+  story.hidden=true; adminEl.hidden=true; profileEl.hidden=true; drawer.classList.remove("open"); closeCard();
+  curPage=name; sitePg.hidden=false; sitePg.scrollTop=0;
+  renderSitePage(); syncHeader();
+  sitePg.querySelector("h1")?.focus({preventScroll:true});
+}
+function closeSitePage(){
+  if (sitePg.hidden) return;
+  sitePg.hidden=true; curPage=null; syncHeader(); draw(); restoreFocus("site");
+}
+document.querySelectorAll(".nav [data-page]").forEach(b=>b.onclick=()=>{ openSitePage(b.dataset.page); setMenu(false); });
+const menuBtn=document.getElementById("menuBtn"), navList=document.getElementById("navList");
+function setMenu(open){ navList.classList.toggle("open", open); menuBtn.setAttribute("aria-expanded", open); }
+menuBtn.onclick=e=>{ e.stopPropagation(); setMenu(!navList.classList.contains("open")); };
+document.addEventListener("click", e=>{ if (navList.classList.contains("open") && !e.target.closest("#navList")) setMenu(false); });
+navList.querySelectorAll("a,button").forEach(el=>el.addEventListener("click", ()=>setMenu(false)));
+
+function pageShell(name, body){
+  return `<div class="sp-in"><nav class="crumbs" aria-label="You are here"><button type="button" class="home" data-sp-home>Map</button><span aria-hidden="true">/</span><span aria-current="page">${PAGES[name].title}</span></nav>
+    <header class="sp-head"><h1 class="page-h" tabindex="-1">${PAGES[name].title}</h1><p class="lede2">${PAGES[name].lede}</p></header>${body}</div>`;
+}
+const emptyBox = (title, text) => `<div class="sp-emptybox"><p class="t">${title}</p><p>${text}</p></div>`;
+function renderSitePage(){
+  const n=curPage; if (!n) return;
+  sitePg.setAttribute("aria-label", PAGES[n].title);
+  sitePg.innerHTML = n==="entries" ? entriesHTML() : n==="community" ? communityHTML() : n==="events" ? eventsHTML() : sponsorsHTML();
+  if (n==="events" || n==="sponsors") loadListing(n);
+}
+
+// --- New entries
+function entryCard(p){
+  const c=CATS[p.cat] ?? CATS.news;
+  return `<article class="ecard">
+    <button type="button" class="ecard-img" data-open="${esc(p.id)}" aria-label="Open ${esc(p.title)}"><img src="${esc(img(p))}" alt="" loading="lazy"><span class="cat-tag" style="background:${c.ink}">${esc(c.label)}</span></button>
+    <div class="b"><div class="badges">${p.uploaded ? '<span class="badge up">Uploaded</span>' : ""}${p.verified ? '<span class="badge ok">Curated</span>' : '<span class="badge wait">Curation pending</span>'}</div>
+      <h3><button type="button" data-open="${esc(p.id)}">${esc(p.title)}</button></h3>
+      <p class="m">${esc(p.author)}${p.aff ? ` · ${esc(p.aff)}` : ""}</p>
+      <p class="m">${esc(p.loc)} · ${p.date ? fmtDate(String(p.date).slice(0,10)) : p.year}</p>
+      <div class="acts"><button type="button" class="btn" data-map="${esc(p.id)}">Show on map</button>${saveBtn(p,"btn save-btn")}</div></div></article>`;
+}
+function entriesHTML(){
+  const all=[...PROJECTS].sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+  const test={ all:()=>true, curated:p=>p.verified, pending:p=>!p.verified, uploaded:p=>p.uploaded };
+  if (!test[entryFilter]) entryFilter="all";
+  const chips=[["all","All"],["curated","Curated"],["pending","Curation pending"],["uploaded","Uploaded by administrators"]]
+    .map(([k,l])=>[k,l,all.filter(test[k]).length]).filter(([k,,n])=>k==="all" || n>0);
+  const list=all.filter(test[entryFilter]);
+  const groups=new Map();
+  for (const p of list){ const k=String(p.year || String(p.date).slice(0,4)); if (!groups.has(k)) groups.set(k,[]); groups.get(k).push(p); }
+  return pageShell("entries", `<div class="chipbar" role="group" aria-label="Show">${chips.map(([k,l,n])=>`<button type="button" data-ef="${k}" aria-pressed="${entryFilter===k}">${l}<span>${n}</span></button>`).join("")}</div>
+    ${list.length ? [...groups].map(([k,ps])=>`<section><h2 class="sp-h2">${k}</h2><div class="ent-grid">${ps.map(entryCard).join("")}</div></section>`).join("")
+      : emptyBox("Nothing here yet", "No projects match this filter.")}`);
+}
+
+// --- Community
+function communityHTML(){
+  const people=new Map();
+  for (const p of PROJECTS){
+    const k=(p.author || "Unknown author").trim().toLowerCase();
+    if (!people.has(k)) people.set(k,{ name:p.author || "Unknown author", prof:p.prof, aff:p.aff, web:p.web, projects:[] });
+    people.get(k).projects.push(p);
+  }
+  const ppl=[...people.values()].sort((a,b)=>b.projects.length-a.projects.length || a.name.localeCompare(b.name));
+  const inst=new Map();
+  for (const person of ppl){ const a=(person.aff || "Independent").trim(); if (!inst.has(a)) inst.set(a,{ name:a, people:0, projects:0 }); const i=inst.get(a); i.people++; i.projects+=person.projects.length; }
+  const insts=[...inst.values()].sort((a,b)=>b.projects-a.projects || a.name.localeCompare(b.name));
+  const top=Math.max(1, ...insts.map(i=>i.projects));
+  const countries=new Set(PROJECTS.map(p=>stampInfo(p).country));
+  const card=person=>{
+    const web=safeUrl(person.web);
+    return `<article class="pcard"><div class="ph"><span class="av" style="background:${INK[person.projects[0].cat] || INK.news}">${esc(initials(person.name))}</span>
+      <div><h3>${esc(person.name)}</h3><p class="m">${esc(person.prof || "Contributor")}</p><p class="m">${esc(person.aff || "Independent")}</p></div></div>
+      <ul class="plist">${person.projects.map(x=>`<li><button type="button" data-open="${esc(x.id)}">${esc(x.title)}</button><span>${esc(stampInfo(x).country)} · ${x.year}${x.verified ? "" : " · curation pending"}</span></li>`).join("")}</ul>
+      <div class="acts"><button type="button" class="btn" data-map="${esc(person.projects[0].id)}">Show on map</button>${web ? `<a class="btn" href="${esc(web)}" target="_blank" rel="noopener">Website</a>` : ""}</div></article>`;
+  };
+  return pageShell("community", `<dl class="sp-stats"><div><dt>Contributors</dt><dd>${ppl.length}</dd></div><div><dt>Institutions</dt><dd>${insts.length}</dd></div>
+      <div><dt>Countries</dt><dd>${countries.size}</dd></div><div><dt>Projects</dt><dd>${PROJECTS.length}</dd></div></dl>
+    <section><h2 class="sp-h2">Photographers and researchers</h2><div class="ppl-grid">${ppl.map(card).join("")}</div></section>
+    <section><h2 class="sp-h2">Institutions</h2><ol class="insts">${insts.map(i=>`<li><span>${esc(i.name)}</span><small>${i.people} ${i.people===1?"person":"people"} · ${i.projects} project${i.projects===1?"":"s"}</small><span class="bar"><i style="width:${Math.round(i.projects/top*100)}%"></i></span></li>`).join("")}</ol></section>`);
+}
+
+// --- Events and Sponsors: lists kept in Supabase
+async function loadListing(kind){
+  if (!sb){ listingErr[kind]="offline"; listings[kind]=[]; return paintListing(kind); }
+  const q = kind==="events" ? sb.from("events").select("*").order("starts_on",{ ascending:true })
+                            : sb.from("sponsors").select("*").order("sort",{ ascending:true }).order("name",{ ascending:true });
+  const { data, error } = await q;
+  if (error){ listingErr[kind] = /does not exist|schema cache|relation/i.test(error.message || "") ? "missing" : (error.message || "error"); listings[kind]=[]; }
+  else { listingErr[kind]=null; listings[kind]=data; }
+  paintListing(kind);
+}
+function paintListing(kind){
+  if (curPage!==kind) return;
+  const box=sitePg.querySelector("#spList"); if (!box) return;
+  box.innerHTML = kind==="events" ? eventsListHTML() : sponsorsListHTML();
+  const note=sitePg.querySelector("#spSetup");
+  if (note) note.hidden = !(isAdmin && listingErr[kind]==="missing");
+}
+const setupNote = kind => `<p class="sp-note" id="spSetup" hidden>The ${kind} list is not set up in Supabase yet. Run <code>supabase/pages.sql</code> once in the Supabase SQL editor, then reload this page.</p>`;
+function eventsHTML(){
+  const form = isAdmin ? `<div class="sp-toolbar"><span></span><button type="button" class="btn primary" data-toggle-form>Add an event</button></div>
+    <form class="sp-form" id="spForm" data-kind="events" hidden>
+      <label class="fld">Title<input name="title" required maxlength="300"></label>
+      <div class="row2"><label class="fld">Type<select name="kind">${Object.entries(EVENT_KINDS).map(([k,l])=>`<option value="${k}">${l}</option>`).join("")}</select></label>
+        <label class="fld">Starts<input name="starts_on" type="date" required></label><label class="fld">Ends (optional)<input name="ends_on" type="date"></label></div>
+      <div class="row2"><label class="fld">Place<input name="location_name" placeholder="Venue, city"></label><label class="fld">Link (optional)<input name="url" type="url" placeholder="https://"></label></div>
+      <label class="fld chk"><input name="online" type="checkbox"> Takes place online</label>
+      <label class="fld">Description<textarea name="description" rows="3"></textarea></label>
+      <p class="msg" role="alert"></p><div class="pp-actions"><button type="button" class="btn" data-toggle-form>Cancel</button><button type="submit" class="btn primary">Publish event</button></div></form>` : "";
+  return pageShell("events", `${setupNote("events")}${form}<div id="spList"><p class="m">Loading…</p></div>`);
+}
+function eventsListHTML(){
+  const rows=listings.events || [];
+  const today=new Date().toISOString().slice(0,10);
+  const up=rows.filter(e=>(e.ends_on || e.starts_on)>=today), past=rows.filter(e=>(e.ends_on || e.starts_on)<today).reverse();
+  const when=e=>fmtDate(e.starts_on)+(e.ends_on && e.ends_on!==e.starts_on ? " to "+fmtDate(e.ends_on) : "");
+  const card=e=>{
+    const d=new Date(e.starts_on+"T00:00:00Z"), link=safeUrl(e.url);
+    return `<article class="evcard"><div class="evdate" aria-hidden="true"><b>${d.getUTCDate()}</b><span>${d.toLocaleDateString("en-GB",{month:"short",timeZone:"UTC"})}</span><small>${d.getUTCFullYear()}</small></div>
+      <div class="evb"><span class="badge kind">${esc(EVENT_KINDS[e.kind] || "Event")}</span><h3>${esc(e.title)}</h3>
+        <p class="m">${when(e)} · ${e.online ? "Online" : esc(e.location_name || "Place to be announced")}</p>${e.description ? `<p>${esc(e.description)}</p>` : ""}
+        <div class="acts">${link ? `<a class="btn" href="${esc(link)}" target="_blank" rel="noopener">Details</a>` : ""}${isAdmin ? `<button type="button" class="btn danger" data-del="events:${e.id}">Remove</button>` : ""}</div></div></article>`;
+  };
+  return `<section><h2 class="sp-h2">Upcoming</h2>${up.length ? `<div class="evlist">${up.map(card).join("")}</div>`
+      : emptyBox("No upcoming events yet", isAdmin ? "Add the first one with “Add an event”." : "Exhibitions, talks and workshops will be listed here as they are announced.")}</section>
+    ${past.length ? `<section><h2 class="sp-h2">Past events</h2><div class="evlist past">${past.map(card).join("")}</div></section>` : ""}`;
+}
+function sponsorsHTML(){
+  const form = isAdmin ? `<div class="sp-toolbar"><span></span><button type="button" class="btn primary" data-toggle-form>Add a sponsor</button></div>
+    <form class="sp-form" id="spForm" data-kind="sponsors" hidden>
+      <div class="row2"><label class="fld">Name<input name="name" required maxlength="200"></label>
+        <label class="fld">Level<select name="tier"><option value="partner">Partner</option><option value="supporter" selected>Supporter</option></select></label></div>
+      <div class="row2"><label class="fld">Website<input name="url" type="url" placeholder="https://"></label><label class="fld">Logo (PNG, JPEG or WebP)<input name="logo" type="file" accept="image/png,image/jpeg,image/webp"></label></div>
+      <label class="fld">One or two lines about them<textarea name="blurb" rows="2"></textarea></label>
+      <p class="msg" role="alert"></p><div class="pp-actions"><button type="button" class="btn" data-toggle-form>Cancel</button><button type="submit" class="btn primary">Add sponsor</button></div></form>` : "";
+  return pageShell("sponsors", `${setupNote("sponsors")}${form}<div id="spList"><p class="m">Loading…</p></div>`);
+}
+function sponsorsListHTML(){
+  const rows=listings.sponsors || [];
+  if (!rows.length) return emptyBox("No sponsors yet", isAdmin ? "Add the first one with “Add a sponsor”." : "Organisations that support The Charter will be listed here.");
+  const card=s=>{
+    const link=safeUrl(s.url), logo=safeUrl(s.logo_url);
+    return `<article class="scard"><div class="logo">${logo ? `<img src="${esc(logo)}" alt="${esc(s.name)} logo">` : `<span class="mono-logo" aria-hidden="true">${esc(initials(s.name))}</span>`}</div>
+      <h3>${esc(s.name)}</h3>${s.blurb ? `<p>${esc(s.blurb)}</p>` : ""}
+      <div class="acts">${link ? `<a class="btn" href="${esc(link)}" target="_blank" rel="noopener">Website</a>` : ""}${isAdmin ? `<button type="button" class="btn danger" data-del="sponsors:${s.id}">Remove</button>` : ""}</div></article>`;
+  };
+  const partners=rows.filter(s=>s.tier==="partner"), supporters=rows.filter(s=>s.tier!=="partner");
+  return `${partners.length ? `<section><h2 class="sp-h2">Partners</h2><div class="spon-grid partners">${partners.map(card).join("")}</div></section>` : ""}
+    ${supporters.length ? `<section><h2 class="sp-h2">Supporters</h2><div class="spon-grid">${supporters.map(card).join("")}</div></section>` : ""}`;
+}
+
+sitePg.addEventListener("click", async e=>{
+  if (e.target.closest("[data-sp-home]")) return closeSitePage();
+  const open=e.target.closest("[data-open]");
+  if (open){ const p=PROJECTS.find(x=>x.id===open.dataset.open); if (p) openStory(p); return; }
+  const map=e.target.closest("[data-map]");
+  if (map){ const id=map.dataset.map, p=PROJECTS.find(x=>x.id===id); closeSitePage(); const d=items.find(x=>x.p.id===id); if (d) select(d); else if (p) flyTo([p.lng,p.lat]); return; }
+  const ef=e.target.closest("[data-ef]");
+  if (ef){ entryFilter=ef.dataset.ef; renderSitePage(); return; }
+  if (e.target.closest("[data-toggle-form]")){ const f=sitePg.querySelector("#spForm"); f.hidden=!f.hidden; if (!f.hidden) f.querySelector("input")?.focus(); return; }
+  const del=e.target.closest("[data-del]");
+  if (del){
+    const [kind,id]=del.dataset.del.split(":");
+    if (!confirm(kind==="events" ? "Remove this event from the site?" : "Remove this sponsor from the site?")) return;
+    del.disabled=true;
+    const { error } = await sb.from(kind).delete().eq("id", +id);
+    if (error){ del.disabled=false; alert(`It was not removed: ${error.message}`); return; }
+    loadListing(kind);
+  }
+});
+sitePg.addEventListener("submit", async e=>{
+  const f=e.target.closest("#spForm"); if (!f) return;
+  e.preventDefault();
+  const kind=f.dataset.kind, v=n=>(f.elements[n]?.value || "").trim(), msg=f.querySelector(".msg"), btn=f.querySelector('[type="submit"]');
+  if (!sb || !isAdmin){ msg.textContent="Sign in as an administrator first."; return; }
+  if (v("url") && !safeUrl(v("url"))){ msg.textContent="The link must start with https://"; return; }
+  btn.disabled=true; msg.textContent="";
+  try {
+    let row;
+    if (kind==="events"){
+      if (v("ends_on") && v("ends_on")<v("starts_on")) throw new Error("the end date is before the start date");
+      row={ title:v("title"), kind:v("kind"), starts_on:v("starts_on"), ends_on:v("ends_on") || null, location_name:v("location_name") || null,
+            online:f.elements.online.checked, url:v("url") || null, description:v("description") || null };
+    } else {
+      let logo_url=null; const file=f.elements.logo.files[0];
+      if (file){
+        if (file.size>2*1024*1024) throw new Error("the logo is larger than 2 MB");
+        const path=`sponsors/${Date.now()}-${file.name.replace(/[^\w.-]+/g,"_")}`;
+        const up=await sb.storage.from(SB_BUCKET).upload(path, file, { contentType:file.type, upsert:false });
+        if (up.error) throw up.error;
+        logo_url=sb.storage.from(SB_BUCKET).getPublicUrl(path).data.publicUrl;
+      }
+      row={ name:v("name"), tier:v("tier"), url:v("url") || null, blurb:v("blurb") || null, logo_url };
+    }
+    const { error } = await sb.from(kind).insert(row);
+    if (error) throw error;
+    f.reset(); f.hidden=true; loadListing(kind);
+  } catch(err){ msg.textContent=`It was not saved: ${err.message || err}.`; }
+  btn.disabled=false;
+});
+
 // ---------- profile: field passport ----------
 // Built from the signed-in email; the holder edits the rest. Kept in this browser until profile endpoints exist.
 const INSTITUTIONS = [
@@ -2029,7 +2344,7 @@ function rosette(){
 const profileEl=$("profile");
 function openProfile(){
   if (!profileEl.hidden) return;
-  rememberFocus("profile"); story.hidden=true; adminEl.hidden=true; syncHeader(); drawer.classList.remove("open");
+  rememberFocus("profile"); story.hidden=true; adminEl.hidden=true; sitePg.hidden=true; curPage=null; syncHeader(); drawer.classList.remove("open");
   const es=savedEntries(), [m1,m2]=mrzLines(ME), full=`${ME.given} ${ME.surname}`;
   const stops=[ME.home, ...es.map(e=>[e.p.lng,e.p.lat])];
   const km=Math.round(stops.slice(1).reduce((s,to,i)=>s+d3.geoDistance(stops[i],to)*6371,0));
@@ -2320,6 +2635,7 @@ async function loadFromSupabase(){
     if (error) throw error;
     PROJECTS.splice(0, PROJECTS.length, ...data.map(fromSupabase), ...SAMPLE_PROJECTS);
     sbLive=true; buildFilters(); refresh();
+    if (curPage==="entries" || curPage==="community") renderSitePage();
     src.innerHTML=`<span class="dot live"></span>${data.length} uploaded project${data.length===1?"":"s"} · ${SAMPLE_PROJECTS.length} samples`;
   } catch { sbLive=false; src.innerHTML='<span class="dot"></span>Sample data'; }
 }
@@ -2387,7 +2703,7 @@ const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 let prev=performance.now(), lastPulse=0;
 function loop(now){
   const dt=now-prev; prev=now;
-  const covered = !story.hidden || !adminEl.hidden || !profileEl.hidden || !lbEl.hidden || document.hidden;
+  const covered = !story.hidden || !adminEl.hidden || !profileEl.hidden || !sitePg.hidden || !lbEl.hidden || document.hidden;
   if (covered) { /* the globe is not visible */ }
   else if (state.auto && !reduce && !picking && state.proj==="globe"){ state.rot[0]+=dt*0.006; lastMove=now; draw(); }
   else if (geoHi && hiAllowed && !drawnHi && state.k>=HI_ZOOM && now-lastMove>240) draw();   // view settled: sharpen once
