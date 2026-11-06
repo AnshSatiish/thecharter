@@ -24,7 +24,7 @@ def test_health(client):
 
 def test_list_all_with_frontend_shape(client):
     data = client.get("/api/projects").json()
-    assert len(data) == 7
+    assert len(data) == 9
     p = next(p for p in data if p["id"] == 25)
     assert p["date"] == "2024-06-25" and p["year"] == 2024
     assert p["author"]["name"] == "Wanjiru Kimathi"
@@ -46,14 +46,14 @@ def test_category_filter(client):
 
 def test_sdg_filter_matches_any_and_exact_code(client):
     assert ids(client.get("/api/projects", params={"sdg": "SDG14"})) == {23}
-    assert ids(client.get("/api/projects", params=[("sdg", "SDG15"), ("sdg", "sdg9")])) == {18, 28}
+    assert ids(client.get("/api/projects", params=[("sdg", "SDG15"), ("sdg", "sdg9")])) == {18, 28, 30}
     # SDG1 must not match SDG10, SDG11, ...
     assert ids(client.get("/api/projects", params={"sdg": "SDG1"})) == {23, 26, 27}
 
 
 def test_year_range(client):
-    assert ids(client.get("/api/projects", params={"year_to": 2023})) == {17}
-    assert ids(client.get("/api/projects", params={"year_from": 2024, "year_to": 2024})) == {18, 23, 25, 26, 27, 28}
+    assert ids(client.get("/api/projects", params={"year_to": 2023})) == {17, 30}
+    assert ids(client.get("/api/projects", params={"year_from": 2024, "year_to": 2024})) == {18, 23, 25, 26, 27, 28, 29}
     assert ids(client.get("/api/projects", params={"year_from": 2025})) == set()
 
 
@@ -124,7 +124,7 @@ def test_create_project(client):
     assert names.count("Wanjiru Kimathi") == 1
 
     listed = client.get("/api/projects").json()
-    assert len(listed) == 8
+    assert len(listed) == 10
     assert created["id"] in {p["id"] for p in listed}
     assert created["id"] in ids(client.get("/api/projects", params={"q": "salmon"}))
 
@@ -134,7 +134,7 @@ def test_create_new_author(client):
     created = client.post("/api/projects", json=body, headers=ADMIN).json()
     assert created["original_language"] == "en"
     assert created["author"]["role"] == "academic"
-    assert len(client.get("/api/authors").json()) == 8
+    assert len(client.get("/api/authors").json()) == 10
 
 
 @pytest.mark.parametrize(
@@ -160,8 +160,8 @@ def test_seed_is_idempotent(client):
     from app.scripts.seed import seed
 
     seed(engine)
-    assert len(client.get("/api/projects").json()) == 7
-    assert len(client.get("/api/authors").json()) == 7
+    assert len(client.get("/api/projects").json()) == 9
+    assert len(client.get("/api/authors").json()) == 9
 
 
 @pytest.mark.postgres

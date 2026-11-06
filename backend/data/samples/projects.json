@@ -356,5 +356,112 @@
       "A crowded concourse at Beijing West railway station, a few days before the Lunar New Year. The station was the largest in Asia when it was inaugurated in the late 90s but it has struggled to keep up with expanding passenger numbers as China's railways undergo modernisation. It serves both green (slow) trains, and some high speed trains.",
       "At Beijing West Railway station, a migrant worker loaded with baggage, heads back to the family hometown for the New Year holiday. The Lunar New Year is the busiest time of year for train travel, with an estimated 190 million trips taken during the 2024 spring festival holidays. The modernisation of the China Railway network has made this yearly migration a lot easier, reducing it to a few hours when it could take one or two days just a decade earlier."
     ]
+  },
+  {
+    "id": 29,
+    "title": "The Persistence of Caste Power: The Panchayats of North India",
+    "category": "anthropology",
+    "location_name": "Sonipat district, Haryana, India",
+    "lat": 28.9931,
+    "lng": 77.0151,
+    "date": "2024-03-01",
+    "description": "Twenty months of fieldwork in Jat farming villages around Sonipat, Haryana, show how caste councils (panchayats) still settle marriage disputes, shape village elections and lead the campaign for reservations, although they are often described as a thing of the past.",
+    "keywords": [
+      "panchayat",
+      "khap panchayat",
+      "caste",
+      "Jat",
+      "Haryana",
+      "India",
+      "village politics",
+      "kinship",
+      "marriage",
+      "gender",
+      "elections",
+      "reservations",
+      "anthropology"
+    ],
+    "sdgs": [
+      "SDG5",
+      "SDG10",
+      "SDG16"
+    ],
+    "verified": false,
+    "original_language": "en",
+    "images": [
+      "img/p29_0.jpg",
+      "img/p29_1.jpg",
+      "img/p29_2.jpg",
+      "img/p29_3.jpg"
+    ],
+    "author": {
+      "name": "Vineet Rathee",
+      "profession": "Anthropologist (PhD)",
+      "role": "academic",
+      "affiliation": "McGill University",
+      "website": null,
+      "google_scholar": null,
+      "researchgate": null,
+      "academia": null
+    },
+    "captions": [
+      "The advancing urban frontier in a village near Sonipat city.",
+      "A Jat village chaupal, the most common site for holding the panchayat.",
+      "A village Jat panchayat.",
+      "A Jat maha-panchayat."
+    ]
+  },
+  {
+    "id": 30,
+    "title": "Common Practices on the Use of Public Pastures in Highland Kyrgyzstan",
+    "category": "anthropology",
+    "location_name": "Tamga, Issyk-Kul region, Kyrgyzstan",
+    "lat": 42.1522,
+    "lng": 77.5461,
+    "date": "2020-04-01",
+    "description": "In Tamga, a village in the Kyrgyz Tian Shan, a 2009 reform made the municipality responsible for its own public pastures. This study follows the everyday work of sharing the grassland: grazing rules, maps, irrigation water and help between herding families.",
+    "keywords": [
+      "pastures",
+      "commons",
+      "Kyrgyzstan",
+      "Tamga",
+      "Tian Shan",
+      "Issyk-Kul",
+      "herding",
+      "pastoralism",
+      "land tenure",
+      "post-socialism",
+      "irrigation",
+      "anthropology"
+    ],
+    "sdgs": [
+      "SDG2",
+      "SDG15",
+      "SDG16"
+    ],
+    "verified": false,
+    "original_language": "en",
+    "images": [
+      "img/p30_0.jpg",
+      "img/p30_1.jpg",
+      "img/p30_2.jpg",
+      "img/p30_3.jpg"
+    ],
+    "author": {
+      "name": "Lisa Francesca Rail",
+      "profession": "Anthropologist (MA)",
+      "role": "academic",
+      "affiliation": "McGill University",
+      "website": null,
+      "google_scholar": null,
+      "researchgate": null,
+      "academia": null
+    },
+    "captions": [
+      "Rearing cattle on one of Tamga's summer pastures (djajloo), August 2015.",
+      "Kara Suu in the second year of the moratorium, August 2019.",
+      "A shepherd's syrt camp with one of the new cubic houses, Djaman Tam, August 2018.",
+      "The maps of Tamga's pasturage in the pasture committee's office, Tamga, July 2019."
+    ]
   }
 ]

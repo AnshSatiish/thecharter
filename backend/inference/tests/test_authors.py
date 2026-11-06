@@ -1,6 +1,6 @@
 def test_list_authors(client):
     data = client.get("/api/authors").json()
-    assert len(data) == 7
+    assert len(data) == 9
     names = [a["name"] for a in data]
     assert names == sorted(names)
     assert {"region_lat", "region_lng", "google_scholar"} <= set(data[0])
