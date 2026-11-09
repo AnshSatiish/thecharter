@@ -1014,10 +1014,52 @@ const state = {
   rot:[70,-10], k:1, panY:0, auto:true,
 };
 
+// ---------- keyword ranking in the page ----------
+// Without the backend, keywords are ranked here by the backend's rules: capitals and accents are ignored
+// ("darien" finds "Darién"), filler words are dropped, every word typed must start a word in the project
+// (otherwise any word may), and where a word is found sets its score: title 1, tags 0.6, text 0.3.
+const KW_STOP = new Set("a an and are as at be by for from has have in into is it its of on or that the their this to was were with".split(" "));
+const KW_W = { title:1, tags:0.6, body:0.3 };
+const RRF_K = 60;   // reciprocal rank fusion: rank 1 scores 1/61, rank 2 scores 1/62, and so on
+const fold = s => String(s ?? "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+function kwTerms(q){ const t=fold(q).match(/[\p{L}\p{N}]+/gu) ?? []; const c=t.filter(w=>!KW_STOP.has(w)); return c.length ? c : t; }
+let kwCache = { key:"", fields:new Map() };
+function kwFields(p){
+  const key = PROJECTS.length+":"+(PROJECTS.at(-1)?.id ?? "");
+  if (kwCache.key!==key) kwCache = { key, fields:new Map() };
+  let f = kwCache.fields.get(p.id);
+  if (!f) { f = { title:fold(p.title), tags:fold([...(p.kw ?? []), p.loc, p.author, p.aff].join(" | ")),
+    body:fold([p.desc, p.summary, ...(p.caps ?? [])].join(" | ")) }; kwCache.fields.set(p.id, f); }
+  return f;
+}
+// Projects with every word, best score first (ties keep the library's order); if none, projects with any word unless strict.
+function keywordRank(q, strict=false){
+  const terms=kwTerms(q); if (!terms.length) return [];
+  const pats=terms.map(t=>new RegExp(`(?<![\\p{L}\\p{N}])${reEsc(t)}`, "u"));
+  const scored=[];
+  for (const p of PROJECTS){
+    const f=kwFields(p);
+    const per=pats.map(re=>Math.max(0, ...Object.keys(KW_W).filter(k=>re.test(f[k])).map(k=>KW_W[k])));
+    const matched=per.filter(Boolean).length;
+    if (matched) scored.push({ id:p.id, matched, score:per.reduce((a,b)=>a+b, 0)/terms.length });
+  }
+  const all=scored.filter(s=>s.matched===terms.length);
+  return (all.length ? all : strict ? [] : scored).sort((a,b)=>b.score-a.score);
+}
+let kwLocal = null;
+function localKeywordSearch(q, whole){
+  if (kwLocal && kwLocal.q===q && kwLocal.whole===whole && kwLocal.key===kwCache.key) return kwLocal;
+  const hits=new Map(keywordRank(q).map((h,i)=>[h.id, { rank:i, matched_by:["keyword"], score:h.score }]));
+  return kwLocal={ q, whole, key:kwCache.key, semantic:false, keywordOnly:!whole, hits, browser:true };
+}
+
 function visibleItems(){
   const q = state.q.trim().toLowerCase();
-  const res = currentSearch();
-  const hits = q && state.semantic && !apiLive && ai.state==="failed" ? meaningHits(q) : {};   // stand-in only if the model cannot run
+  const aiDown = !AI_OK || ai.state==="failed";
+  // No backend: "Keywords" is ranked in the page, and so is "By meaning" when the model cannot run in this browser.
+  const res = currentSearch() ?? (q && !apiLive && (!state.semantic || aiDown) ? localKeywordSearch(state.q.trim(), !state.semantic) : null);
+  const hits = q && state.semantic && !apiLive && aiDown ? meaningHits(q) : {};   // stand-in only if the model cannot run
   const why = {};
   const list = PROJECTS.filter(p => {
     if (!(state.cats.has(p.cat) && p.year>=state.y0 && p.year<=state.y1 &&
@@ -1027,12 +1069,12 @@ function visibleItems(){
     const h = res?.hits.get(p.id);
     if (h) {
       if (h.matched_by.includes("semantic") && h.passage) why[p.id] = { meaning:true,
-        label:`Related by meaning · similarity ${h.similarity.toFixed(2)}`, sim:h.similarity,
+        label:`Related by meaning${h.matched_by.includes("keyword") ? " and keywords" : ""} · similarity ${h.similarity.toFixed(2)}`, sim:h.similarity,
         passage:(h.passage_document ? `From “${h.passage_document}”: ` : "") + h.passage };
       else if (!inPage && p.docs?.length) why[p.id] = {label:"Found in the project document"};
       return true;
     }
-    if (res?.semantic) return false;          // by meaning: the backend's ranking is the whole answer
+    if (res?.semantic || res?.whole) return false;   // the ranking is the whole answer
     if (inPage) return true;
     if (hits[p.id]) { why[p.id] = {meaning:true, label:"Related by meaning: "+hits[p.id].join(", ")}; return true; }
     return false;
@@ -1153,15 +1195,15 @@ async function browserSearch(q){
   const floor=Math.max(AI_MIN, (ranked[0]?.[1].s ?? 0)*AI_REL);
   ai.lastMs=performance.now()-t0;
   if (state.q.trim()!==q || !state.semantic) return;
-  const hits=new Map();
-  ranked.filter(([,b])=>b.s>=floor).forEach(([id,b],i)=>hits.set(id, { rank:i, matched_by:["semantic"], similarity:b.s, passage:b.text }));
-  // Hybrid, as on the backend: projects that contain the words typed join after the matches by meaning.
-  const ql=q.toLowerCase();
-  for (const p of PROJECTS){
-    if (hits.has(p.id)) continue;
-    if ([p.title,p.author,p.loc,p.aff,p.desc,p.summary,...p.kw,...(p.caps ?? [])].join(" ").toLowerCase().includes(ql))
-      hits.set(p.id, { rank:hits.size, matched_by:["keyword"] });
-  }
+  // Hybrid, as on the backend: the ranking by meaning and the projects containing every word typed are merged by
+  // reciprocal rank fusion. A project scores 1/(60 + its place) in each list, so one high in both lists comes first.
+  const fused=new Map();
+  ranked.filter(([,b])=>b.s>=floor).forEach(([id,b],i)=>fused.set(id, { score:1/(RRF_K+i+1), matched_by:["semantic"], similarity:b.s, passage:b.text }));
+  keywordRank(q, true).forEach((h,i)=>{
+    const f=fused.get(h.id) ?? { score:0, matched_by:[], similarity:0 };
+    f.score+=1/(RRF_K+i+1); f.matched_by.push("keyword"); fused.set(h.id, f);
+  });
+  const hits=new Map([...fused].sort((a,b)=>b[1].score-a[1].score || b[1].similarity-a[1].similarity).map(([id,f],i)=>[id, { ...f, rank:i }]));
   apiSearch={ q, semantic:true, model:AI_LABEL, keywordOnly:false, hits, browser:true };
   refresh(); aiStat();
 }
@@ -1184,9 +1226,9 @@ function renderQStatus(){
   const byMeaning=Object.values(lastWhy).filter(w=>w.meaning).length, total=items.length, res=currentSearch();
   if (!state.semantic) el.innerHTML = `${total} keyword match${total===1?"":"es"}`;
   else if (!apiLive && AI_OK && ai.state!=="failed" && !res) el.innerHTML = ai.state==="ready" ? "Searching by meaning…" : "Getting the AI model ready…";
+  else if (res?.keywordOnly) el.innerHTML = `The language model is not ready, so these are keyword matches only (${total}).`;
   else if (res?.browser) el.innerHTML = `${total} result${total===1?"":"s"}, ${byMeaning} found by meaning · ranked in ${Math.round(ai.lastMs)} ms`;
   else if (apiLive && !res) el.innerHTML = "Searching by meaning…";
-  else if (res?.keywordOnly) el.innerHTML = `The language model is not ready, so these are keyword matches only (${total}).`;
   else el.innerHTML = `${total} result${total===1?"":"s"}, ${byMeaning} found by meaning`;
 }
 const catsEl = document.getElementById("cats");
