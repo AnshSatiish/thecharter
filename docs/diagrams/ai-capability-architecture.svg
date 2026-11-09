@@ -1,93 +1,122 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="980" height="640" viewBox="0 0 980 640" font-family="Arial, Helvetica, sans-serif" font-size="12">
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="800" viewBox="0 0 1180 800" font-family="Arial, Helvetica, sans-serif" font-size="12">
 <defs><marker id="arr" markerWidth="9" markerHeight="8" refX="8" refY="4" orient="auto-start-reverse"><path d="M0,0 L9,4 L0,8 z" fill="#3d3d3a"/></marker></defs>
-<rect width="980" height="640" fill="white"/>
-<rect x="20" y="20" width="940" height="250" fill="none" stroke="#8a8a86" stroke-dasharray="6 4" rx="6"/>
+<rect width="1180" height="800" fill="white"/>
+<rect x="20" y="20" width="1140" height="250" fill="none" stroke="#8a8a86" stroke-dasharray="6 4" rx="6"/>
 <text x="30" y="38" font-weight="bold" fill="#52514e">Indexing: runs when a project or PDF is saved</text>
-<rect x="20" y="300" width="940" height="320" fill="none" stroke="#8a8a86" stroke-dasharray="6 4" rx="6"/>
-<text x="30" y="318" font-weight="bold" fill="#52514e">Query: runs on every search</text>
-<line x1="180.0" y1="102.0" x2="215.0" y2="102.0" stroke="#3d3d3a" stroke-width="1.2" marker-end="url(#arr)"/>
-<line x1="355.0" y1="102.0" x2="390.0" y2="102.0" stroke="#3d3d3a" stroke-width="1.2" marker-end="url(#arr)"/>
-<line x1="540.0" y1="102.0" x2="575.0" y2="102.0" stroke="#3d3d3a" stroke-width="1.2" marker-end="url(#arr)"/>
-<line x1="740.0" y1="127.7" x2="780.0" y2="140.1" stroke="#3d3d3a" stroke-width="1.2" marker-end="url(#arr)"/>
-<rect x="734.6" y="124.9" width="50.7" height="16" fill="white"/>
-<text x="760.0" y="136.9" text-anchor="middle" font-size="10.5" fill="#52514e">vectors</text>
-<line x1="338.3" y1="134.0" x2="415.0" y2="180.0" stroke="#3d3d3a" stroke-width="1.2" marker-end="url(#arr)"/>
-<line x1="540.0" y1="201.5" x2="780.0" y2="174.1" stroke="#3d3d3a" stroke-width="1.2" marker-end="url(#arr)"/>
-<rect x="631.6" y="178.8" width="56.8" height="16" fill="white"/>
-<text x="660.0" y="190.8" text-anchor="middle" font-size="10.5" fill="#52514e">tsvector</text>
-<line x1="180.0" y1="432.0" x2="215.0" y2="432.0" stroke="#3d3d3a" stroke-width="1.2" marker-end="url(#arr)"/>
-<rect x="178.2" y="423.0" width="38.5" height="16" fill="white"/>
-<text x="197.5" y="435.0" text-anchor="middle" font-size="10.5" fill="#52514e">query</text>
-<line x1="365.0" y1="408.8" x2="410.0" y2="394.8" stroke="#3d3d3a" stroke-width="1.2" marker-end="url(#arr)"/>
-<line x1="570.0" y1="370.0" x2="610.0" y2="370.0" stroke="#3d3d3a" stroke-width="1.2" marker-end="url(#arr)"/>
-<line x1="770.0" y1="370.0" x2="800.0" y2="370.0" stroke="#3d3d3a" stroke-width="1.2" marker-end="url(#arr)"/>
-<line x1="365.0" y1="457.5" x2="410.0" y2="472.8" stroke="#3d3d3a" stroke-width="1.2" marker-end="url(#arr)"/>
-<line x1="570.0" y1="500.0" x2="610.0" y2="500.0" stroke="#3d3d3a" stroke-width="1.2" marker-end="url(#arr)"/>
-<line x1="830.4" y1="400.0" x2="732.1" y2="470.0" stroke="#3d3d3a" stroke-width="1.2" marker-end="url(#arr)"/>
-<line x1="770.0" y1="500.0" x2="800.0" y2="500.0" stroke="#3d3d3a" stroke-width="1.2" marker-end="url(#arr)"/>
-<line x1="290.0" y1="464.0" x2="290.0" y2="540.0" stroke="#3d3d3a" stroke-width="1.2" stroke-dasharray="5 4" marker-end="url(#arr)"/>
-<line x1="806.1" y1="230.0" x2="714.9" y2="340.0" stroke="#3d3d3a" stroke-width="1.2" stroke-dasharray="5 4" marker-end="url(#arr)"/>
-<rect x="732.1" y="276.0" width="56.8" height="16" fill="white"/>
-<text x="760.5" y="288.0" text-anchor="middle" font-size="10.5" fill="#52514e">passages</text>
-<rect x="40" y="70" width="140" height="64" rx="5" fill="#f5f4f1" stroke="#52514e" stroke-width="1.4"/>
-<text x="110.0" y="92.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">Admin upload</text>
-<text x="110.0" y="106.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">project text, narration,</text>
-<text x="110.0" y="120.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">PDF</text>
-<rect x="215" y="70" width="140" height="64" rx="5" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4"/>
-<text x="285.0" y="99.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">Text extraction</text>
-<text x="285.0" y="113.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">pypdf, per page</text>
-<rect x="390" y="70" width="150" height="64" rx="5" fill="#fdece4" stroke="#eb6834" stroke-width="1.4"/>
-<text x="465.0" y="92.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">Passage chunking</text>
-<text x="465.0" y="106.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">whole sentences,</text>
-<text x="465.0" y="120.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">40 words, 1 overlap</text>
-<rect x="575" y="70" width="165" height="64" rx="5" fill="#fdece4" stroke="#eb6834" stroke-width="1.4"/>
-<text x="657.5" y="92.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">Sentence model</text>
-<text x="657.5" y="106.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">bge-small-en-v1.5,</text>
-<text x="657.5" y="120.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">ONNX, 384 dimensions</text>
-<rect x="390" y="180" width="150" height="60" rx="5" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4"/>
-<text x="465.0" y="200.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">Keyword text</text>
-<text x="465.0" y="214.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">accent folding,</text>
-<text x="465.0" y="228.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">field weights A to D</text>
-<path d="M780,109 A80.0,9 0 0 1 940,109 V221 A80.0,9 0 0 1 780,221 Z" fill="#e9f7f1" stroke="#1baf7a" stroke-width="1.4"/>
-<path d="M780,109 A80.0,9 0 0 0 940,109" fill="none" stroke="#1baf7a" stroke-width="1.4"/>
-<text x="860.0" y="146.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">PostgreSQL</text>
-<text x="860.0" y="160.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">search_chunks:</text>
-<text x="860.0" y="174.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">vector(384), HNSW</text>
-<text x="860.0" y="188.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">projects.search_tsv:</text>
-<text x="860.0" y="202.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">tsvector, GIN</text>
-<rect x="40" y="400" width="140" height="64" rx="5" fill="#f5f4f1" stroke="#52514e" stroke-width="1.4"/>
-<text x="110.0" y="422.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">3D globe site</text>
-<text x="110.0" y="436.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">search box:</text>
-<text x="110.0" y="450.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Keywords / By meaning</text>
-<rect x="215" y="400" width="150" height="64" rx="5" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4"/>
-<text x="290.0" y="422.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">FastAPI</text>
-<text x="290.0" y="436.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">GET /api/projects/search</text>
-<text x="290.0" y="450.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">mode, limit</text>
-<rect x="410" y="340" width="160" height="60" rx="5" fill="#fdece4" stroke="#eb6834" stroke-width="1.4"/>
-<text x="490.0" y="367.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">Embed the query</text>
-<text x="490.0" y="381.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">same sentence model</text>
-<rect x="610" y="340" width="160" height="60" rx="5" fill="#fdece4" stroke="#eb6834" stroke-width="1.4"/>
-<text x="690.0" y="360.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">Vector search</text>
-<text x="690.0" y="374.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">pgvector, cosine,</text>
-<text x="690.0" y="388.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">best passage per project</text>
-<rect x="800" y="340" width="145" height="60" rx="5" fill="#fdece4" stroke="#eb6834" stroke-width="1.4"/>
-<text x="872.5" y="360.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">Relevance cut-off</text>
-<text x="872.5" y="374.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">0.575 and 95% of</text>
-<text x="872.5" y="388.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">the top score</text>
-<rect x="410" y="470" width="160" height="60" rx="5" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4"/>
-<text x="490.0" y="490.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">Keyword search</text>
-<text x="490.0" y="504.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">to_tsquery, stems and</text>
-<text x="490.0" y="518.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">prefixes, ts_rank_cd</text>
-<rect x="610" y="470" width="160" height="60" rx="5" fill="#fdece4" stroke="#eb6834" stroke-width="1.4"/>
-<text x="690.0" y="490.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">Hybrid fusion</text>
-<text x="690.0" y="504.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">reciprocal rank fusion,</text>
-<text x="690.0" y="518.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">k = 60</text>
-<rect x="800" y="470" width="145" height="60" rx="5" fill="#e9f7f1" stroke="#1baf7a" stroke-width="1.4"/>
-<text x="872.5" y="490.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">Ranked projects</text>
-<text x="872.5" y="504.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">matched passage,</text>
-<text x="872.5" y="518.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">similarity, matched_by</text>
-<rect x="215" y="540" width="150" height="56" rx="5" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4"/>
-<text x="290.0" y="558.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">Fallback</text>
-<text x="290.0" y="572.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">model unavailable:</text>
-<text x="290.0" y="586.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">keyword results only</text>
+<rect x="20" y="290" width="1140" height="490" fill="none" stroke="#8a8a86" stroke-dasharray="6 4" rx="6"/>
+<text x="30" y="308" font-weight="bold" fill="#52514e">Query: runs on every search</text>
+<rect x="40" y="70" width="140" height="64" rx="6" fill="#f5f4f1" stroke="#52514e" stroke-width="1.3"/>
+<text x="110.0" y="91.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold" font-size="13">Admin upload</text>
+<text x="110.0" y="106.0" text-anchor="middle" fill="#0b0b0b">project text, narration,</text>
+<text x="110.0" y="121.0" text-anchor="middle" fill="#0b0b0b">PDF</text>
+<rect x="215" y="70" width="140" height="64" rx="6" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.3"/>
+<text x="285.0" y="98.5" text-anchor="middle" fill="#0b0b0b" font-weight="bold" font-size="13">Text extraction</text>
+<text x="285.0" y="113.5" text-anchor="middle" fill="#0b0b0b">pypdf, per page</text>
+<rect x="390" y="70" width="150" height="64" rx="6" fill="#fdece4" stroke="#eb6834" stroke-width="1.3"/>
+<text x="465.0" y="91.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold" font-size="13">Passage chunking</text>
+<text x="465.0" y="106.0" text-anchor="middle" fill="#0b0b0b">whole sentences,</text>
+<text x="465.0" y="121.0" text-anchor="middle" fill="#0b0b0b">40 words, 1 overlap</text>
+<rect x="575" y="70" width="165" height="64" rx="6" fill="#fdece4" stroke="#eb6834" stroke-width="1.3"/>
+<text x="657.5" y="91.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold" font-size="13">Sentence model</text>
+<text x="657.5" y="106.0" text-anchor="middle" fill="#0b0b0b">bge-small-en-v1.5,</text>
+<text x="657.5" y="121.0" text-anchor="middle" fill="#0b0b0b">ONNX, 384 dimensions</text>
+<rect x="390" y="180" width="150" height="60" rx="6" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.3"/>
+<text x="465.0" y="199.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold" font-size="13">Keyword text</text>
+<text x="465.0" y="214.0" text-anchor="middle" fill="#0b0b0b">accent folding,</text>
+<text x="465.0" y="229.0" text-anchor="middle" fill="#0b0b0b">field weights A to D</text>
+<path d="M960,104 A90.0,9 0 0 1 1140,104 L1140,221 A90.0,9 0 0 1 960,221 Z" fill="#e9f7f1" stroke="#1baf7a" stroke-width="1.3"/>
+<path d="M960,104 A90.0,9 0 0 0 1140,104" fill="none" stroke="#1baf7a" stroke-width="1.3"/>
+<text x="1050.0" y="141.5" text-anchor="middle" fill="#0b0b0b" font-weight="bold" font-size="13">PostgreSQL</text>
+<text x="1050.0" y="156.5" text-anchor="middle" fill="#0b0b0b">search_chunks:</text>
+<text x="1050.0" y="171.5" text-anchor="middle" fill="#0b0b0b">vector(384), HNSW</text>
+<text x="1050.0" y="186.5" text-anchor="middle" fill="#0b0b0b">projects.search_tsv:</text>
+<text x="1050.0" y="201.5" text-anchor="middle" fill="#0b0b0b">tsvector, GIN</text>
+<rect x="40" y="440" width="140" height="64" rx="6" fill="#f5f4f1" stroke="#52514e" stroke-width="1.3"/>
+<text x="110.0" y="461.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold" font-size="13">3D globe site</text>
+<text x="110.0" y="476.0" text-anchor="middle" fill="#0b0b0b">search box:</text>
+<text x="110.0" y="491.0" text-anchor="middle" fill="#0b0b0b">Keywords / By meaning</text>
+<polygon points="265.0,432 325,472.0 265.0,512 205,472.0" fill="#fff6e0" stroke="#c98a00" stroke-width="1.3"/>
+<text x="265.0" y="468.5" text-anchor="middle" fill="#0b0b0b" font-weight="bold" font-size="13">Backend</text>
+<text x="265.0" y="483.5" text-anchor="middle" fill="#0b0b0b">reachable?</text>
+<rect x="355" y="440" width="165" height="64" rx="6" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.3"/>
+<text x="437.5" y="461.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold" font-size="13">FastAPI</text>
+<text x="437.5" y="476.0" text-anchor="middle" fill="#0b0b0b">GET /api/projects/search</text>
+<text x="437.5" y="491.0" text-anchor="middle" fill="#0b0b0b">mode, limit</text>
+<rect x="575" y="330" width="160" height="60" rx="6" fill="#fdece4" stroke="#eb6834" stroke-width="1.3"/>
+<text x="655.0" y="356.5" text-anchor="middle" fill="#0b0b0b" font-weight="bold" font-size="13">Embed the query</text>
+<text x="655.0" y="371.5" text-anchor="middle" fill="#0b0b0b">same sentence model</text>
+<polygon points="835.0,320 895,360.0 835.0,400 775,360.0" fill="#fff6e0" stroke="#c98a00" stroke-width="1.3"/>
+<text x="835.0" y="356.5" text-anchor="middle" fill="#0b0b0b" font-weight="bold" font-size="13">Model</text>
+<text x="835.0" y="371.5" text-anchor="middle" fill="#0b0b0b">loaded?</text>
+<rect x="950" y="330" width="190" height="60" rx="6" fill="#fdece4" stroke="#eb6834" stroke-width="1.3"/>
+<text x="1045.0" y="349.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold" font-size="13">Vector search</text>
+<text x="1045.0" y="364.0" text-anchor="middle" fill="#0b0b0b">pgvector HNSW, cosine</text>
+<text x="1045.0" y="379.0" text-anchor="middle" fill="#0b0b0b">(numpy without pgvector)</text>
+<rect x="950" y="430" width="190" height="60" rx="6" fill="#fdece4" stroke="#eb6834" stroke-width="1.3"/>
+<text x="1045.0" y="449.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold" font-size="13">Relevance cut-off</text>
+<text x="1045.0" y="464.0" text-anchor="middle" fill="#0b0b0b">at least 0.575 and within</text>
+<text x="1045.0" y="479.0" text-anchor="middle" fill="#0b0b0b">95% of the top score</text>
+<rect x="770" y="428" width="130" height="64" rx="6" fill="#fff6e0" stroke="#c98a00" stroke-width="1.3"/>
+<text x="835.0" y="449.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold" font-size="13">Fallback</text>
+<text x="835.0" y="464.0" text-anchor="middle" fill="#0b0b0b">skip meaning, return</text>
+<text x="835.0" y="479.0" text-anchor="middle" fill="#0b0b0b">keyword results only</text>
+<rect x="760" y="540" width="150" height="64" rx="6" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.3"/>
+<text x="835.0" y="561.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold" font-size="13">Keyword search</text>
+<text x="835.0" y="576.0" text-anchor="middle" fill="#0b0b0b">to_tsquery, stems and</text>
+<text x="835.0" y="591.0" text-anchor="middle" fill="#0b0b0b">prefixes, ts_rank_cd</text>
+<rect x="950" y="540" width="190" height="64" rx="6" fill="#fdece4" stroke="#eb6834" stroke-width="1.3"/>
+<text x="1045.0" y="561.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold" font-size="13">Hybrid fusion</text>
+<text x="1045.0" y="576.0" text-anchor="middle" fill="#0b0b0b">reciprocal rank fusion, k = 60:</text>
+<text x="1045.0" y="591.0" text-anchor="middle" fill="#0b0b0b">meaning + every-word matches</text>
+<rect x="40" y="670" width="650" height="84" rx="6" fill="#fff6e0" stroke="#c98a00" stroke-width="1.3"/>
+<text x="365.0" y="693.5" text-anchor="middle" fill="#0b0b0b" font-weight="bold" font-size="13">Search in the browser (the live site, no backend)</text>
+<text x="365.0" y="708.5" text-anchor="middle" fill="#0b0b0b">Transformers.js runs the same model (bge-small-en-v1.5, q8): cosine over every passage,</text>
+<text x="365.0" y="723.5" text-anchor="middle" fill="#0b0b0b">fused with the page&#x27;s keyword ranking (RRF, k = 60).</text>
+<text x="365.0" y="738.5" text-anchor="middle" fill="#0b0b0b">If the model cannot run: the keyword ranking alone, and the site says so.</text>
+<rect x="950" y="670" width="190" height="84" rx="6" fill="#e9f7f1" stroke="#1baf7a" stroke-width="1.3"/>
+<text x="1045.0" y="701.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold" font-size="13">Ranked projects</text>
+<text x="1045.0" y="716.0" text-anchor="middle" fill="#0b0b0b">passage, similarity,</text>
+<text x="1045.0" y="731.0" text-anchor="middle" fill="#0b0b0b">matched_by, mode_used</text>
+<path d="M180,102 L215,102" fill="none" stroke="#3d3d3a" stroke-width="1.3" marker-end="url(#arr)"/>
+<path d="M355,102 L390,102" fill="none" stroke="#3d3d3a" stroke-width="1.3" marker-end="url(#arr)"/>
+<path d="M540,102 L575,102" fill="none" stroke="#3d3d3a" stroke-width="1.3" marker-end="url(#arr)"/>
+<path d="M740,115 L960,140" fill="none" stroke="#3d3d3a" stroke-width="1.3" marker-end="url(#arr)"/>
+<rect x="826.4" y="108" width="47.199999999999996" height="15" fill="white"/>
+<text x="850" y="119" text-anchor="middle" font-size="11" fill="#52514e">vectors</text>
+<path d="M330,134 L400,180" fill="none" stroke="#3d3d3a" stroke-width="1.3" marker-end="url(#arr)"/>
+<path d="M540,210 L960,190" fill="none" stroke="#3d3d3a" stroke-width="1.3" marker-end="url(#arr)"/>
+<rect x="733.6" y="189" width="52.8" height="15" fill="white"/>
+<text x="760" y="200" text-anchor="middle" font-size="11" fill="#52514e">tsvector</text>
+<path d="M1050,230 L1050,330" fill="none" stroke="#3d3d3a" stroke-width="1.3" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+<rect x="1023.6" y="271" width="52.8" height="15" fill="white"/>
+<text x="1050" y="282" text-anchor="middle" font-size="11" fill="#52514e">passages</text>
+<path d="M180,472 L205,472" fill="none" stroke="#3d3d3a" stroke-width="1.3" marker-end="url(#arr)"/>
+<path d="M325,472 L355,472" fill="none" stroke="#3d3d3a" stroke-width="1.3" marker-end="url(#arr)"/>
+<rect x="327.6" y="453" width="24.799999999999997" height="15" fill="white"/>
+<text x="340" y="464" text-anchor="middle" font-size="11" fill="#52514e">yes</text>
+<path d="M265,512 L265,670" fill="none" stroke="#3d3d3a" stroke-width="1.3" marker-end="url(#arr)"/>
+<rect x="270.4" y="581" width="19.2" height="15" fill="white"/>
+<text x="280" y="592" text-anchor="middle" font-size="11" fill="#52514e">no</text>
+<path d="M470,440 L575,365" fill="none" stroke="#3d3d3a" stroke-width="1.3" marker-end="url(#arr)"/>
+<rect x="480.0" y="383" width="64.0" height="15" fill="white"/>
+<text x="512" y="394" text-anchor="middle" font-size="11" fill="#52514e">By meaning</text>
+<path d="M520,485 L760,572" fill="none" stroke="#3d3d3a" stroke-width="1.3" marker-end="url(#arr)"/>
+<rect x="588.0" y="503" width="64.0" height="15" fill="white"/>
+<text x="620" y="514" text-anchor="middle" font-size="11" fill="#52514e">both modes</text>
+<path d="M735,360 L775,360" fill="none" stroke="#3d3d3a" stroke-width="1.3" marker-end="url(#arr)"/>
+<path d="M895,360 L950,360" fill="none" stroke="#3d3d3a" stroke-width="1.3" marker-end="url(#arr)"/>
+<rect x="909.6" y="341" width="24.799999999999997" height="15" fill="white"/>
+<text x="922" y="352" text-anchor="middle" font-size="11" fill="#52514e">yes</text>
+<path d="M835,400 L835,428" fill="none" stroke="#3d3d3a" stroke-width="1.3" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+<rect x="840.4" y="404" width="19.2" height="15" fill="white"/>
+<text x="850" y="415" text-anchor="middle" font-size="11" fill="#52514e">no</text>
+<path d="M835,492 L835,540" fill="none" stroke="#3d3d3a" stroke-width="1.3" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+<path d="M1045,390 L1045,430" fill="none" stroke="#3d3d3a" stroke-width="1.3" marker-end="url(#arr)"/>
+<path d="M1045,490 L1045,540" fill="none" stroke="#3d3d3a" stroke-width="1.3" marker-end="url(#arr)"/>
+<path d="M910,572 L950,572" fill="none" stroke="#3d3d3a" stroke-width="1.3" marker-end="url(#arr)"/>
+<path d="M1045,604 L1045,670" fill="none" stroke="#3d3d3a" stroke-width="1.3" marker-end="url(#arr)"/>
+<path d="M840,604 L840,690 L950,690" fill="none" stroke="#3d3d3a" stroke-width="1.3" marker-end="url(#arr)"/>
+<rect x="622.4" y="643" width="209.6" height="15" fill="white"/>
+<text x="832" y="654" text-anchor="end" font-size="11" fill="#52514e">Keywords mode, or fallback: any word</text>
+<path d="M690,730 L950,730" fill="none" stroke="#3d3d3a" stroke-width="1.3" marker-end="url(#arr)"/>
 </svg>

@@ -6,9 +6,11 @@ services:
     environment:
       POSTGRES_DB: charter
       POSTGRES_USER: charter
-      POSTGRES_PASSWORD: charter
+      # Development default. Anywhere else, set POSTGRES_PASSWORD in the environment (see docs/security/postgresql.md).
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-charter}
     ports:
-      - "5432:5432"
+      # This computer only: other machines on the same network cannot reach the database.
+      - "127.0.0.1:5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
