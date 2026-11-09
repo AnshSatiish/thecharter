@@ -72,7 +72,24 @@ def _add_missing_columns(engine: Engine) -> None:
                     conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {name} {sql_type}"))
 
 
+_INIT_LOCK = 3850001  # any fixed number: the PostgreSQL advisory lock that lets one process at a time set up the schema
+
+
 def init_db(engine: Engine) -> None:
+    """Several server processes (uvicorn --workers N) start at once. Without the lock, their ALTER TABLE
+    statements deadlock and the server fails to start."""
+    if engine.dialect.name != "postgresql":
+        _init(engine)
+        return
+    with engine.connect() as lock:
+        lock.execute(text("SELECT pg_advisory_lock(:key)"), {"key": _INIT_LOCK})
+        try:
+            _init(engine)
+        finally:
+            lock.execute(text("SELECT pg_advisory_unlock(:key)"), {"key": _INIT_LOCK})
+
+
+def _init(engine: Engine) -> None:
     Base.metadata.create_all(engine)
     _add_missing_columns(engine)
     if engine.dialect.name == "postgresql":

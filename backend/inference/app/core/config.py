@@ -20,6 +20,12 @@ class Settings(BaseSettings):
     upload_dir: Path = BACKEND_ROOT / "data" / "uploads"
     max_image_mb: int = 25
     max_pdf_mb: int = 50
+    # Database connections per server process: a pool of this size, plus overflow when busy. A request that
+    # cannot get one within db_pool_timeout seconds is answered "503 busy" instead of waiting.
+    # Keep processes x (pool + overflow) below PostgreSQL's max_connections (100 by default): 4 processes x 20 = 80.
+    db_pool_size: int = 5
+    db_max_overflow: int = 15
+    db_pool_timeout: float = 5
     # Semantic search: an open-source sentence embedding model that runs on this machine (no API key, no cost).
     semantic_search: bool = True
     embedding_model: str = "BAAI/bge-small-en-v1.5"
@@ -27,6 +33,9 @@ class Settings(BaseSettings):
     # Longest passage, in words, cut from project text for embedding (tuned by cross-validation).
     embedding_chunk_words: int = 40
     embedding_cache_dir: Path = Path.home() / ".cache" / "charter-models"
+    # CPU threads the model may use for one query. Unset: ONNX Runtime's default (all cores), fastest for one
+    # user. Under many simultaneous searches, 1 lets each request use its own core instead of all competing.
+    embedding_threads: int | None = None
     # A passage is unrelated when its cosine similarity is below this, or below this share of the best result's.
     # Both chosen by 5-fold cross-validation over the judged queries (backend/model_training/compare_models.py).
     semantic_min_score: float = 0.575

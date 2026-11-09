@@ -1,0 +1,150 @@
+{
+  "label": "small_1worker",
+  "seconds": 15.0,
+  "rows": [
+    {
+      "mode": "keyword",
+      "users": 1,
+      "requests": 452,
+      "errors": 0,
+      "per_second": 30.1,
+      "p50_ms": 23,
+      "p95_ms": 70,
+      "p99_ms": 84,
+      "mean_ms": 33,
+      "fell_back_to_keyword": 0
+    },
+    {
+      "mode": "keyword",
+      "users": 5,
+      "requests": 382,
+      "errors": 0,
+      "per_second": 25.3,
+      "p50_ms": 172,
+      "p95_ms": 346,
+      "p99_ms": 466,
+      "mean_ms": 196,
+      "fell_back_to_keyword": 0
+    },
+    {
+      "mode": "keyword",
+      "users": 10,
+      "requests": 368,
+      "errors": 0,
+      "per_second": 24.1,
+      "p50_ms": 285,
+      "p95_ms": 1067,
+      "p99_ms": 2189,
+      "mean_ms": 410,
+      "fell_back_to_keyword": 0
+    },
+    {
+      "mode": "keyword",
+      "users": 25,
+      "requests": 247,
+      "errors": 0,
+      "per_second": 15.2,
+      "p50_ms": 1055,
+      "p95_ms": 4299,
+      "p99_ms": 6164,
+      "mean_ms": 1576,
+      "fell_back_to_keyword": 0
+    },
+    {
+      "mode": "keyword",
+      "users": 50,
+      "requests": 294,
+      "errors": 0,
+      "per_second": 18.1,
+      "p50_ms": 2237,
+      "p95_ms": 6523,
+      "p99_ms": 8856,
+      "mean_ms": 2588,
+      "fell_back_to_keyword": 0
+    },
+    {
+      "mode": "keyword",
+      "users": 100,
+      "requests": 105,
+      "errors": 100,
+      "per_second": 0.1,
+      "p50_ms": 1043,
+      "p95_ms": 1064,
+      "p99_ms": 1064,
+      "mean_ms": 1040,
+      "fell_back_to_keyword": 0
+    },
+    {
+      "mode": "hybrid",
+      "users": 1,
+      "requests": 113,
+      "errors": 0,
+      "per_second": 7.5,
+      "p50_ms": 118,
+      "p95_ms": 218,
+      "p99_ms": 321,
+      "mean_ms": 133,
+      "fell_back_to_keyword": 0
+    },
+    {
+      "mode": "hybrid",
+      "users": 5,
+      "requests": 106,
+      "errors": 0,
+      "per_second": 7.0,
+      "p50_ms": 556,
+      "p95_ms": 1504,
+      "p99_ms": 2920,
+      "mean_ms": 710,
+      "fell_back_to_keyword": 0
+    },
+    {
+      "mode": "hybrid",
+      "users": 10,
+      "requests": 114,
+      "errors": 0,
+      "per_second": 7.4,
+      "p50_ms": 956,
+      "p95_ms": 3463,
+      "p99_ms": 4423,
+      "mean_ms": 1328,
+      "fell_back_to_keyword": 0
+    },
+    {
+      "mode": "hybrid",
+      "users": 25,
+      "requests": 85,
+      "errors": 0,
+      "per_second": 4.1,
+      "p50_ms": 3608,
+      "p95_ms": 15071,
+      "p99_ms": 17387,
+      "mean_ms": 5251,
+      "fell_back_to_keyword": 0
+    },
+    {
+      "mode": "hybrid",
+      "users": 50,
+      "requests": 116,
+      "errors": 1,
+      "per_second": 5.8,
+      "p50_ms": 6795,
+      "p95_ms": 12012,
+      "p99_ms": 13864,
+      "mean_ms": 7389,
+      "fell_back_to_keyword": 0
+    },
+    {
+      "mode": "hybrid",
+      "users": 100,
+      "requests": 103,
+      "errors": 100,
+      "per_second": 0.0,
+      "p50_ms": 4234,
+      "p95_ms": 4303,
+      "p99_ms": 4303,
+      "mean_ms": 4238,
+      "fell_back_to_keyword": 0
+    }
+  ]
+}

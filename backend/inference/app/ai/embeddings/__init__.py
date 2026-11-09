@@ -33,9 +33,10 @@ def normalize(vector: list[float]) -> list[float]:
 
 
 class FastEmbedEmbedder:
-    def __init__(self, name: str, cache_dir: str) -> None:
+    def __init__(self, name: str, cache_dir: str, threads: int | None = None) -> None:
         self.name = name
         self._cache_dir = cache_dir
+        self._threads = threads
         self._model = None
         self._lock = threading.Lock()
 
@@ -45,7 +46,7 @@ class FastEmbedEmbedder:
                 try:
                     from fastembed import TextEmbedding
 
-                    self._model = TextEmbedding(self.name, cache_dir=self._cache_dir)
+                    self._model = TextEmbedding(self.name, cache_dir=self._cache_dir, threads=self._threads)
                 except Exception as exc:  # missing package, no network for the first download, unknown model
                     raise EmbedderUnavailable(f"Could not load {self.name}: {exc}") from exc
         return self._model
@@ -69,7 +70,7 @@ def get_embedder() -> Embedder:
     if not settings.semantic_search:
         raise EmbedderUnavailable("Semantic search is switched off (SEMANTIC_SEARCH=false)")
     if _embedder is None:
-        _embedder = FastEmbedEmbedder(settings.embedding_model, str(settings.embedding_cache_dir))
+        _embedder = FastEmbedEmbedder(settings.embedding_model, str(settings.embedding_cache_dir), settings.embedding_threads)
     return _embedder
 
 

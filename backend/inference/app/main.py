@@ -4,9 +4,11 @@ import threading
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy.exc import TimeoutError as PoolTimeout
 
 from app.ai.embeddings import EmbedderUnavailable, get_embedder
 from app.api import ai, authors, documents, geo, projects, search
@@ -46,6 +48,12 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    @app.exception_handler(PoolTimeout)
+    async def busy(_: Request, __: PoolTimeout) -> JSONResponse:
+        # Every database connection is in use: say so at once, so the site can fall back, instead of a 500.
+        return JSONResponse({"detail": "The server is busy. Try again in a moment."}, status_code=503,
+                            headers={"Retry-After": "2"})
+
     app.include_router(search.router, prefix="/api")  # before projects: /projects/search must not be read as an id
     app.include_router(projects.router, prefix="/api")
     app.include_router(documents.router, prefix="/api")

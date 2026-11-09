@@ -1100,13 +1100,22 @@ function searchApi(){
   if (!q) { apiSearch=null; return; }
   if (!apiLive) { if (semantic && AI_OK) qTimer=setTimeout(()=>browserSearch(q), 200); return; }
   qTimer=setTimeout(async()=>{
-    try { const r=await fetch(`${API_BASE}/api/projects/search?q=${encodeURIComponent(q)}&mode=${semantic?"hybrid":"keyword"}&limit=50`); if (!r.ok) return;
+    try { const r=await fetch(`${API_BASE}/api/projects/search?q=${encodeURIComponent(q)}&mode=${semantic?"hybrid":"keyword"}&limit=50`,
+        { signal:AbortSignal.timeout(8000) });
+      if (!r.ok) return searchHere(q, semantic);   // 503 busy, or any other failure
       const body=await r.json(); if (state.q.trim()!==q || state.semantic!==semantic) return;
       apiSearch={ q, semantic, model:body.model, keywordOnly: semantic && body.mode_used==="keyword",
         hits:new Map(body.results.map((h,i)=>[String(h.project.id), {rank:i, matched_by:h.matched_by, similarity:h.similarity,
           passage:h.passage, passage_document:h.passage_document}])) };
-      refresh(); } catch {}
+      refresh(); } catch { searchHere(q, semantic); }   // unreachable or too slow
   }, 250);
+}
+// The backend did not answer: search in this page instead, by meaning in the browser if the model can run here.
+function searchHere(q, semantic){
+  if (state.q.trim()!==q || state.semantic!==semantic) return;
+  if (semantic && AI_OK && ai.state!=="failed") return browserSearch(q);
+  apiSearch={ ...localKeywordSearch(q, !semantic), semantic, keywordOnly:semantic };
+  refresh();
 }
 // ---------- search by meaning in the browser ----------
 // Without the backend (the deployed site), "By meaning" runs the embedding model the backend uses,
