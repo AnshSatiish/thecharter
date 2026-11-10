@@ -10,9 +10,10 @@ from app.core.security import require_admin
 from app.db.models import Document, Project
 from app.db.session import get_db
 from app.schemas import DocumentOut
+from app.ai.summarization import summarize_with_fallback
 from app.services.search_index import reindex_project
 from app.services.storage import LocalStorage, get_storage, safe_filename
-from app.services.text import extract_keywords, extract_pdf_text, summarize
+from app.services.text import extract_keywords, extract_pdf_text
 from app.services.uploads import is_pdf, read_limited
 
 router = APIRouter(tags=["documents"])
@@ -51,14 +52,16 @@ def upload_document(
     storage: Storage,
     file: Annotated[UploadFile, File()],
     title: Annotated[str | None, Form(max_length=300)] = None,
+    summary: Annotated[str | None, Form(max_length=5000)] = None,
 ) -> Document:
-    """Save a project PDF, extract its text, and suggest a summary and keywords from it."""
+    """Save a project PDF, extract its text, and draft a summary and keywords from it."""
     project = _project_or_404(db, project_id)
     data, text, pages = read_pdf(file)
     filename = safe_filename(file.filename or "", default="document.pdf")
     if not filename.lower().endswith(".pdf"):
         filename += ".pdf"
 
+    generated_summary = summarize_with_fallback(text)[0] if summary is None else summary.strip()
     path = storage.save(data, f"projects/{project_id}/documents", filename)
     document = Document(
         project=project,
@@ -68,7 +71,7 @@ def upload_document(
         size_bytes=len(data),
         pages=pages,
         text=text,
-        summary=summarize(text) or None,
+        summary=generated_summary or None,
         keywords=extract_keywords(text),
     )
     if not project.summary and document.summary:

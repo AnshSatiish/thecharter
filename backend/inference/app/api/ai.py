@@ -10,22 +10,19 @@ from app.api.documents import read_pdf
 from app.core.security import require_admin
 from app.schemas import KeywordsIn, KeywordsOut, PdfExtractOut, SummarizeIn, SummaryOut
 from app.services.storage import safe_filename
-from app.ai.summarization import SummarizerUnavailable, get_summarizer
+from app.ai.summarization import summarize_with_fallback
 from app.services.text import METHOD, extract_keywords, summarize
 
 router = APIRouter(prefix="/ai", tags=["ai"])
 
 
-@router.post("/summarize", response_model=SummaryOut)
+@router.post("/summarize", response_model=SummaryOut, dependencies=[Depends(require_admin)])
 def summarize_text(body: SummarizeIn) -> SummaryOut:
     """A draft summary for the administrator to review. With method=ai the summarization model writes it;
     if the model cannot be loaded, the extractive baseline answers and `fallback` is true."""
     if body.method == "ai":
-        try:
-            summarizer = get_summarizer()
-            return SummaryOut(summary=summarizer.summarize(body.text), method=f"ai:{summarizer.name}")
-        except SummarizerUnavailable:
-            return SummaryOut(summary=summarize(body.text, body.max_sentences), method=METHOD, fallback=True)
+        summary, method, fallback = summarize_with_fallback(body.text, body.max_sentences)
+        return SummaryOut(summary=summary, method=method, fallback=fallback)
     return SummaryOut(summary=summarize(body.text, body.max_sentences), method=METHOD)
 
 
@@ -41,11 +38,14 @@ def extract_pdf(file: Annotated[UploadFile, File()]) -> PdfExtractOut:
     The admin form calls this to prefill fields before the project exists.
     """
     _, text, pages = read_pdf(file)
+    summary, method, fallback = summarize_with_fallback(text)
     return PdfExtractOut(
         filename=safe_filename(file.filename or "", default="document.pdf"),
         pages=pages,
         characters=len(text),
-        summary=summarize(text),
+        summary=summary,
+        summary_method=method,
+        fallback=fallback,
         keywords=extract_keywords(text),
         has_text=bool(text.strip()),
         text=text,

@@ -114,7 +114,7 @@ def test_upload_document(client):
     assert set(doc) == {"id", "title", "filename", "url", "size_bytes", "pages", "summary", "keywords", "uploaded_at"}
     assert doc["title"] == "Field report" and doc["filename"] == "report.pdf"
     assert doc["pages"] == 2 and doc["size_bytes"] == len(make_pdf(REPORT))
-    assert doc["summary"] and "sambaza" in doc["summary"]
+    assert doc["summary"].startswith("Draft:") and "sambaza" in doc["summary"]
     assert "sambaza" in [k.lower() for k in doc["keywords"]]
 
     # Served at its URL
@@ -141,6 +141,11 @@ def test_document_does_not_overwrite_existing_summary(client):
     client.patch("/api/projects/18", json={"summary": "Written by the curator."}, headers=ADMIN)
     upload_pdf(client)
     assert client.get("/api/projects/18").json()["summary"] == "Written by the curator."
+
+
+def test_upload_document_preserves_admin_edited_summary(client):
+    doc = upload_pdf(client, summary="Edited and approved by the admin.").json()
+    assert doc["summary"] == "Edited and approved by the admin."
 
 
 def test_document_default_title_and_scanned_pdf(client):
@@ -201,27 +206,59 @@ def test_extract_pdf_saves_nothing(client):
     body = resp.json()
     assert body["filename"] == "report.pdf" and body["pages"] == 2 and body["has_text"] is True
     assert body["characters"] > 100 and body["summary"]
+    assert body["summary"].startswith("Draft:") and body["summary_method"] == "ai:test-stub"
+    assert body["fallback"] is False
     assert "sambaza" in [k.lower() for k in body["keywords"]]
     assert stored_files() == before
     assert client.get("/api/projects/18/documents").json() == []
 
     scanned = client.post("/api/ai/extract-pdf", files={"file": ("s.pdf", make_pdf([""]), "application/pdf")}, headers=ADMIN).json()
     assert scanned["has_text"] is False and scanned["summary"] == "" and scanned["keywords"] == []
+    assert scanned["fallback"] is False
+
+
+def test_extract_pdf_uses_extractive_fallback_when_ai_unavailable(client):
+    from app.ai.summarization import SummarizerUnavailable, set_summarizer
+
+    class Broken:
+        name = "broken"
+
+        def summarize(self, text):
+            raise SummarizerUnavailable("no model")
+
+    set_summarizer(Broken())
+    response = client.post(
+        "/api/ai/extract-pdf",
+        files={"file": ("report.pdf", make_pdf(REPORT), "application/pdf")},
+        headers=ADMIN,
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["fallback"] is True and body["summary_method"] == "extractive-baseline"
+    assert body["summary"] and "sambaza" in body["summary"].lower()
 
 
 def test_ai_summarize_and_keywords(client):
     text = " ".join(REPORT)
-    summary = client.post("/api/ai/summarize", json={"text": text, "max_sentences": 1}).json()
+    assert client.post("/api/ai/summarize", json={"text": text}).status_code == 401
+    assert client.post("/api/ai/summarize", json={"text": text}, headers={"X-Admin-Token": "nope"}).status_code == 403
+    response = client.post("/api/ai/summarize", json={"text": text, "max_sentences": 1}, headers=ADMIN)
+    assert response.status_code == 200, response.text
+    summary = response.json()
     assert summary["method"] == "extractive-baseline"
     assert summary["summary"] and summary["summary"] in text
     keywords = client.post("/api/ai/keywords", json={"text": text, "top_k": 3}).json()
     assert keywords["method"] == "extractive-baseline" and len(keywords["keywords"]) == 3
-    assert client.post("/api/ai/summarize", json={"text": text, "max_sentences": 0}).status_code == 422
-    assert client.post("/api/ai/summarize", json={}).status_code == 422
+    assert client.post("/api/ai/summarize", json={"text": text, "max_sentences": 0}, headers=ADMIN).status_code == 422
+    assert client.post("/api/ai/summarize", json={}, headers=ADMIN).status_code == 422
 
 
 def test_ai_summarize_with_the_model(client):
-    body = client.post("/api/ai/summarize", json={"text": "Lake Kivu is warming. Fishers report smaller catches.", "method": "ai"}).json()
+    body = client.post(
+        "/api/ai/summarize",
+        json={"text": "Lake Kivu is warming. Fishers report smaller catches.", "method": "ai"},
+        headers=ADMIN,
+    ).json()
     assert body == {"summary": "Draft: Lake Kivu is warming", "method": "ai:test-stub", "fallback": False}
 
 
@@ -235,8 +272,35 @@ def test_ai_summarize_falls_back_without_the_model(client):
             raise SummarizerUnavailable("no model")
 
     set_summarizer(Broken())
-    body = client.post("/api/ai/summarize", json={"text": "One sentence here. Another one.", "method": "ai"}).json()
+    body = client.post(
+        "/api/ai/summarize",
+        json={"text": "One sentence here. Another one.", "method": "ai"},
+        headers=ADMIN,
+    ).json()
     assert body["fallback"] is True and body["method"] == "extractive-baseline" and body["summary"]
+
+
+def test_summarizer_generation_errors_are_fallback_eligible(monkeypatch):
+    from contextlib import nullcontext
+    from types import SimpleNamespace
+    import sys
+
+    from app.ai.summarization import AbstractiveSummarizer, SummarizerUnavailable
+
+    class Tokenizer:
+        def __call__(self, *_args, **_kwargs):
+            return {}
+
+    class BrokenModel:
+        def generate(self, **_kwargs):
+            raise RuntimeError("generation failed")
+
+    summarizer = AbstractiveSummarizer("broken")
+    monkeypatch.setattr(summarizer, "_load", lambda: (Tokenizer(), BrokenModel()))
+    monkeypatch.setitem(sys.modules, "torch", SimpleNamespace(no_grad=nullcontext))
+
+    with pytest.raises(SummarizerUnavailable, match="Could not generate a summary"):
+        summarizer._generate("A sample report.")
 
 
 # Edits

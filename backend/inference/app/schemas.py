@@ -192,12 +192,14 @@ class KeywordsOut(BaseModel):
 
 
 class PdfExtractOut(BaseModel):
-    """Suggestions from a PDF that has not been saved."""
+    """Text, summary draft and keywords from a PDF that has not been saved."""
 
     filename: str
     pages: int
     characters: int
     summary: str
+    summary_method: str
+    fallback: bool = Field(description="True when the AI model was unavailable and the extractive summary was used")
     keywords: list[str]
     has_text: bool
-    text: str = Field(description="The extracted text, so the form can ask for an AI summary of it")
+    text: str = Field(description="The extracted text, for the admin form")

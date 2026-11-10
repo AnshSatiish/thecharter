@@ -11,7 +11,7 @@ import re
 import threading
 
 from app.core.config import get_settings
-from app.services.text import split_sentences
+from app.services.text import METHOD, split_sentences, summarize as summarize_extractive
 
 
 class SummarizerUnavailable(RuntimeError):
@@ -45,15 +45,22 @@ class AbstractiveSummarizer:
         return self._tokenizer, self._model
 
     def _generate(self, text: str) -> str:
-        import torch
+        try:
+            import torch
 
-        tokenizer, model = self._load()
-        inputs = tokenizer(self.prefix + text, return_tensors="pt", truncation=True, max_length=512)
-        with torch.no_grad():
-            output = model.generate(**inputs, max_new_tokens=self.max_new_tokens, num_beams=self.num_beams,
-                                    no_repeat_ngram_size=3, early_stopping=self.num_beams > 1)
-        text = tokenizer.decode(output[0], skip_special_tokens=True).strip()
-        return re.sub(r"\s+([.,;:!?])", r"\1", text)  # some models put a space before punctuation
+            tokenizer, model = self._load()
+            inputs = tokenizer(self.prefix + text, return_tensors="pt", truncation=True, max_length=512)
+            with torch.no_grad():
+                output = model.generate(**inputs, max_new_tokens=self.max_new_tokens, num_beams=self.num_beams,
+                                        no_repeat_ngram_size=3, early_stopping=self.num_beams > 1)
+            summary = tokenizer.decode(output[0], skip_special_tokens=True).strip()
+            if not summary:
+                raise SummarizerUnavailable(f"{self.name} returned an empty summary")
+            return re.sub(r"\s+([.,;:!?])", r"\1", summary)  # some models put a space before punctuation
+        except SummarizerUnavailable:
+            raise
+        except Exception as exc:
+            raise SummarizerUnavailable(f"Could not generate a summary with {self.name}: {exc}") from exc
 
     def summarize(self, text: str, piece_words: int = 350, max_pieces: int = 6) -> str:
         sentences = split_sentences(text or "")
@@ -82,6 +89,17 @@ def get_summarizer() -> AbstractiveSummarizer:
         _summarizer = AbstractiveSummarizer(settings.summary_model, settings.summary_max_new_tokens,
                                             settings.summary_num_beams, settings.summary_prefix)
     return _summarizer
+
+
+def summarize_with_fallback(text: str, max_sentences: int = 3) -> tuple[str, str, bool]:
+    """Return an AI draft when available, otherwise the extractive summary."""
+    if not text.strip():
+        return "", METHOD, False
+    try:
+        summarizer = get_summarizer()
+        return summarizer.summarize(text), f"ai:{summarizer.name}", False
+    except SummarizerUnavailable:
+        return summarize_extractive(text, max_sentences), METHOD, True
 
 
 def set_summarizer(summarizer: AbstractiveSummarizer | None) -> None:

@@ -1816,34 +1816,20 @@ async function analysePdf(){
   if (!apiLive && sb) { box.innerHTML=`<div class="pdfres"><p class="meta">The PDF is stored with the project when you publish. Reading its text and drafting an AI summary need the backend, so write the summary here.</p>
       <label class="fld" for="pdfSummary">Summary<textarea id="pdfSummary" style="min-height:96px;line-height:1.45"></textarea></label></div>`; return; }
   if (!apiLive) { box.innerHTML='<p class="placeholder-note" style="margin-top:12px">The backend is not running, so the PDF cannot be read or stored yet. Start it to get a summary and keywords.</p>'; return; }
-  box.innerHTML='<p class="meta" style="margin-top:12px">Reading the PDF…</p>';
+  box.innerHTML='<p class="meta" style="margin-top:12px">Reading the PDF and drafting a summary…</p>';
   try {
     const fd=new FormData(); fd.append("file",pdfFile);
     const r=await fetch(`${API_BASE}/api/ai/extract-pdf`,{method:"POST",headers:{"X-Admin-Token":DEV_ADMIN_TOKEN},body:fd});
     const o=await r.json().catch(()=>({}));
     if (!r.ok) throw new Error(typeof o.detail==="string" ? o.detail : r.status);
+    const summaryLabel=o.fallback ? "Extractive fallback summary, review and edit before publishing"
+      : o.summary_method?.startsWith("ai:") ? "AI draft summary, review and edit before publishing"
+      : "Summary, edit before publishing";
     box.innerHTML=`<div class="pdfres"><p class="meta">${o.pages} page${o.pages===1?"":"s"} · ${Number(o.characters).toLocaleString()} characters of text</p>
-      ${o.has_text ? `<div class="askai" id="askAi"><span>Generate an AI summary of this document?</span>
-        <button type="button" class="btn violet" id="aiYes">Yes, draft it</button><button type="button" class="btn" id="aiNo">No, I will write it</button></div>`
-        : '<p class="pubmsg" style="margin:0">This PDF has no selectable text (it looks scanned), so there is nothing to summarize or search.</p>'}
-      <label class="fld" for="pdfSummary"><span id="pdfSumLabel">Summary, edit before publishing</span><textarea id="pdfSummary" style="min-height:96px;line-height:1.45"></textarea></label>
+      ${o.has_text ? "" : '<p class="pubmsg" style="margin:0">This PDF has no selectable text (it looks scanned), so there is nothing to summarize or search.</p>'}
+      <label class="fld" for="pdfSummary"><span id="pdfSumLabel">${summaryLabel}</span><textarea id="pdfSummary" style="min-height:96px;line-height:1.45">${esc(o.summary ?? "")}</textarea></label>
       <div class="fld">Keywords found in the document, click to remove<div class="tchips" id="pdfKw">${(o.keywords ?? []).map(k=>`<button type="button" aria-pressed="true">${esc(k)}</button>`).join("")}</div></div></div>`;
     $("pdfKw").onclick=e=>{ const b=e.target.closest("button"); if (b) b.setAttribute("aria-pressed", b.getAttribute("aria-pressed")!=="true"); };
-    if (o.has_text){
-      $("aiNo").onclick=()=>{ $("askAi").remove(); $("pdfSummary").focus(); };
-      $("aiYes").onclick=async()=>{
-        const yes=$("aiYes"); yes.disabled=true; $("aiNo").disabled=true; yes.innerHTML='<span class="spin"></span>Writing';
-        try {
-          const r=await fetch(`${API_BASE}/api/ai/summarize`,{method:"POST",headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({text:o.text, method:"ai", max_sentences:2})});
-          const s=await r.json(); if (!r.ok) throw new Error(r.status);
-          $("pdfSummary").value=s.summary ?? "";
-          $("pdfSumLabel").textContent = s.fallback ? "Summary drafted by the baseline (the AI model is not available), edit before publishing"
-            : "AI draft summary, review and edit before publishing";
-          $("askAi").remove();
-        } catch(err) { yes.disabled=false; $("aiNo").disabled=false; yes.textContent="Try again"; }
-      };
-    }
   } catch(err) { box.innerHTML=`<p class="pubmsg">The PDF could not be read: ${esc(String(err.message))}</p>`; }
 }
 $("pdfFile").onchange=e=>setPdf(e.target.files[0]);
@@ -1881,7 +1867,7 @@ $("suggest").onclick=async()=>{
   }
   if (!apiLive) { $("sugs").innerHTML='<p class="placeholder-note">The backend is not running, so there is nothing to read your text. Start it, or load the example to see this step.</p>'; done(); return; }
   try {
-    const post=(path,body)=>fetch(API_BASE+path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}).then(r=>{ if(!r.ok) throw new Error(r.status); return r.json(); });
+    const post=(path,body)=>fetch(API_BASE+path,{method:"POST",headers:{"Content-Type":"application/json","X-Admin-Token":DEV_ADMIN_TOKEN},body:JSON.stringify(body)}).then(r=>{ if(!r.ok) throw new Error(r.status); return r.json(); });
     const [kw,sm]=await Promise.all([post("/api/ai/keywords",{text:`${title}. ${desc}`,top_k:8}), post("/api/ai/summarize",{text:desc || title,max_sentences:2,method:"ai"})]);
     renderSugs([{k:"Keywords", type:"chips", v:kw.keywords ?? [], conf:"Extracted from your title and description", real:true},
                 {k:"Preview summary", type:"text", v:sm.summary ?? "", conf: sm.fallback ? "Baseline summarizer: the most representative sentences of your description" : "AI draft from your description, edit before accepting", real:true}]);
@@ -1946,6 +1932,7 @@ async function publishToApi(lat,lng){
     }
     if (pdfFile){
       const fd=new FormData(); fd.append("file",pdfFile); fd.append("title",body.title);
+      fd.append("summary",$("pdfSummary")?.value.trim() ?? "");
       const r3=await fetch(`${API_BASE}/api/projects/${out.id}/documents`,{method:"POST",headers:auth,body:fd});
       if (!r3.ok) problems.push("the PDF");
     }
