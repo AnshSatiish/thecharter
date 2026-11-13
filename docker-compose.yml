@@ -10,7 +10,9 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-charter}
     ports:
       # This computer only: other machines on the same network cannot reach the database.
+      # Both loopback addresses, because "localhost" in DATABASE_URL tries IPv6 (::1) first.
       - "127.0.0.1:5432:5432"
+      - "[::1]:5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
