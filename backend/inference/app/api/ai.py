@@ -11,7 +11,7 @@ from app.core.security import require_admin
 from app.schemas import KeywordsIn, KeywordsOut, PdfExtractOut, SummarizeIn, SummaryOut
 from app.services.storage import safe_filename
 from app.ai.summarization import summarize_with_fallback
-from app.services.text import METHOD, extract_keywords, summarize
+from app.services.text import METHOD, SUMMARY_METHOD, extract_keywords, summarize
 
 router = APIRouter(prefix="/ai", tags=["ai"])
 
@@ -23,7 +23,7 @@ def summarize_text(body: SummarizeIn) -> SummaryOut:
     if body.method == "ai":
         summary, method, fallback = summarize_with_fallback(body.text, body.max_sentences)
         return SummaryOut(summary=summary, method=method, fallback=fallback)
-    return SummaryOut(summary=summarize(body.text, body.max_sentences), method=METHOD)
+    return SummaryOut(summary=summarize(body.text, body.max_sentences), method=SUMMARY_METHOD)
 
 
 @router.post("/keywords", response_model=KeywordsOut)

@@ -71,7 +71,7 @@ def main() -> None:
 
     baselines = {
         "Lead-2 (first two sentences)": lambda text: " ".join(split_sentences(text)[:2]),
-        "Word-frequency extractive (current baseline)": lambda text: summarize(text, max_sentences=2),
+        "TF-IDF extractive (current fallback)": lambda text: summarize(text, max_sentences=2),
     }
     for label, fn in baselines.items():
         t0 = time.perf_counter()
@@ -131,7 +131,7 @@ def main() -> None:
 
 SHORT_NAMES = {
     "Lead-2 (first two sentences)": "Lead-2",
-    "Word-frequency extractive (current baseline)": "Word\nfrequency",
+    "TF-IDF extractive (current fallback)": "TF-IDF\nextractive",
     "flan-t5-small": "flan-t5\nsmall",
     "t5-small (summarization)": "t5-small\nsummarizer",
     "distilbart-cnn-6-6": "distilbart\ncnn-6-6",

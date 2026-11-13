@@ -29,4 +29,6 @@ Run each script from this folder with the backend's environment, for example `..
 - Fine-tuning did not improve the pretrained model on unseen projects (two settings tried), so the pretrained weights are used.
 - Summarizer: **distilbart-cnn-6-6**, greedy decoding, up to 60 new tokens. The FLAN-T5 models invented facts in their summaries, which is why every summary is a draft the administrator confirms.
 
+The checked-in summarization results compare DistilBART with the former word-frequency fallback. The application fallback now uses TF-IDF sentence scoring; rerun `evaluate_summarizers.py` to measure the updated baseline.
+
 All results come from a corpus that is mostly synthetic and from queries written by the team. Rerun the scripts when the partner's full data arrives.

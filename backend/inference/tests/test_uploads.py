@@ -234,7 +234,7 @@ def test_extract_pdf_uses_extractive_fallback_when_ai_unavailable(client):
     )
     assert response.status_code == 200
     body = response.json()
-    assert body["fallback"] is True and body["summary_method"] == "extractive-baseline"
+    assert body["fallback"] is True and body["summary_method"] == "tfidf-extractive"
     assert body["summary"] and "sambaza" in body["summary"].lower()
 
 
@@ -245,7 +245,7 @@ def test_ai_summarize_and_keywords(client):
     response = client.post("/api/ai/summarize", json={"text": text, "max_sentences": 1}, headers=ADMIN)
     assert response.status_code == 200, response.text
     summary = response.json()
-    assert summary["method"] == "extractive-baseline"
+    assert summary["method"] == "tfidf-extractive"
     assert summary["summary"] and summary["summary"] in text
     keywords = client.post("/api/ai/keywords", json={"text": text, "top_k": 3}).json()
     assert keywords["method"] == "extractive-baseline" and len(keywords["keywords"]) == 3
@@ -277,7 +277,7 @@ def test_ai_summarize_falls_back_without_the_model(client):
         json={"text": "One sentence here. Another one.", "method": "ai"},
         headers=ADMIN,
     ).json()
-    assert body["fallback"] is True and body["method"] == "extractive-baseline" and body["summary"]
+    assert body["fallback"] is True and body["method"] == "tfidf-extractive" and body["summary"]
 
 
 def test_summarizer_generation_errors_are_fallback_eligible(monkeypatch):

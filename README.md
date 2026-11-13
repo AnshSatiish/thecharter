@@ -74,7 +74,7 @@ Agreed with the partner, and reflected in the backend:
 - **Projects are uploaded as PDF files**, not links. The backend stores the PDF, extracts its text and keeps it searchable.
 - **Keyword search and project text summarization are the AI priorities.** Search covers titles, descriptions, keywords, narration, summaries and the text of the uploaded PDFs. A summary and keywords are suggested from the PDF, and the admin can edit them.
 - **English only.** The site and its content are in English; this is a course requirement. Machine translation was dropped from scope.
-- **Summaries are drafted by an AI model and confirmed by the administrator.** After a PDF is uploaded, the form asks whether to draft a summary; distilbart-cnn-6-6, chosen against five alternatives by ROUGE, writes it, and the administrator edits it before publishing. The word-frequency extractive summarizer remains as the fallback.
+- **Summaries are drafted by an AI model and confirmed by the administrator.** After a PDF is uploaded, the form asks whether to draft a summary; distilbart-cnn-6-6, chosen against five alternatives by ROUGE, writes it, and the administrator edits it before publishing. A TF-IDF sentence scorer provides the extractive fallback.
 
 ### 1. Curation assistant
 

@@ -1,15 +1,16 @@
-"""Text services: extractive summary, keyword extraction and PDF text extraction.
+"""Text services: TF-IDF extractive summary, keyword extraction and PDF text extraction.
 
-Pure Python, no model downloads. This is the measurable baseline: BART or PEGASUS
-summaries and embedding-based search replace it later (see the README roadmap),
-and are compared against it.
+The extractive summary is pure Python with no model downloads, and serves as a fallback
+for the local abstractive summarizer.
 """
 import io
+import math
 import re
 import unicodedata
 from collections import Counter
 
 METHOD = "extractive-baseline"
+SUMMARY_METHOD = "tfidf-extractive"
 
 _EN = """a about above after again against all also am an and any are as at be because been before being below
 between both but by can could did do does doing down during each few for from further had has have having he her
@@ -43,10 +44,10 @@ def split_sentences(text: str) -> list[str]:
 
 
 def summarize(text: str, max_sentences: int = 3) -> str:
-    """Pick the highest-scoring sentences and return them in their original order.
+    """Pick sentences with the highest TF-IDF score, preserving source order.
 
-    A sentence scores the mean normalised frequency of its content words, with a
-    small bonus for appearing early.
+    IDF is calculated across the input's sentences, and term frequency across the
+    document boosts recurring topics over one-off details.
     """
     sentences = split_sentences(text or "")
     if max_sentences < 1 or not sentences:
@@ -55,16 +56,27 @@ def summarize(text: str, max_sentences: int = 3) -> str:
         return " ".join(sentences)
 
     tokens = [[w for w in (m.lower() for m in _WORD.findall(s)) if _is_content(w)] for s in sentences]
-    freq = Counter(w for words in tokens for w in words)
-    if not freq:
+    document_frequency = Counter(word for words in tokens for word in set(words))
+    if not document_frequency:
         return " ".join(sentences[:max_sentences])
-    top = max(freq.values())
+    sentence_count = len(sentences)
+    document_term_frequency = Counter(word for words in tokens for word in words)
+    term_weight = {
+        word: (1 + math.log(document_term_frequency[word]))
+        * (math.log((sentence_count + 1) / (count + 1)) + 1)
+        for word, count in document_frequency.items()
+    }
 
     def score(i: int) -> float:
         words = tokens[i]
         if len(words) < 3:  # headings and fragments
             return 0.0
-        base = sum(freq[w] / top for w in words) / len(words)
+        term_frequency = Counter(words)
+        weighted_terms = sum(
+            (1 + math.log(count)) * term_weight[word]
+            for word, count in term_frequency.items()
+        )
+        base = weighted_terms / math.sqrt(len(words))
         return base * (1 + 0.2 * (1 - i / len(sentences)))
 
     best = sorted(range(len(sentences)), key=lambda i: (-score(i), i))[:max_sentences]

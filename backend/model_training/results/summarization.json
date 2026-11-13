@@ -19,7 +19,7 @@
       "seconds_per_doc": 0.003,
       "example": "Every monsoon season, herds of Asian elephants move between forest patches that are now separated by tea estates, rice fields and highways. The animals follow corridors their herds have used for generations, and those corridors now run through villages."
     },
-    "Word-frequency extractive (current baseline)": {
+    "Word-frequency extractive (historical baseline)": {
       "rouge1": {
         "mean": 0.3165374849133662,
         "sd": 0.03947260542379887

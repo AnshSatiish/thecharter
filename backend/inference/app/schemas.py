@@ -171,7 +171,7 @@ class SummarizeIn(BaseModel):
     text: str = Field(max_length=500_000)
     max_sentences: int = Field(default=3, ge=1, le=10, description="Extractive method only")
     method: Literal["ai", "extractive"] = Field(
-        default="extractive", description="ai: the summarization model writes a draft. extractive: the word-frequency baseline."
+        default="extractive", description="ai: the summarization model writes a draft. extractive: the TF-IDF sentence-selection baseline."
     )
 
 

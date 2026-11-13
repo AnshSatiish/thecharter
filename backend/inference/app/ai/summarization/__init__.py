@@ -1,6 +1,6 @@
 """AI summarization of project text with an open-source sequence-to-sequence model.
 
-The model writes a new short summary (abstractive), unlike the word-frequency baseline in
+The model writes a new short summary (abstractive), unlike the TF-IDF extractive fallback in
 services/text.py, which only copies sentences. It runs on this machine with PyTorch, so there is
 no API key and no cost; it is downloaded once into the Hugging Face cache. The model and its
 generation settings were chosen by cross-validation (backend/model_training/evaluate_summarizers.py).
@@ -11,7 +11,7 @@ import re
 import threading
 
 from app.core.config import get_settings
-from app.services.text import METHOD, split_sentences, summarize as summarize_extractive
+from app.services.text import SUMMARY_METHOD, split_sentences, summarize as summarize_extractive
 
 
 class SummarizerUnavailable(RuntimeError):
@@ -94,12 +94,12 @@ def get_summarizer() -> AbstractiveSummarizer:
 def summarize_with_fallback(text: str, max_sentences: int = 3) -> tuple[str, str, bool]:
     """Return an AI draft when available, otherwise the extractive summary."""
     if not text.strip():
-        return "", METHOD, False
+        return "", SUMMARY_METHOD, False
     try:
         summarizer = get_summarizer()
         return summarizer.summarize(text), f"ai:{summarizer.name}", False
     except SummarizerUnavailable:
-        return summarize_extractive(text, max_sentences), METHOD, True
+        return summarize_extractive(text, max_sentences), SUMMARY_METHOD, True
 
 
 def set_summarizer(summarizer: AbstractiveSummarizer | None) -> None:

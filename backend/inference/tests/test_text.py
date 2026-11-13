@@ -26,6 +26,16 @@ def test_summarize_english_keeps_order_and_drops_filler():
     assert positions == sorted(positions)
 
 
+def test_summarize_tfidf_prefers_distinctive_sentences():
+    text = (
+        "The community faces severe flooding across several villages. "
+        "The community faces flooding in the villages. "
+        "The community faces flooding near the villages. "
+        "The community faces flooding beyond the villages."
+    )
+    assert summarize(text, max_sentences=1) == "The community faces severe flooding across several villages."
+
+
 
 def test_summarize_short_and_empty_text():
     assert summarize("") == ""
