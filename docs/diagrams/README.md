@@ -7,5 +7,7 @@ Diagrams for the report. Each one has an editable `.drawio` file (open it at [dr
 | Use case diagram | `use-case-diagram.*` |
 | Architecture of the AI capability (semantic search) | `ai-capability-architecture.*` |
 | Component diagram of the AI capability | `ai-component-diagram.*` |
+| Backend database diagram | `backend-database-erd.*` |
+| Supabase database diagram | `supabase-database-erd.*` |
 
 After editing a `.drawio` file, export it again as PNG so the report picture matches.
