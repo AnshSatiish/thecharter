@@ -108,7 +108,7 @@ def test_captions_padded_to_images(client):
 
 def test_upload_document(client):
     assert client.get("/api/projects/18").json()["summary"] is None
-    resp = upload_pdf(client, title="Field report")
+    resp = upload_pdf(client, title="Field report", summary="Draft: Thermocline shifts are changing the sambaza fishery")
     assert resp.status_code == 201, resp.text
     doc = resp.json()
     assert set(doc) == {"id", "title", "filename", "url", "size_bytes", "pages", "summary", "keywords", "uploaded_at"}
@@ -141,6 +141,18 @@ def test_document_does_not_overwrite_existing_summary(client):
     client.patch("/api/projects/18", json={"summary": "Written by the curator."}, headers=ADMIN)
     upload_pdf(client)
     assert client.get("/api/projects/18").json()["summary"] == "Written by the curator."
+
+
+def test_document_upload_does_not_draft_a_summary(client):
+    doc = upload_pdf(client).json()
+    assert doc["summary"] is None
+    assert client.get("/api/projects/18").json()["summary"] is None
+
+
+def test_document_upload_keeps_an_intentionally_empty_summary(client):
+    doc = upload_pdf(client, summary="").json()
+    assert doc["summary"] is None
+    assert client.get("/api/projects/18").json()["summary"] is None
 
 
 def test_upload_document_preserves_admin_edited_summary(client):
@@ -205,10 +217,20 @@ def test_extract_pdf_saves_nothing(client):
     assert resp.status_code == 200, resp.text
     body = resp.json()
     assert body["filename"] == "report.pdf" and body["pages"] == 2 and body["has_text"] is True
-    assert body["characters"] > 100 and body["summary"]
+    assert body["characters"] > 100 and body["summary"] == ""
+    assert body["summary_method"] == "not-requested"
+    assert "sambaza" in [k.lower() for k in body["keywords"]]
+
+    resp = client.post(
+        "/api/ai/extract-pdf",
+        files=files,
+        data={"generate_summary": "true"},
+        headers=ADMIN,
+    )
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
     assert body["summary"].startswith("Draft:") and body["summary_method"] == "ai:test-stub"
     assert body["fallback"] is False
-    assert "sambaza" in [k.lower() for k in body["keywords"]]
     assert stored_files() == before
     assert client.get("/api/projects/18/documents").json() == []
 
@@ -230,6 +252,7 @@ def test_extract_pdf_uses_extractive_fallback_when_ai_unavailable(client):
     response = client.post(
         "/api/ai/extract-pdf",
         files={"file": ("report.pdf", make_pdf(REPORT), "application/pdf")},
+        data={"generate_summary": "true"},
         headers=ADMIN,
     )
     assert response.status_code == 200

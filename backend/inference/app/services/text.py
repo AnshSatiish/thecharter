@@ -9,7 +9,7 @@ import re
 import unicodedata
 from collections import Counter
 
-METHOD = "extractive-baseline"
+KEYWORD_METHOD = "extractive-baseline"
 SUMMARY_METHOD = "tfidf-extractive"
 
 _EN = """a about above after again against all also am an and any are as at be because been before being below

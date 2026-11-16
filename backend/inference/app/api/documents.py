@@ -1,4 +1,4 @@
-"""PDF documents attached to a project: upload, list and delete."""
+"""Upload, list and delete project PDFs."""
 from pathlib import PurePosixPath
 from typing import Annotated
 
@@ -10,7 +10,6 @@ from app.core.security import require_admin
 from app.db.models import Document, Project
 from app.db.session import get_db
 from app.schemas import DocumentOut
-from app.ai.summarization import summarize_with_fallback
 from app.services.search_index import reindex_project
 from app.services.storage import LocalStorage, get_storage, safe_filename
 from app.services.text import extract_keywords, extract_pdf_text
@@ -54,14 +53,13 @@ def upload_document(
     title: Annotated[str | None, Form(max_length=300)] = None,
     summary: Annotated[str | None, Form(max_length=5000)] = None,
 ) -> Document:
-    """Save a project PDF, extract its text, and draft a summary and keywords from it."""
+    """Save a PDF, its extracted text and the summary supplied by the administrator."""
     project = _project_or_404(db, project_id)
     data, text, pages = read_pdf(file)
     filename = safe_filename(file.filename or "", default="document.pdf")
     if not filename.lower().endswith(".pdf"):
         filename += ".pdf"
 
-    generated_summary = summarize_with_fallback(text)[0] if summary is None else summary.strip()
     path = storage.save(data, f"projects/{project_id}/documents", filename)
     document = Document(
         project=project,
@@ -71,7 +69,7 @@ def upload_document(
         size_bytes=len(data),
         pages=pages,
         text=text,
-        summary=generated_summary or None,
+        summary=(summary or "").strip() or None,
         keywords=extract_keywords(text),
     )
     if not project.summary and document.summary:

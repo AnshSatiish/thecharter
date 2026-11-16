@@ -1,12 +1,7 @@
-"""Choose the summarizer by measurement: `..\\.venv\\Scripts\\python evaluate_summarizers.py`.
+"""Evaluate extractive baselines and pretrained summarizers on the synthetic reports.
 
-Each of the 30 synthetic projects has a field-report text (what an administrator would upload as
-a PDF) and a two-sentence reference summary. Every method summarizes the report text and is scored
-against the reference with ROUGE-1, ROUGE-2 and ROUGE-L (F1). Generation settings of the AI models
-(beam search width and summary length) are tuned by 5-fold cross-validation over the projects:
-chosen on 24 projects, measured on the other 6, five times.
-
-Writes results/summarization.json, results/summarization.md and figures/summarization.png.
+AI generation settings are selected by five-fold cross-validation using ROUGE-L.
+Writes JSON, Markdown and chart results under this folder.
 """
 import gc
 import itertools
@@ -15,7 +10,7 @@ import logging
 import random
 import time
 
-import common  # noqa: F401
+import common  # noqa: F401  (configures the temporary backend database)
 from common import HERE, SEED, SYNTHETIC
 
 import numpy as np
@@ -49,7 +44,7 @@ def project_folds(n: int, k: int = 5) -> list[list[int]]:
 
 
 def cross_validate(per_setting: dict, n: int) -> dict:
-    """per_setting[setting] = list of ROUGE dicts, one per document. Pick by ROUGE-L on the training folds."""
+    """Choose settings on four folds and report ROUGE on the held-out fold."""
     held, chosen = [], []
     for k, test in enumerate(project_folds(n)):
         train = [i for f, part in enumerate(project_folds(n)) if f != k for i in part]
@@ -171,7 +166,7 @@ def plot(report: dict) -> None:
 if __name__ == "__main__":
     import sys
 
-    if "--plot-only" in sys.argv:  # redraw the figure from the saved results
+    if "--plot-only" in sys.argv:
         plot(json.loads((RESULTS / "summarization.json").read_text(encoding="utf-8")))
     else:
         main()

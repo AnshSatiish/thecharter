@@ -1,11 +1,7 @@
-"""AI summarization of project text with an open-source sequence-to-sequence model.
+"""Local abstractive summaries with a TF-IDF sentence-selection fallback.
 
-The model writes a new short summary (abstractive), unlike the TF-IDF extractive fallback in
-services/text.py, which only copies sentences. It runs on this machine with PyTorch, so there is
-no API key and no cost; it is downloaded once into the Hugging Face cache. The model and its
-generation settings were chosen by cross-validation (backend/model_training/evaluate_summarizers.py).
-
-The summary is always a draft: the administrator reviews, edits and confirms it before it is saved.
+The configured Transformers model runs with PyTorch. Administrators review and edit
+generated summaries before saving them.
 """
 import re
 import threading
@@ -19,8 +15,7 @@ class SummarizerUnavailable(RuntimeError):
 
 
 class AbstractiveSummarizer:
-    """Summarizes long text in pieces: each piece is summarized, then the piece summaries are joined
-    and summarized again if needed, because the models read a limited number of tokens."""
+    """Summarize long text in chunks, then combine the chunk summaries."""
 
     def __init__(self, name: str, max_new_tokens: int = 90, num_beams: int = 4, prefix: str = "") -> None:
         self.name = name
@@ -40,7 +35,7 @@ class AbstractiveSummarizer:
                     self._tokenizer = AutoTokenizer.from_pretrained(self.name)
                     self._model = AutoModelForSeq2SeqLM.from_pretrained(self.name)
                     self._model.eval()
-                except Exception as exc:  # transformers or torch missing, no network for the first download
+                except Exception as exc:
                     raise SummarizerUnavailable(f"Could not load {self.name}: {exc}") from exc
         return self._tokenizer, self._model
 

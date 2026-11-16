@@ -352,6 +352,8 @@ button:not(:disabled):active{transform:translateY(1px)}
 .shotrow .rm:hover{background:var(--paper-2);color:var(--text)}
 .pdfres{display:flex;flex-direction:column;gap:12px;margin-top:12px}
 .pdfres .meta{margin:0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pdfres fieldset{display:grid;gap:8px;margin:0;padding:12px;border:1px solid var(--line);border-radius:8px}
+.pdfres fieldset label{display:flex;gap:8px;align-items:flex-start;color:var(--text);font-size:14px}
 .sbauth{border:1px solid var(--line);border-radius:8px;background:#fff;padding:14px 16px;margin:0 0 18px;display:flex;flex-direction:column;gap:10px}
 .sbauth p{margin:0;font-size:14px;line-height:1.45}
 .sbauth .row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
@@ -858,7 +860,7 @@ body.locked .stage{inset:0}
       </nav>
     <h1 class="page-h">Upload a project</h1>
     <div class="sbauth" id="sbAuth" hidden></div>
-    <div class="placeholder-note">When the backend is running, it reads your PDF and an AI model can draft a summary for you to review and edit. Keywords are suggested from the text. In the example, the category, SDG and location suggestions are prepared placeholders. Photo narration is always written by you.
+    <div class="placeholder-note">After you choose whether to request an AI summary or write one yourself, the backend reads your PDF and suggests keywords. You can review and edit the summary before publishing. Category, SDG and location suggestions in the example are placeholders. Photo narration is written by you.
       <div style="margin-top:10px"><button class="btn" type="button" id="loadSample">Load an example</button></div></div>
 
     <section class="step">
@@ -1803,28 +1805,42 @@ $("thumbs").addEventListener("click",e=>{ const b=e.target.closest(".rm"); if (b
 function readFiles(files){ for (const f of files){ if(!f.type.startsWith("image/")) continue;
   const r=new FileReader(); r.onload=()=>addShot(r.result,f); r.readAsDataURL(f); } }
 
-// Project document: the backend extracts the text and suggests keywords. The admin then chooses whether an AI model
-// drafts the summary (it can be edited before publishing) or writes it themselves.
 let pdfFile=null;
 function setPdf(f){
   if (!f) return;
   if (f.type!=="application/pdf" && !/\.pdf$/i.test(f.name)) { $("pdfInfo").textContent="That file is not a PDF."; return; }
-  pdfFile=f; $("pdfInfo").innerHTML=`<strong>${esc(f.name)}</strong> · ${fmtSize(f.size)}`; $("publish").disabled=false; analysePdf();
+  pdfFile=f; $("pdfInfo").innerHTML=`<strong>${esc(f.name)}</strong> · ${fmtSize(f.size)}`; $("publish").disabled=false;
+  if (apiLive) showPdfSummaryChoice();
+  else analysePdf(false);
 }
-async function analysePdf(){
+function showPdfSummaryChoice(){
+  $("pdfOut").innerHTML=`<form id="pdfSummaryChoice" class="pdfres">
+    <fieldset><legend>How should the summary be prepared?</legend>
+      <label><input type="radio" name="summaryChoice" value="ai" required> Draft one with AI (you can review and edit it)</label>
+      <label><input type="radio" name="summaryChoice" value="manual" required> I’ll write it myself</label>
+    </fieldset>
+    <button class="btn" type="submit">Continue</button>
+  </form>`;
+  $("pdfSummaryChoice").onsubmit=e=>{
+    e.preventDefault();
+    const generateSummary=document.querySelector('input[name="summaryChoice"]:checked').value==="ai";
+    analysePdf(generateSummary);
+  };
+}
+async function analysePdf(generateSummary){
   const box=$("pdfOut");
   if (!apiLive && sb) { box.innerHTML=`<div class="pdfres"><p class="meta">The PDF is stored with the project when you publish. Reading its text and drafting an AI summary need the backend, so write the summary here.</p>
       <label class="fld" for="pdfSummary">Summary<textarea id="pdfSummary" style="min-height:96px;line-height:1.45"></textarea></label></div>`; return; }
   if (!apiLive) { box.innerHTML='<p class="placeholder-note" style="margin-top:12px">The backend is not running, so the PDF cannot be read or stored yet. Start it to get a summary and keywords.</p>'; return; }
-  box.innerHTML='<p class="meta" style="margin-top:12px">Reading the PDF and drafting a summary…</p>';
+  box.innerHTML=`<p class="meta" style="margin-top:12px">${generateSummary?"Reading the PDF and drafting a summary…":"Reading the PDF and extracting keywords…"}</p>`;
   try {
-    const fd=new FormData(); fd.append("file",pdfFile);
+    const fd=new FormData(); fd.append("file",pdfFile); fd.append("generate_summary",String(generateSummary));
     const r=await fetch(`${API_BASE}/api/ai/extract-pdf`,{method:"POST",headers:{"X-Admin-Token":DEV_ADMIN_TOKEN},body:fd});
     const o=await r.json().catch(()=>({}));
     if (!r.ok) throw new Error(typeof o.detail==="string" ? o.detail : r.status);
     const summaryLabel=o.fallback ? "Extractive fallback summary, review and edit before publishing"
       : o.summary_method?.startsWith("ai:") ? "AI draft summary, review and edit before publishing"
-      : "Summary, edit before publishing";
+      : "Write a summary";
     box.innerHTML=`<div class="pdfres"><p class="meta">${o.pages} page${o.pages===1?"":"s"} · ${Number(o.characters).toLocaleString()} characters of text</p>
       ${o.has_text ? "" : '<p class="pubmsg" style="margin:0">This PDF has no selectable text (it looks scanned), so there is nothing to summarize or search.</p>'}
       <label class="fld" for="pdfSummary"><span id="pdfSumLabel">${summaryLabel}</span><textarea id="pdfSummary" style="min-height:96px;line-height:1.45">${esc(o.summary ?? "")}</textarea></label>

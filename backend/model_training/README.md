@@ -13,7 +13,7 @@ Run each script from this folder with the backend's environment, for example `..
 |---|---|---|---|
 | `compare_models.py` | Compares keyword full-text search, TF-IDF and three pretrained embedding models (all-MiniLM-L6-v2, paraphrase-multilingual-MiniLM-L12-v2, bge-small-en-v1.5), each alone and in hybrid with keyword search. Passage length and cut-offs are tuned by 5-fold cross-validation over the queries. | `results/model_comparison.*`, `figures/model_comparison.png` | about 3 minutes |
 | `finetune_embeddings.py` | Fine-tunes the chosen model on pairs built from the corpus (title, keywords or place with the project's own passages), with 5-fold cross-validation over projects so each test fold is unseen. `--epochs` and `--lr` set the training; `--save` keeps a model in `models/` (not committed). | `results/finetune_e<epochs>_lr<rate>.*` | 10 to 20 minutes |
-| `evaluate_summarizers.py` | Compares two extractive baselines with four pretrained summarization models (flan-t5-small, flan-t5-base, a t5-small summarizer, distilbart-cnn-6-6) by ROUGE against the reference summaries, with beam width and length tuned by 5-fold cross-validation over the reports. `--plot-only` redraws the figure. | `results/summarization.*`, `figures/summarization.png` | 20 to 30 minutes |
+| `evaluate_summarizers.py` | Compares Lead-2 and TF-IDF sentence selection with four pretrained summarization models by ROUGE against the reference summaries. AI generation settings are tuned by five-fold cross-validation. `--plot-only` redraws the figure. | `results/summarization.*`, `figures/summarization.png` | 20 to 30 minutes |
 | `search_eval/evaluate_search.py` | Runs every query through the application's own search code with its final settings. | `search_eval/results.md` | about 1 minute |
 | `common.py` | Shared set-up: a temporary database with the 7 partner samples and the 30 synthetic projects, passages cut by the API's code, the query folds and the measures. | | |
 
@@ -27,8 +27,8 @@ Run each script from this folder with the backend's environment, for example `..
 
 - Search model: **bge-small-en-v1.5**, the most accurate and the smallest of the three models; passages of 40 words, minimum similarity 0.575, relative cut-off 0.95. These are the defaults in `../inference/app/core/config.py`.
 - Fine-tuning did not improve the pretrained model on unseen projects (two settings tried), so the pretrained weights are used.
-- Summarizer: **distilbart-cnn-6-6**, greedy decoding, up to 60 new tokens. The FLAN-T5 models invented facts in their summaries, which is why every summary is a draft the administrator confirms.
+- Abstractive model: **distilbart-cnn-6-6**, greedy decoding, up to 60 new tokens. It scored best among the four pretrained models tested. The extractive TF-IDF fallback scored higher on this dataset, but selects original sentences instead of rewriting them.
 
-The checked-in summarization results compare DistilBART with the former word-frequency fallback. The application fallback now uses TF-IDF sentence scoring; rerun `evaluate_summarizers.py` to measure the updated baseline.
+The updated evaluation compares the current TF-IDF fallback with DistilBART and three other pretrained models. Both AI-generated and extractive summaries are drafts for the administrator to review.
 
 All results come from a corpus that is mostly synthetic and from queries written by the team. Rerun the scripts when the partner's full data arrives.
