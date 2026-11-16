@@ -171,7 +171,6 @@ button:not(:disabled):active{transform:translateY(1px)}
 .reset{align-self:flex-start;border:0;background:none;color:var(--red-ink);font-weight:600;font-size:13px;padding:0}
 .legend{display:flex;flex-direction:column;gap:7px;font-size:12.5px;color:var(--muted)}
 .legend div{display:flex;align-items:center;gap:8px}
-.swatch{width:14px;height:14px;border-radius:3px;background:rgba(230,70,38,.35);border:1.5px dashed var(--red)}
 
 .panel-toggle{position:absolute;top:16px;left:16px;z-index:9;background:var(--paper);border:0;border-radius:8px;padding:10px 14px;
   font-weight:700;font-size:13px;box-shadow:0 6px 20px rgba(0,0,0,.3);display:flex;gap:8px;align-items:center;color:var(--text)}
@@ -197,7 +196,6 @@ button:not(:disabled):active{transform:translateY(1px)}
 
 .hint{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.72);font-size:12px;letter-spacing:.04em;
   background:rgba(0,0,0,.28);padding:6px 12px;border-radius:999px;z-index:5;white-space:nowrap;pointer-events:none}
-.newsnote{position:absolute;bottom:16px;right:16px;z-index:5;background:var(--red-strong);color:#fff;font-size:12px;padding:7px 12px;border-radius:6px;max-width:260px;line-height:1.35}
 
 /* ---------- preview card ---------- */
 .card{position:absolute;z-index:12;width:280px;background:var(--paper);border-radius:10px;overflow:hidden;
@@ -399,7 +397,7 @@ button:not(:disabled):active{transform:translateY(1px)}
   .upload-btn{padding:6px 8px;font-size:11px}
 }
 /* ---------- sign-in gate: the globe turns behind a passport cover ---------- */
-body.locked .top,body.locked .panel,body.locked .panel-toggle,body.locked .tools,body.locked .hint,body.locked .newsnote,
+body.locked .top,body.locked .panel,body.locked .panel-toggle,body.locked .tools,body.locked .hint,
 body.locked .coords,body.locked #pins,body.locked .routechip{visibility:hidden}
 body.locked .stage{inset:0}
 .gate{position:fixed;inset:0;z-index:100;display:grid;grid-template-columns:minmax(0,1fr) 420px;align-items:center;gap:32px;
@@ -659,7 +657,7 @@ body.locked .stage{inset:0}
   .panel.closed{transform:translateY(calc(100% + 20px))}
   .panel-toggle{top:auto;bottom:16px}
   .proj button{padding:7px 8px;font-size:11px}
-  .hint,.newsnote,.upload-btn .wide{display:none}
+  .hint,.upload-btn .wide{display:none}
   .top{gap:10px;padding-inline:14px}
   .logo img{height:28px}
   .user{padding-inline:11px}
@@ -712,32 +710,7 @@ body.locked .stage{inset:0}
         <p class="gerr" id="gErr" role="alert"></p>
         <label class="gkeep" for="gKeep"><input id="gKeep" type="checkbox" checked>Keep me signed in on this device</label>
         <button class="gbtn" type="submit" id="gSubmit">Enter the map</button>
-        <div class="glinks"><button type="button" data-view="gForgot">Forgot password?</button><button type="button" data-view="gRequest">Request access</button></div>
         <p class="gnote" id="gNote">Students can explore, search and save projects. Demo sign-in: any institutional email and password are accepted until student accounts are connected. Your password is not stored.</p>
-      </form>
-
-      <form id="gForgot" novalidate hidden>
-        <h2>Reset your password</h2>
-        <p class="sub">Enter your institutional email and we will send a link to set a new password.</p>
-        <label class="gfld" for="gFEmail">Institutional email<input id="gFEmail" type="email" autocomplete="username" placeholder="name@university.edu" required></label>
-        <p class="gerr" id="gFErr" role="alert"></p>
-        <p class="gok" id="gFOk" hidden></p>
-        <button class="gbtn" type="submit">Send reset link</button>
-        <div class="glinks"><button type="button" data-view="gSignin">Back to sign in</button></div>
-        <p class="gnote">Demo. No email is sent yet.</p>
-      </form>
-
-      <form id="gRequest" novalidate hidden>
-        <h2>Request access</h2>
-        <p class="sub">Access is granted by institution. An administrator reviews each request.</p>
-        <label class="gfld" for="gRName">Full name<input id="gRName" type="text" autocomplete="name" required></label>
-        <label class="gfld" for="gREmail">Institutional email<input id="gREmail" type="email" autocomplete="email" placeholder="name@university.edu" required></label>
-        <label class="gfld" for="gRInst">University or newsroom<input id="gRInst" type="text" autocomplete="organization" required></label>
-        <p class="gerr" id="gRErr" role="alert"></p>
-        <p class="gok" id="gROk" hidden></p>
-        <button class="gbtn" type="submit">Send request</button>
-        <div class="glinks"><button type="button" data-view="gSignin">Back to sign in</button></div>
-        <p class="gnote">Demo. The request is not sent yet.</p>
       </form>
     </div>
   </div>
@@ -796,7 +769,6 @@ body.locked .stage{inset:0}
       <div class="sec"><h2>Legend</h2>
         <div class="legend">
           <div><svg class="check" width="16" height="16" viewBox="0 0 24 24"><path fill="#1d8cf0" d="M12 1.5l2.6 1.9 3.2-.2 1 3 2.7 1.8-1 3 1 3-2.7 1.8-1 3-3.2-.2L12 22.5l-2.6-1.9-3.2.2-1-3L2.5 16l1-3-1-3 2.7-1.8 1-3 3.2.2z"/><path d="m7.8 12.2 2.8 2.8 5.6-5.8" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Curated, information checked</div>
-          <div><span class="swatch"></span>News layer: regions set by admin</div>
           <div><span style="width:12px;height:12px;border-radius:50%;background:#111"></span>Academic <span style="width:12px;height:12px;border-radius:50%;background:var(--orange);margin-left:8px"></span>Journalist</div>
         </div>
       </div>
@@ -822,13 +794,9 @@ body.locked .stage{inset:0}
       <button type="button" id="borders" aria-pressed="false" title="Highlight country borders" aria-label="Highlight country borders">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l5-2 6 2 5-2v14l-5 2-6-2-5 2z"/><path d="M9 4v14M15 6v14" stroke-dasharray="2 2"/></svg></button>
       <button type="button" id="places" aria-pressed="true" title="Cities and country names" aria-label="Cities and country names">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="9" r="2.4"/><path d="M12 9h8M4 17h4M12 17h8"/><circle cx="7" cy="17" r="1.4" fill="currentColor"/></svg></button>
-      <button type="button" id="news" aria-pressed="true" title="News layer" aria-label="News layer">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" stroke-dasharray="3 3"/></svg></button>
-    </div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="9" r="2.4"/><path d="M12 9h8M4 17h4M12 17h8"/><circle cx="7" cy="17" r="1.4" fill="currentColor"/></svg></button>    </div>
   </div>
 
-  <div class="newsnote" id="newsnote">News layer on. Shaded regions are set by an admin.</div>
   <div class="hint">Drag to spin · scroll or pinch to zoom · click a pin</div>
   <div class="coords" id="coords" hidden></div>
   <div class="routechip" id="routechip" hidden><span id="routeTxt"></span> <button type="button" id="routeOff">Hide route</button></div>
@@ -858,7 +826,7 @@ body.locked .stage{inset:0}
       </nav>
     <h1 class="page-h">Upload a project</h1>
     <div class="sbauth" id="sbAuth" hidden></div>
-    <div class="placeholder-note">When the backend is running, it reads your PDF and an AI model can draft a summary for you to review and edit. Keywords are suggested from the text. In the example, the category, SDG and location suggestions are prepared placeholders. Photo narration is always written by you.
+    <div class="placeholder-note">When the backend is running, it reads your PDF and an AI model can draft a summary for you to review and edit. Keywords are suggested from the text. Photo narration is always written by you.
       <div style="margin-top:10px"><button class="btn" type="button" id="loadSample">Load an example</button></div></div>
 
     <section class="step">
@@ -951,14 +919,6 @@ const CATS = {
   border:       {label:"Cross-border interactions",    color:"#F68B1F", ink:"#AD5907", g:"B"},
   news:         {label:"News",                         color:"#E64626", ink:"#C8351B", g:"N"},
 };
-// News layer: regions an admin has switched on (lng, lat, radius in degrees)
-const HOTSPOTS = [
-  {name:"Gaza", c:[34.4,31.4], r:1.6},
-  {name:"Sudan", c:[30,14.5], r:5.5},
-  {name:"Eastern DRC", c:[28.8,-1.2], r:2.6},
-  {name:"Haiti", c:[-72.6,18.9], r:1.6},
-  {name:"Eastern Ukraine", c:[37.5,48.3], r:3.2},
-];
 // Official UN SDG names and colours (UN SDG communications guidelines).
 const SDGS = {1:["No poverty","#E5243B"],2:["Zero hunger","#DDA63A"],3:["Good health and well-being","#4C9F38"],4:["Quality education","#C5192D"],
   5:["Gender equality","#FF3A21"],6:["Clean water and sanitation","#26BDE2"],7:["Affordable and clean energy","#FCC30B"],8:["Decent work and economic growth","#A21942"],
@@ -971,22 +931,7 @@ const CHECK = '<svg class="check" viewBox="0 0 24 24" aria-label="Curated"><path
 
 // Search runs on the backend when it is up (backend/inference/app/services/search.py): full-text search for
 // "Keywords", and for "By meaning" a sentence embedding model that ranks projects by how close their text is to
-// the query. Without the backend, keywords are matched in the page and "By meaning" falls back to this small
-// prepared map, which is labelled as a placeholder.
-const CONCEPTS = [
-  {label:"death and ritual", words:["grief","mourn","death","dead","dying","funeral","ancest","ritual","ceremon","spirit","festival","mask","sacred","religio"], ids:["17"]},
-  {label:"Indigenous knowledge", words:["indigen","native","tradition","first nations","aborigin","ancestral"], ids:["17","28"]},
-  {label:"migration", words:["migra","refugee","asylum","border","displac","leave home","forced to leave","exodus","exile","crossing"], ids:["26","27"]},
-  {label:"environment and livelihoods", words:["climate","environment","fish","lake","pollut","fire","nature","ecolog","wildlife","drought","livelihood"], ids:["23","28"]},
-  {label:"protest and politics", words:["protest","youth","young","student","activis","tax","democra","government","parliament","uprising","gen z"], ids:["25"]},
-  {label:"cities and infrastructure", words:["train","rail","transport","infrastructure","moderni","city","cities","urban","development"], ids:["18"]},
-  {label:"danger and survival", words:["danger","violence","jungle","survival","risk"], ids:["27","26"]},
-];
-function meaningHits(q){
-  const hits={};
-  for (const c of CONCEPTS) if (c.words.some(w=>q.includes(w))) for (const id of c.ids) (hits[id] ??= []).push(c.label);
-  return hits;
-}
+// the query. Without the backend, both run in the page (see "keyword ranking" and "search by meaning" below).
 const EXAMPLES=["grief rituals","people forced to leave home","young people protesting","climate and livelihoods"];
 
 const esc = s => String(s ?? "").replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
@@ -1010,7 +955,7 @@ let years = [...new Set(PROJECTS.map(p=>p.year))].sort();
 let sdgList = [...new Set(PROJECTS.flatMap(p=>p.sdgs))].sort((a,b)=>+a.slice(3)-+b.slice(3));
 const state = {
   q:"", semantic:false, cats:new Set(Object.keys(CATS)), sdgs:new Set(), y0:years[0], y1:years.at(-1),
-  proj:"globe", researchers:false, borders:false, news:true, places:true, selected:null,
+  proj:"globe", researchers:false, borders:false, places:true, selected:null,
   rot:[70,-10], k:1, panY:0, auto:true,
 };
 
@@ -1059,7 +1004,6 @@ function visibleItems(){
   const aiDown = !AI_OK || ai.state==="failed";
   // No backend: "Keywords" is ranked in the page, and so is "By meaning" when the model cannot run in this browser.
   const res = currentSearch() ?? (q && !apiLive && (!state.semantic || aiDown) ? localKeywordSearch(state.q.trim(), !state.semantic) : null);
-  const hits = q && state.semantic && !apiLive && aiDown ? meaningHits(q) : {};   // stand-in only if the model cannot run
   const why = {};
   const list = PROJECTS.filter(p => {
     if (!(state.cats.has(p.cat) && p.year>=state.y0 && p.year<=state.y1 &&
@@ -1076,19 +1020,18 @@ function visibleItems(){
     }
     if (res?.semantic || res?.whole) return false;   // the ranking is the whole answer
     if (inPage) return true;
-    if (hits[p.id]) { why[p.id] = {meaning:true, label:"Related by meaning: "+hits[p.id].join(", ")}; return true; }
     return false;
   });
   // Best match first when the backend ranked them; anything matched only in the page follows.
   if (res) { const rank = p => res.hits.get(p.id)?.rank ?? 1e9; list.sort((a,b)=>rank(a)-rank(b)); }
-  lastWhy = why;
+  lastWhy = why; lastRes = res;
   if (!state.researchers) return list.map(p=>({kind:"project", id:"p"+p.id, p, lng:p.lng, lat:p.lat, why:why[p.id]}));
   // researcher mode: same filters, show the people behind the work
   return list.map(p=>({kind:"person", id:"r"+p.id, p, lng:p.lng+0.8, lat:p.lat+0.6,
     journalist:/journalist|photographer|reporter/i.test(p.prof)}));
 }
 
-let lastWhy = {};
+let lastWhy = {}, lastRes = null;   // what the last visibleItems() used, so the status line describes the same search
 let apiSearch = null, qTimer = null;
 // The backend's answer, if it is for what is in the search box right now.
 const currentSearch = () => apiSearch && apiSearch.q===state.q.trim() && apiSearch.semantic===state.semantic ? apiSearch : null;
@@ -1136,7 +1079,7 @@ function aiStat(){
     loading: `Downloading the model… ${ai.mb.toFixed(0)} of ${ai.total.toFixed(0)} MB`,
     indexing: `Reading ${PROJECTS.length} projects into vectors…`,
     ready: `${AI_LABEL} ready · ${ai.passages} passages from ${PROJECTS.length} projects${ai.lastMs ? ` · last search ${Math.round(ai.lastMs)} ms` : ""}`,
-    failed: "The AI model could not run in this browser, so results use a simple stand-in.",
+    failed: "The AI model could not run in this browser, so these are keyword matches only.",
   }[ai.state];
   document.getElementById("aiMsg").innerHTML=`<span class="dot"></span><span>${esc(msg)}</span>`;
   document.getElementById("aiBar").style.width = ai.state==="loading" ? Math.round(ai.progress*100)+"%" : "";
@@ -1232,7 +1175,7 @@ document.querySelector('.smode [data-smode="meaning"]').addEventListener("pointe
 function renderQStatus(){
   const el=document.getElementById("qstatus");
   if (!state.q.trim()) { el.innerHTML = state.semantic ? "Describe a topic in your own words, for example one of these:" : "Searches titles, places, authors, keywords, photo narration and project documents."; return; }
-  const byMeaning=Object.values(lastWhy).filter(w=>w.meaning).length, total=items.length, res=currentSearch();
+  const byMeaning=Object.values(lastWhy).filter(w=>w.meaning).length, total=items.length, res=lastRes;
   if (!state.semantic) el.innerHTML = `${total} keyword match${total===1?"":"es"}`;
   else if (!apiLive && AI_OK && ai.state!=="failed" && !res) el.innerHTML = ai.state==="ready" ? "Searching by meaning…" : "Getting the AI model ready…";
   else if (res?.keywordOnly) el.innerHTML = `The language model is not ready, so these are keyword matches only (${total}).`;
@@ -1327,7 +1270,7 @@ modeBtn.onclick=()=>{ state.researchers=!state.researchers; modeBtn.setAttribute
   document.getElementById("modeLabel").textContent = state.researchers ? "Showing researchers" : "Researchers";
   closeCard(); refresh(); };
 const tog=(id,key,after)=>{ const b=document.getElementById(id); b.onclick=()=>{ state[key]=!state[key]; b.setAttribute("aria-pressed",state[key]); after&&after(); draw(); }; };
-tog("borders","borders"); tog("places","places"); tog("news","news",()=>document.getElementById("newsnote").hidden=!state.news);
+tog("borders","borders"); tog("places","places");
 
 const drawer=document.getElementById("drawer");
 const openDrawer=()=>{ closePages(); drawer.classList.add("open"); document.getElementById("drawerClose").focus(); };
@@ -1449,20 +1392,10 @@ function draw(){
     ctx.stroke();
   }
   if (useHi){
-    // keep a copy of the finished map so the idle news pulse does not redraw 80,000 outline points
+    // keep a copy of the finished map so later redraws of the same view do not redraw 80,000 outline points
     baseCanvas.width=canvas.width; baseCanvas.height=canvas.height; baseCanvas.getContext("2d").drawImage(canvas,0,0); baseKey=key;
     if (performance.now()-started>900) hiAllowed=false;   // too slow on this device: stay on the light outlines
   }
-  }
-  // news caps
-  const showNews = state.news && !document.body.classList.contains("locked");
-  if (showNews){
-    const pulse=.3+.08*Math.sin(t*2.4);
-    for (const h of HOTSPOTS){
-      const c=d3.geoCircle().center(h.c).radius(h.r)();
-      ctx.beginPath(); path(c); ctx.fillStyle=`rgba(230,70,38,${pulse})`; ctx.fill();
-      ctx.setLineDash([4,3]); ctx.strokeStyle="rgba(214,52,24,.9)"; ctx.lineWidth=1.3; ctx.stroke(); ctx.setLineDash([]);
-    }
   }
   ctx.restore();
   if (typeof drawRoute==="function") drawRoute();
@@ -1473,17 +1406,6 @@ function draw(){
     ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,r,0,7); ctx.fill();
   }
   drawPlaces();
-  // hotspot labels
-  if (showNews){
-    ctx.font="600 11px 'Instrument Sans', system-ui, sans-serif"; ctx.textAlign="center";
-    for (const h of HOTSPOTS){
-      if (!isVisible(h.c)) continue;
-      const [x,y]=projection(h.c);
-      ctx.fillStyle="rgba(20,10,8,.75)"; const w=ctx.measureText(h.name).width+10;
-      const dy=Math.max(16, h.r*projection.scale()*Math.PI/180 + 12);
-      ctx.fillRect(x-w/2,y+dy-8,w,16); ctx.fillStyle="#fff"; ctx.fillText(h.name,x,y+dy+4);
-    }
-  }
   placePins();
 }
 // ---------- places: cities and country names (Natural Earth, public domain) ----------
@@ -1505,11 +1427,6 @@ function drawPlaces(){
   const k=state.k, r=projection.scale(), taken=[];
   const free=(x,y,w,h)=>{ for (const q of taken) if (x<q[0]+q[2] && x+w>q[0] && y<q[1]+q[3] && y+h>q[1]) return false; taken.push([x,y,w,h]); return true; };
   for (const d of items){ if (!isVisible([d.lng,d.lat])) continue; const [x,y]=projection([d.lng,d.lat]); taken.push([x-20,y-48,40,50]); }
-  if (state.news) for (const h of HOTSPOTS){   // the news labels are drawn later, in the same places
-    if (!isVisible(h.c)) continue;
-    const [x,y]=projection(h.c), dy=Math.max(16, h.r*r*Math.PI/180+12), w=h.name.length*6.4+14;
-    taken.push([x-w/2,y+dy-10,w,20]);
-  }
   ctx.save(); ctx.textBaseline="middle"; ctx.lineJoin="round";
   if (PLACES){
     // few cities from far away, more only as you get close; a roomy gap around every label
@@ -1773,20 +1690,13 @@ async function loadNearby(p){
 function closeStory(){ story.hidden=true; syncHeader(); draw(); restoreFocus("story"); }
 addEventListener("keydown",e=>{ if(e.key==="Escape"){ if(document.body.classList.contains("locked")) return; if(!lbEl.hidden) closeLb(); else if(picking) endPick(); else if(!profileEl.hidden) closeProfile(); else if(!adminEl.hidden) $("adminClose").click(); else if(!story.hidden) closeStory(); else if(!sitePg.hidden) closeSitePage(); else if(drawer.classList.contains("open")) drawer.classList.remove("open"); else closeCard(); }});
 
-// ---------- admin upload (AI steps are placeholders) ----------
+// ---------- admin upload ----------
 const adminEl=document.getElementById("admin");
 const SAMPLE = {
   photos:["img/p17_0.jpg","img/p17_1.jpg","img/p17_2.jpg","img/p17_3.jpg"],
   author:"Cinthia Karina Baños Paredes", aff:"National School of Anthropology and History (ENAH)", web:"https://cinthiabanosphotography.com",
   title:"Toxo'o o tsui' kiee'n: Day of the Dead in the Mazatec Highlands of Oaxaca",
   desc:"The Day of the Dead celebration in the Sierra Mazateca territory is known as ·Tsui' kiee'n· or ·The Festival of the Sun·. It is the most significant celebration in Mazatec culture, representing ·Naxinandá·, which in their cosmogony means \"community.\" People who migrated return to reunite with their living and deceased relatives; the souls of their ancestors are represented in the ·Toxo'o· by the ·Huehuentones or chaxo o'·, who are the men and women of the earth's navel.",
-  sugs:[
-    {k:"Category", type:"one", v:"Anthropology", conf:"0.93 (next: News 0.04)"},
-    {k:"UN SDGs", type:"chips", v:["SDG 11 Sustainable cities and communities","SDG 10 Reduced inequalities","SDG 16 Peace, justice and strong institutions"], conf:"0.81 · 0.64 · 0.52"},
-    {k:"Keywords", type:"chips", v:["Day of the Dead","Mazatec","Oaxaca","Huehuentones","ritual","Indigenous traditions","migration","community"], conf:"Extracted from the description"},
-    {k:"Map location", type:"one", v:"Sierra Mazateca, Oaxaca, Mexico · 18.13° N, 96.83° W", conf:"Place name found in the text: “Sierra Mazateca”, then geocoded"},
-    {k:"Preview summary", type:"text", v:"Mazatec families in Oaxaca's highlands honour their dead during Tsui' kiee'n, when masked Huehuentones carry ancestral spirits through town.", conf:"Short blurb for the map card"},
-  ],
 };
 const $=id=>document.getElementById(id);
 let adminState={sample:false};
@@ -1848,24 +1758,21 @@ $("loadSample").onclick=()=>{
   SAMPLE.photos.forEach((s,i)=>addShot(s,null,caps17[i] ?? ""));
   $("aName").value=SAMPLE.author; $("aAff").value=SAMPLE.aff; $("aWeb").value=SAMPLE.web;
   $("tEn").value=SAMPLE.title; $("dEn").value=SAMPLE.desc;
+  // The example's own details, filled in as an administrator would type them.
+  $("catIn").value="anthropology"; $("locIn").value="Sierra Mazateca, Oaxaca, Mexico";
+  $("latIn").value="18.1333"; $("lngIn").value="-96.8333"; $("dateIn").value="2022-10-27"; syncDraftPin(); setSdgPick(["SDG10","SDG11","SDG16"]);
   adminState={sample:true}; resetSugs();
 };
 ["tEn","dEn"].forEach(id=>$(id).addEventListener("input",()=>{ adminState.sample=false; }));
 function resetSugs(){ $("sugs").innerHTML='<p class="placeholder-note">Suggestions are drawn from your description. You accept, edit or reject each one.</p>'; }
 
-// Keywords and a short summary from the description. Real when the backend is running; the example also shows prepared category, SDG and location suggestions.
+// Keywords and a short summary drafted from the description by the backend.
 $("suggest").onclick=async()=>{
   const title=$("tEn").value.trim(), desc=$("dEn").value.trim();
   if (!title && !desc) { $("sugs").innerHTML='<p class="pubmsg" style="margin:0">Add a title or description in step 4 first.</p>'; return; }
   const b=$("suggest"); b.disabled=true; b.innerHTML='<span class="spin"></span>Reading';
   const done=()=>{ b.disabled=false; b.textContent="Suggest again"; };
-  if (adminState.sample){
-    setTimeout(()=>{ renderSugs(SAMPLE.sugs);
-      $("catIn").value="anthropology"; $("locIn").value="Sierra Mazateca, Oaxaca, Mexico";
-      $("latIn").value="18.1333"; $("lngIn").value="-96.8333"; $("dateIn").value="2022-10-27"; syncDraftPin(); setSdgPick(["SDG10","SDG11","SDG16"]); done(); }, 700);
-    return;
-  }
-  if (!apiLive) { $("sugs").innerHTML='<p class="placeholder-note">The backend is not running, so there is nothing to read your text. Start it, or load the example to see this step.</p>'; done(); return; }
+  if (!apiLive) { $("sugs").innerHTML='<p class="placeholder-note">The backend is not running, so there is nothing to read your text yet.</p>'; done(); return; }
   try {
     const post=(path,body)=>fetch(API_BASE+path,{method:"POST",headers:{"Content-Type":"application/json","X-Admin-Token":DEV_ADMIN_TOKEN},body:JSON.stringify(body)}).then(r=>{ if(!r.ok) throw new Error(r.status); return r.json(); });
     const [kw,sm]=await Promise.all([post("/api/ai/keywords",{text:`${title}. ${desc}`,top_k:8}), post("/api/ai/summarize",{text:desc || title,max_sentences:2,method:"ai"})]);
@@ -2518,9 +2425,7 @@ function unlock(animate){
   setTimeout(()=>gate.classList.add("leaving"), reduce ? 0 : 750);
   setTimeout(finish, reduce ? 0 : 1250);
 }
-function showGateView(id){ ["gSignin","gForgot","gRequest"].forEach(v=>$(v).hidden=v!==id);
-  const first=$(id).querySelector("input"); if (first && !gate.hidden) first.focus(); }
-gate.addEventListener("click",e=>{ const b=e.target.closest("[data-view]"); if (b) showGateView(b.dataset.view); });
+function showGateView(id){ const first=$(id).querySelector("input"); if (first && !gate.hidden) first.focus(); }
 $("gSignin").addEventListener("submit",async e=>{
   e.preventDefault();
   const email=$("gEmail").value.trim(), pass=$("gPass").value;
@@ -2538,20 +2443,6 @@ $("gSignin").addEventListener("submit",async e=>{
   try { ($("gKeep").checked ? localStorage : sessionStorage).setItem(SESSION_KEY, JSON.stringify({email, role:gRole})); } catch {}
   $("gPass").value="";
   applyUser(email, gRole); unlock(true);
-});
-$("gForgot").addEventListener("submit",e=>{
-  e.preventDefault(); const v=$("gFEmail").value.trim(), bad=!validEmail(v);
-  $("gFEmail").setAttribute("aria-invalid",bad); $("gFErr").textContent=bad ? "Enter your institutional email." : "";
-  $("gFOk").hidden=bad; if (!bad) $("gFOk").textContent=`If ${v} is on the access list, a reset link will be sent to it.`;
-});
-$("gRequest").addEventListener("submit",e=>{
-  e.preventDefault();
-  const bad = !$("gRName").value.trim() ? ["gRName","Enter your full name."] : !validEmail($("gREmail").value) ? ["gREmail","Enter your institutional email."]
-    : !$("gRInst").value.trim() ? ["gRInst","Enter your university or newsroom."] : null;
-  ["gRName","gREmail","gRInst"].forEach(id=>$(id).setAttribute("aria-invalid", !!bad && bad[0]===id));
-  $("gRErr").textContent=bad ? bad[1] : ""; $("gROk").hidden=!!bad;
-  if (bad) return $(bad[0]).focus();
-  $("gROk").textContent=`Thanks, ${$("gRName").value.trim().split(" ")[0]}. An administrator will review the request for ${$("gRInst").value.trim()}.`;
 });
 function signOut(){
   try { localStorage.removeItem(SESSION_KEY); sessionStorage.removeItem(SESSION_KEY); } catch {}
@@ -2738,15 +2629,13 @@ function zoomBy(f){ const a=state.k, b=Math.max(0.7,Math.min(MAX_K,a*f));
 
 // ---------- loop ----------
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
-let prev=performance.now(), lastPulse=0;
+let prev=performance.now();
 function loop(now){
   const dt=now-prev; prev=now;
   const covered = !story.hidden || !adminEl.hidden || !profileEl.hidden || !sitePg.hidden || !lbEl.hidden || document.hidden;
   if (covered) { /* the globe is not visible */ }
   else if (state.auto && !reduce && !picking && state.proj==="globe"){ state.rot[0]+=dt*0.006; lastMove=now; draw(); }
-  else if (geoHi && hiAllowed && !drawnHi && state.k>=HI_ZOOM && now-lastMove>240) draw();   // view settled: sharpen once
-  else if (state.news && !reduce && now-lastPulse>80){ lastPulse=now; draw(); }
-  requestAnimationFrame(loop);
+  else if (geoHi && hiAllowed && !drawnHi && state.k>=HI_ZOOM && now-lastMove>240) draw();   // view settled: sharpen once  requestAnimationFrame(loop);
 }
 
 // ---------- boot ----------
