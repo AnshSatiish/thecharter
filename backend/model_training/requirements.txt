@@ -1,6 +1,9 @@
 # Model training and evaluation, on top of ../inference/requirements.txt
 -r ../inference/requirements.txt
 sentence-transformers>=3.0
+torch>=2.4
+transformers>=4.44,<5
+sentencepiece>=0.2
 scikit-learn>=1.5
 rouge-score>=0.1.2
 matplotlib>=3.9

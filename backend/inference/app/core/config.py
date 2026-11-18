@@ -40,13 +40,12 @@ class Settings(BaseSettings):
     # Both chosen by 5-fold cross-validation over the judged queries (backend/model_training/compare_models.py).
     semantic_min_score: float = 0.575
     semantic_relative_cut: float = 0.95
-    # AI summarization: an open-source sequence-to-sequence model run with PyTorch on this machine (no API, no cost).
-    # Model and generation settings chosen by cross-validation (backend/model_training/evaluate_summarizers.py).
+    # AI summarization runs through a local Ollama server. If it is unavailable, the TF-IDF baseline is used.
     ai_summary: bool = True
-    summary_model: str = "sshleifer/distilbart-cnn-6-6"
-    summary_prefix: str = ""
-    summary_max_new_tokens: int = 60
-    summary_num_beams: int = 1
+    summary_model: str = "llama3.2:3b"
+    summary_ollama_url: str = "http://localhost:11434"
+    summary_timeout_seconds: float = 300
+    summary_max_new_tokens: int = 160
 
     @field_validator("upload_dir", "embedding_cache_dir")
     @classmethod

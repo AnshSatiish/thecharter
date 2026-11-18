@@ -16,8 +16,8 @@ from common import HERE, SEED, SYNTHETIC
 import numpy as np
 from rouge_score import rouge_scorer
 
-from app.ai.summarization import AbstractiveSummarizer
 from app.services.text import split_sentences, summarize
+from transformers_summarizer import TransformersSummarizer
 
 logging.disable(logging.WARNING)
 RESULTS = HERE / "results"
@@ -81,7 +81,7 @@ def main() -> None:
         per_setting, seconds = {}, []
         try:
             for beams, tokens in GRID:
-                summarizer = AbstractiveSummarizer(name, max_new_tokens=tokens, num_beams=beams, prefix=prefix)
+                summarizer = TransformersSummarizer(name, max_new_tokens=tokens, num_beams=beams, prefix=prefix)
                 if per_setting:  # reuse the loaded weights
                     summarizer._model, summarizer._tokenizer = model, tokenizer
                 t0 = time.perf_counter()

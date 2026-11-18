@@ -285,6 +285,113 @@ def test_ai_summarize_with_the_model(client):
     assert body == {"summary": "Draft: Lake Kivu is warming", "method": "ai:test-stub", "fallback": False}
 
 
+def test_ollama_summarizer_posts_to_local_generate_api(monkeypatch):
+    import json
+
+    from app.ai.summarization import OllamaSummarizer
+
+    class Response:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return None
+
+        def read(self):
+            return (
+                b'{"response":"Here is a summary of the report in 3 concise sentences: '
+                b'Lake Kivu is warming . Fishers report smaller catches."}'
+            )
+
+    captured = {}
+
+    def fake_urlopen(request, timeout):
+        captured["url"] = request.full_url
+        captured["method"] = request.method
+        captured["body"] = json.loads(request.data)
+        captured["timeout"] = timeout
+        return Response()
+
+    monkeypatch.setattr("app.ai.summarization.urlopen", fake_urlopen)
+    summarizer = OllamaSummarizer("llama3.2:3b", "http://localhost:11434/", 75, 12)
+
+    assert summarizer._generate("Lake Kivu is warming. Fishers report smaller catches.") == (
+        "Lake Kivu is warming. Fishers report smaller catches."
+    )
+    assert captured == {
+        "url": "http://localhost:11434/api/generate",
+        "method": "POST",
+        "body": {
+            "model": "llama3.2:3b",
+            "system": "Output only the summary sentences. Do not add a heading, introduction, or commentary.",
+            "prompt": (
+                "Summarize this report accurately in 2 or 3 concise sentences. "
+                "Preserve its key people, places, issues, and findings. Use only facts in the report; "
+                "do not add assumptions.\n\n"
+                "REPORT:\nLake Kivu is warming. Fishers report smaller catches.\n\nSUMMARY:"
+            ),
+            "stream": False,
+            "options": {"num_predict": 75, "temperature": 0.1},
+        },
+        "timeout": 12,
+    }
+
+
+def test_ollama_summarizer_falls_back_when_generation_is_truncated(monkeypatch):
+    import json
+
+    from app.ai.summarization import OllamaSummarizer, SummarizerUnavailable
+
+    class Response:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return None
+
+        def read(self):
+            return json.dumps({
+                "response": "A report summary cut off mid-sentence",
+                "done_reason": "length",
+            }).encode()
+
+    monkeypatch.setattr("app.ai.summarization.urlopen", lambda *_args, **_kwargs: Response())
+
+    with pytest.raises(SummarizerUnavailable, match="reached the output token limit"):
+        OllamaSummarizer("llama3.2:3b")._generate("A sample report.")
+
+
+def test_ollama_summarizer_reports_unavailable_server(monkeypatch):
+    from urllib.error import URLError
+
+    from app.ai.summarization import OllamaSummarizer, SummarizerUnavailable
+
+    def unavailable(*_args, **_kwargs):
+        raise URLError("connection refused")
+
+    monkeypatch.setattr("app.ai.summarization.urlopen", unavailable)
+    summarizer = OllamaSummarizer("llama3.2:3b")
+
+    with pytest.raises(SummarizerUnavailable, match="Could not connect to Ollama"):
+        summarizer._generate("A sample report.")
+
+
+def test_get_summarizer_uses_configured_ollama(monkeypatch):
+    from app.ai.summarization import OllamaSummarizer, get_summarizer, set_summarizer
+    from app.core.config import get_settings
+
+    settings = get_settings()
+    monkeypatch.setattr(settings, "summary_model", "llama-test:3b")
+    monkeypatch.setattr(settings, "summary_ollama_url", "http://127.0.0.1:11434")
+    set_summarizer(None)
+
+    summarizer = get_summarizer()
+
+    assert isinstance(summarizer, OllamaSummarizer)
+    assert summarizer.name == "llama-test:3b"
+    assert summarizer.base_url == "http://127.0.0.1:11434"
+
+
 def test_ai_summarize_falls_back_without_the_model(client):
     from app.ai.summarization import SummarizerUnavailable, set_summarizer
 
@@ -301,29 +408,6 @@ def test_ai_summarize_falls_back_without_the_model(client):
         headers=ADMIN,
     ).json()
     assert body["fallback"] is True and body["method"] == "tfidf-extractive" and body["summary"]
-
-
-def test_summarizer_generation_errors_are_fallback_eligible(monkeypatch):
-    from contextlib import nullcontext
-    from types import SimpleNamespace
-    import sys
-
-    from app.ai.summarization import AbstractiveSummarizer, SummarizerUnavailable
-
-    class Tokenizer:
-        def __call__(self, *_args, **_kwargs):
-            return {}
-
-    class BrokenModel:
-        def generate(self, **_kwargs):
-            raise RuntimeError("generation failed")
-
-    summarizer = AbstractiveSummarizer("broken")
-    monkeypatch.setattr(summarizer, "_load", lambda: (Tokenizer(), BrokenModel()))
-    monkeypatch.setitem(sys.modules, "torch", SimpleNamespace(no_grad=nullcontext))
-
-    with pytest.raises(SummarizerUnavailable, match="Could not generate a summary"):
-        summarizer._generate("A sample report.")
 
 
 # Edits

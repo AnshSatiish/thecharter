@@ -13,7 +13,7 @@ COMP 385 AI Capstone Project, Centennial College. Built for an external partner.
 | `backend/eda/` | Exploratory data analysis of the partner samples and the synthetic dataset (script, summary and figures). | `cd backend/eda && ..\.venv\Scripts\python eda_sample_projects.py` |
 | `backend/preprocessing/` | Cleaning and preparing data for models. Empty for now; PDF text extraction currently lives in the API (`inference/app/services/text.py`). | |
 | `backend/model_training/` | How every AI model was chosen: search model comparison and summarizer comparison with 5-fold cross-validation, and a fine-tuning experiment. Results and figures are committed. See its README. | `cd backend/model_training && ..\.venv\Scripts\python compare_models.py` |
-| `backend/inference/` | The FastAPI application that serves results. Projects with filters (category, SDG, year, keyword, map bounding box), nearby search, authors, admin upload and verification, photo and PDF uploads with file storage, keyword, semantic and hybrid search (`GET /api/projects/search`), AI summarization with a TF-IDF fallback, keyword extraction, and the location check. Runs on SQLite with no setup, or PostgreSQL with PostGIS and pgvector. Tested with pytest. Admin auth is a shared token for now (JWT planned). | `cd backend/inference && python -m app.scripts.seed && uvicorn app.main:app --reload --port 8000` (after install, see below) |
+| `backend/inference/` | The FastAPI application that serves results. Projects with filters (category, SDG, year, keyword, map bounding box), nearby search, authors, admin upload and verification, photo and PDF uploads with file storage, keyword, semantic and hybrid search (`GET /api/projects/search`), local Ollama AI summarization with a TF-IDF fallback, keyword extraction, and the location check. Runs on SQLite with no setup, or PostgreSQL with PostGIS and pgvector. Tested with pytest. Admin auth is a shared token for now (JWT planned). | `cd backend/inference && python -m app.scripts.seed && uvicorn app.main:app --reload --port 8000` (after install, see below) |
 | `backend/data/` | `samples/`: 7 sample projects loaded by the seed script. `geo/`: country outlines (Natural Earth 1:50m) used by the location check. `uploads/`: uploaded photographs and PDFs (git-ignored). | |
 | `frontend/` | **The site the team is building on.** A 3D globe (D3, no API key, no build step). Passport-style sign-in (demo: any institutional email is accepted until accounts exist), field-passport profile, pin previews, project pages with a full-screen photo viewer and narration, filters, UN SDG colours, news layer, researcher mode, projection toggle, live latitude/longitude and country name under the cursor, and the admin upload. On localhost it loads from the backend; without it, it falls back to built-in sample data. With the backend running, "By meaning" is real semantic search and shows the passage that matched; without it, it falls back to a labelled placeholder with prepared examples. | `cd frontend && python -m http.server 8080`, then open http://localhost:8080 |
 | `docs/requirements/` | Partner requirement documents: interactive map, admin and security, project summary. | |
@@ -22,6 +22,8 @@ COMP 385 AI Capstone Project, Centennial College. Built for an external partner.
 | `docker-compose.yml` | PostgreSQL 16 with PostGIS 3.4 for the backend. | `docker compose up -d` |
 
 Semantic search and abstractive summarization are built (`backend/inference/app/ai/embeddings/` and `backend/inference/app/ai/summarization/`). Tagging, image search, news, JWT auth and Alembic migrations are not built yet.
+
+The backend sends summarization prompts to Ollama on the same machine by default. Install Ollama, start it, and download the default model once with `ollama pull llama3.2:3b`. The PDF text stays local; if Ollama is unavailable, the backend uses its TF-IDF extractive fallback.
 
 Project photographs in `frontend/img/` and `docs/reference/figma-app/src/assets/` belong to their authors and are included for development only (converted to JPEG to keep the repository small).
 
@@ -184,6 +186,9 @@ cd the-charter
 # Optional: start PostgreSQL + PostGIS (without it the backend uses a local SQLite file)
 docker compose up -d
 
+# Local summarization model (install Ollama separately, then pull the model once)
+ollama pull llama3.2:3b
+
 # Backend API
 cd backend/inference
 python -m venv .venv
@@ -224,7 +229,10 @@ EMBEDDING_CHUNK_WORDS=40         # passage length, chosen by cross-validation
 SEMANTIC_MIN_SCORE=0.575         # passages below this cosine similarity are treated as unrelated (cross-validated)
 SEMANTIC_RELATIVE_CUT=0.95       # and passages below 95% of the best result's similarity
 AI_SUMMARY=true                  # false: summary requests use the TF-IDF extractive method
-SUMMARY_MODEL=sshleifer/distilbart-cnn-6-6   # downloaded once into the Hugging Face cache (about 1 GB)
+SUMMARY_MODEL=llama3.2:3b        # local Ollama model; download once with `ollama pull`
+SUMMARY_OLLAMA_URL=http://localhost:11434
+SUMMARY_TIMEOUT_SECONDS=300
+SUMMARY_MAX_NEW_TOKENS=160
 ```
 
 Planned, not read by the code yet:

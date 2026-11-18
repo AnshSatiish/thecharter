@@ -27,7 +27,7 @@ Run each script from this folder with the backend's environment, for example `..
 
 - Search model: **bge-small-en-v1.5**, the most accurate and the smallest of the three models; passages of 40 words, minimum similarity 0.575, relative cut-off 0.95. These are the defaults in `../inference/app/core/config.py`.
 - Fine-tuning did not improve the pretrained model on unseen projects (two settings tried), so the pretrained weights are used.
-- Abstractive model: **distilbart-cnn-6-6**, greedy decoding, up to 60 new tokens. It scored best among the four pretrained models tested. The extractive TF-IDF fallback scored higher on this dataset, but selects original sentences instead of rewriting them.
+- The evaluation compared DistilBART and three other Transformers summarizers; the extractive TF-IDF method scored higher on this dataset, but selects original sentences instead of rewriting them. The application now uses Ollama with `llama3.2:3b`; that model has not yet been evaluated against the reference summaries.
 
 The updated evaluation compares the current TF-IDF fallback with DistilBART and three other pretrained models. Both AI-generated and extractive summaries are drafts for the administrator to review.
 
