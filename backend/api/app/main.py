@@ -27,10 +27,13 @@ def _warm_up_embedder() -> None:
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    settings = get_settings()
     init_db(engine)
-    if get_settings().semantic_search and get_settings().env != "test":
-        # Load the sentence model in the background so the first search does not wait for it.
+
+    if settings.semantic_search and settings.env != "test":
+        # Load the sentence model in the background.
         threading.Thread(target=_warm_up_embedder, daemon=True).start()
+
     yield
 
 
@@ -42,17 +45,20 @@ def create_app() -> FastAPI:
         version="0.2.0",
         lifespan=lifespan,
     )
-    app.add_middleware(
+        app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origin_list,
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
     @app.exception_handler(PoolTimeout)
     async def busy(_: Request, __: PoolTimeout) -> JSONResponse:
-        # Every database connection is in use: say so at once, so the site can fall back, instead of a 500.
-        return JSONResponse({"detail": "The server is busy. Try again in a moment."}, status_code=503,
-                            headers={"Retry-After": "2"})
+        return JSONResponse(
+            {"detail": "The server is busy. Try again in a moment."},
+            status_code=503,
+            headers={"Retry-After": "2"},
+        )
 
     for router in public.routers:
         app.include_router(router, prefix="/api")
