@@ -26,10 +26,10 @@
     "verified": true,
     "original_language": "en",
     "images": [
-      "img/p17_0.jpg",
-      "img/p17_1.jpg",
-      "img/p17_2.jpg",
-      "img/p17_3.jpg"
+      "assets/projects/thumbs/p17_0.jpg",
+      "assets/projects/thumbs/p17_1.jpg",
+      "assets/projects/thumbs/p17_2.jpg",
+      "assets/projects/thumbs/p17_3.jpg"
     ],
     "author": {
       "name": "Cinthia Karina Baños Paredes",
@@ -79,10 +79,10 @@
     "verified": true,
     "original_language": "en",
     "images": [
-      "img/p26_0.jpg",
-      "img/p26_1.jpg",
-      "img/p26_2.jpg",
-      "img/p26_3.jpg"
+      "assets/projects/thumbs/p26_0.jpg",
+      "assets/projects/thumbs/p26_1.jpg",
+      "assets/projects/thumbs/p26_2.jpg",
+      "assets/projects/thumbs/p26_3.jpg"
     ],
     "author": {
       "name": "Alejandro Cegarra",
@@ -134,10 +134,10 @@
     "verified": true,
     "original_language": "en",
     "images": [
-      "img/p23_0.jpg",
-      "img/p23_1.jpg",
-      "img/p23_2.jpg",
-      "img/p23_3.jpg"
+      "assets/projects/thumbs/p23_0.jpg",
+      "assets/projects/thumbs/p23_1.jpg",
+      "assets/projects/thumbs/p23_2.jpg",
+      "assets/projects/thumbs/p23_3.jpg"
     ],
     "author": {
       "name": "Jean-Baptiste Munyankindi",
@@ -184,10 +184,10 @@
     "verified": true,
     "original_language": "en",
     "images": [
-      "img/p25_0.jpg",
-      "img/p25_1.jpg",
-      "img/p25_2.jpg",
-      "img/p25_3.jpg"
+      "assets/projects/thumbs/p25_0.jpg",
+      "assets/projects/thumbs/p25_1.jpg",
+      "assets/projects/thumbs/p25_2.jpg",
+      "assets/projects/thumbs/p25_3.jpg"
     ],
     "author": {
       "name": "Wanjiru Kimathi",
@@ -234,10 +234,10 @@
     "verified": true,
     "original_language": "en",
     "images": [
-      "img/p27_0.jpg",
-      "img/p27_1.jpg",
-      "img/p27_2.jpg",
-      "img/p27_3.jpg"
+      "assets/projects/thumbs/p27_0.jpg",
+      "assets/projects/thumbs/p27_1.jpg",
+      "assets/projects/thumbs/p27_2.jpg",
+      "assets/projects/thumbs/p27_3.jpg"
     ],
     "author": {
       "name": "Santiago Ramírez",
@@ -284,10 +284,10 @@
     "verified": true,
     "original_language": "en",
     "images": [
-      "img/p28_0.jpg",
-      "img/p28_1.jpg",
-      "img/p28_2.jpg",
-      "img/p28_3.jpg"
+      "assets/projects/thumbs/p28_0.jpg",
+      "assets/projects/thumbs/p28_1.jpg",
+      "assets/projects/thumbs/p28_2.jpg",
+      "assets/projects/thumbs/p28_3.jpg"
     ],
     "author": {
       "name": "Matthew Abbott",
@@ -335,10 +335,10 @@
     "verified": false,
     "original_language": "en",
     "images": [
-      "img/p18_0.jpg",
-      "img/p18_1.jpg",
-      "img/p18_2.jpg",
-      "img/p18_3.jpg"
+      "assets/projects/thumbs/p18_0.jpg",
+      "assets/projects/thumbs/p18_1.jpg",
+      "assets/projects/thumbs/p18_2.jpg",
+      "assets/projects/thumbs/p18_3.jpg"
     ],
     "author": {
       "name": "Gilles Sabrie",
@@ -389,10 +389,10 @@
     "verified": false,
     "original_language": "en",
     "images": [
-      "img/p29_0.jpg",
-      "img/p29_1.jpg",
-      "img/p29_2.jpg",
-      "img/p29_3.jpg"
+      "assets/projects/thumbs/p29_0.jpg",
+      "assets/projects/thumbs/p29_1.jpg",
+      "assets/projects/thumbs/p29_2.jpg",
+      "assets/projects/thumbs/p29_3.jpg"
     ],
     "author": {
       "name": "Vineet Rathee",
@@ -442,10 +442,10 @@
     "verified": false,
     "original_language": "en",
     "images": [
-      "img/p30_0.jpg",
-      "img/p30_1.jpg",
-      "img/p30_2.jpg",
-      "img/p30_3.jpg"
+      "assets/projects/thumbs/p30_0.jpg",
+      "assets/projects/thumbs/p30_1.jpg",
+      "assets/projects/thumbs/p30_2.jpg",
+      "assets/projects/thumbs/p30_3.jpg"
     ],
     "author": {
       "name": "Lisa Francesca Rail",

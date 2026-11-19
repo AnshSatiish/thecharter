@@ -1,0 +1,33 @@
+# The site has no build step, so check what can break silently: JavaScript syntax, and that every file
+# index.html loads actually exists.
+name: Frontend check
+
+on:
+  pull_request:
+    paths: ["frontend/**", ".github/workflows/frontend-check.yml"]
+  push:
+    branches: [main]
+    paths: ["frontend/**", ".github/workflows/frontend-check.yml"]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: JavaScript syntax
+        run: for f in config.js $(find js -name '*.js'); do node --check "$f" || exit 1; done
+      - name: Every file index.html loads exists
+        run: |
+          missing=0
+          for f in $(grep -oE '(href|src)="(css|js|assets)/[^"]+"' index.html | sed -E 's/^(href|src)="//; s/"$//'); do
+            [ -f "$f" ] || { echo "missing: $f"; missing=1; }
+          done
+          exit $missing
+      - name: Data files are valid JSON
+        run: for f in data/*.json; do node -e "JSON.parse(require('fs').readFileSync('$f'))" || exit 1; done

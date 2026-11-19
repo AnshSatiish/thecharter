@@ -1,0 +1,39 @@
+/* Colour variables, typography, and the parts the browser draws (selection, scrollbars). */
+:root{
+  color-scheme: dark;
+  --ink:#1f1d1b;            /* header / deep charcoal */
+  --ink-2:#2d2a27;
+  --space:#16222b;          /* behind the globe */
+  --paper:#fbf8f3;          /* cards */
+  --paper-2:#f1ece4;
+  --text:#23201d;
+  --muted:#6f675f;
+  --line:#e2dbd0;
+  --gold:#C9A86A;
+  --red:#E64626;            /* brand red: graphics, pins, rules */
+  --red-strong:#D83C1D;     /* surfaces that carry white text (4.6:1) */
+  --red-ink:#C8351B;        /* red text on paper (5:1) */
+  --label:#6b6154;          /* small labels on the passport papers (4.8:1 or better) */
+  --orange:#F68B1F;
+  --green:#64A70B;
+  --urban:#4a4a4a;
+  --verify:#1d8cf0;
+  --serif:"Newsreader", "Iowan Old Style", Georgia, serif;
+  --sans:"Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--space);color:var(--text);font-family:var(--sans);overflow:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;font-feature-settings:"ss01","cv11"}
+h1,h2,h3,.page-h,.lede{font-optical-sizing:auto;letter-spacing:-.01em}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+/* the parts the browser draws: selection, caret, checkbox tint, scrollbars, link underlines */
+::selection{background:#e3c98f;color:#1f1d1b}
+:root{caret-color:var(--red-ink);accent-color:#1f3b44;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.28) transparent}
+.panel,.drawer,.admin,.pp,.card,.pass{scrollbar-color:#cfc3a8 transparent}
+a{text-underline-offset:3px}
+button{-webkit-tap-highlight-color:transparent}
+button:not(:disabled):active{transform:translateY(1px)}
+.ic{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;display:block}
+.ic-sm{display:inline-block;width:14px;height:14px;vertical-align:-2px}
+

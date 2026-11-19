@@ -16,7 +16,7 @@ and every request is checked by the database itself, not only by the website.
 
 ### What is already in place
 
-- **Row-level security (RLS) on every table** (`supabase/schema.sql`, `supabase/pages.sql`). The database checks
+- **Row-level security (RLS) on every table** (`supabase/migrations/001_schema.sql`, `supabase/migrations/002_pages.sql`). The database checks
   each row against a policy: everyone may read projects, events and sponsors; only accounts listed in
   `public.admins` may add, change or remove them. The check runs inside PostgreSQL, so editing the website's
   JavaScript cannot get around it.
@@ -32,14 +32,14 @@ and every request is checked by the database itself, not only by the website.
 
 ### Steps to do once (in the Supabase dashboard)
 
-1. **Run `supabase/security.sql`** (SQL Editor -> New query -> paste -> Run). It removes privileges that visitors
+1. **Run `supabase/migrations/003_security.sql`** (SQL Editor -> New query -> paste -> Run). It removes privileges that visitors
    never need: writing to tables, seeing the administrators list, `TRUNCATE`. Then a mistake in one RLS policy
    cannot open a table. The last query lists every table: `rls` must be `true` and `visitors_can_insert` must be
    `false` everywhere. This was tested on a copy set up like Supabase: visitors can read but not write, signed-in
    students are refused, administrators can still add, edit and remove.
 2. **Turn off public sign-ups**: Authentication -> Sign In / Providers -> uncheck *Allow new users to sign up*.
    Administrators are added by hand (Authentication -> Users -> Add user, then the `insert into public.admins`
-   line at the end of `schema.sql`). Students do not need an account.
+   line at the end of `001_schema.sql`). Students do not need an account.
 3. **Two-factor authentication** on every Supabase account that can open the project (Account -> Security).
 4. **Database password**: Project Settings -> Database. Use a long random one and keep it in a password manager.
    The site never needs it. Change it if it was ever shared.
@@ -55,7 +55,7 @@ and every request is checked by the database itself, not only by the website.
 ### Rules for future changes
 
 - Every new table: `alter table ... enable row level security;` plus explicit policies, then run
-  `security.sql` again.
+  `003_security.sql` again.
 - Never write a policy with `using (true)` for `insert`, `update` or `delete`.
 - Never put `service_role` in the frontend. Code that needs it runs on a server.
 - New `security definer` functions: always `set search_path = public`, and grant `execute` only to the roles
@@ -108,7 +108,7 @@ and every request is checked by the database itself, not only by the website.
 
 ## Checklist
 
-- [ ] `supabase/security.sql` run, last query shows `rls = true` and `visitors_can_insert = false`
+- [ ] `supabase/migrations/003_security.sql` run, last query shows `rls = true` and `visitors_can_insert = false`
 - [ ] Public sign-ups off
 - [ ] Two-factor authentication on every Supabase account
 - [ ] Database password long, random, not shared

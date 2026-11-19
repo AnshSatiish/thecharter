@@ -1,5 +1,5 @@
 // Live data for the deployed site. Projects that administrators upload are stored in Supabase
-// (database, file storage and administrator sign-in); see supabase/schema.sql.
+// (database, file storage and administrator sign-in); see supabase/migrations/001_schema.sql.
 // Both values come from the Supabase dashboard: Project Settings -> API. The anon key is public by
 // design: the database's row-level security decides what it may read and write. Never put the
 // service_role key here.

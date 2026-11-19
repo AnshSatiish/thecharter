@@ -1,0 +1,14 @@
+# Model training and evaluation, on top of the API requirements (../api/requirements.txt)
+-r ../api/requirements.txt
+sentence-transformers>=3.0
+# The summarizer comparison runs Hugging Face models with PyTorch (CPU is enough):
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+torch>=2.4
+transformers>=4.44,<5
+sentencepiece>=0.2
+scikit-learn>=1.5
+rouge-score>=0.1.2
+matplotlib>=3.9
+datasets>=3,<4.4
+huggingface-hub>=0.34,<1.0
+accelerate>=0.30

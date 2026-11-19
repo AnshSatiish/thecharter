@@ -1,0 +1,44 @@
+/* Live latitude/longitude readout and picking a location on the globe. */
+/* ---------- coordinates ---------- */
+.coords{position:absolute;left:16px;bottom:16px;z-index:6;background:rgba(0,0,0,.45);color:#fff;border-radius:6px;padding:6px 10px;
+  font:500 12px/1 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.04em;pointer-events:none;font-variant-numeric:tabular-nums}
+.panel:not(.closed)~.coords{left:332px}
+.pickbar{position:absolute;top:16px;left:50%;transform:translateX(-50%);z-index:25;background:#1f1d1b;color:#fff;border-radius:999px;
+  padding:8px 8px 8px 16px;display:flex;align-items:center;gap:12px;font-size:13px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.pickbar button{border:0;border-radius:999px;background:#fff;color:#1f1d1b;padding:6px 12px;font-weight:700;font-size:12px}
+#globe.picking{cursor:crosshair}
+.src{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:11.5px;font-weight:600;color:var(--muted)}
+.src .dot{width:8px;height:8px;border-radius:50%;background:#b8aea2}
+.src .dot.live{background:#3f9a32;box-shadow:0 0 0 3px rgba(63,154,50,.18)}
+.loc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;align-items:end}
+.loc-grid select{font:inherit;font-size:14px;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:#fff}
+.pubmsg{font-size:13px;color:#b3261e;margin:10px 0 0}
+.loccheck{font-size:13px;line-height:1.45;margin:12px 0 0;padding:8px 12px;border-radius:6px;border:1px solid var(--line);background:#fff;color:var(--text)}
+.loccheck.ok{border-color:#a9d8b9;background:#eef8f1;color:#1f5a34}
+.loccheck.mismatch{border-color:#e7b3ab;background:#fdf0ee;color:#8f2416}
+.nearby{display:flex;flex-direction:column;gap:6px}
+.nearby button{display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;border:1px solid rgba(255,255,255,.16);background:transparent;color:#efe9e0;border-radius:6px;padding:9px 12px;font-size:13.5px}
+.nearby button:hover{border-color:var(--gold)}
+.nearby span{color:#b7ad9f;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+@media (max-width:760px){
+  .coords{display:none}
+  .nav{display:none}
+  .menu-btn{display:grid;margin-left:auto}
+  .nav.open{display:flex;position:fixed;top:62px;left:12px;right:12px;flex-direction:column;align-items:stretch;gap:2px;margin:0;padding:8px;border-radius:16px;
+    background:rgba(14,18,22,.94);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:0 18px 40px rgba(0,0,0,.45);z-index:40}
+  .nav.open a,.nav.open button{text-align:left;padding:12px 14px;font-size:15px}
+  .top{justify-content:space-between}
+  .panel{width:auto;right:16px;top:auto;bottom:16px;max-height:62%}
+  .panel.closed{transform:translateY(calc(100% + 20px))}
+  .panel-toggle{top:auto;bottom:16px}
+  .proj button{padding:7px 8px;font-size:11px}
+  .hint,.upload-btn .wide{display:none}
+  .top{gap:10px;padding-inline:14px}
+  .logo img{height:28px}
+  .user{padding-inline:11px}
+  .stage.has-card .tools{opacity:0;pointer-events:none}
+  .tools{transition:opacity .15s}
+  .grid{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

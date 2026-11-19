@@ -1,0 +1,12 @@
+# Who reviews what. GitHub requests a review from the owner of every folder a pull request touches.
+# Replace each placeholder with a team member's GitHub username (keep the @), then delete this comment.
+# Later lines win when several match.
+
+# *                      @owner-of-everything-else
+# /backend/api/          @api-owner
+# /backend/api/app/services/search/   @search-owner
+# /backend/api/app/routes/admin/      @admin-owner
+# /backend/ml/           @ml-owner
+# /frontend/             @frontend-owner
+# /supabase/             @database-owner
+# /docs/                 @docs-owner

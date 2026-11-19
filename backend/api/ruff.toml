@@ -1,0 +1,10 @@
+# Linting: `ruff check .` from backend/api/ (installed by requirements-dev.txt).
+line-length = 130
+target-version = "py311"
+
+[lint]
+# F: real errors (unused or undefined names). I: import order.
+select = ["F", "I"]
+
+[lint.isort]
+known-first-party = ["app", "tests"]
