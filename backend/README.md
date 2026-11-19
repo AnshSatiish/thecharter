@@ -1,14 +1,11 @@
 # Backend
 
-The backend follows the stages of the work, in order:
-
-| Folder | Stage | Status |
+| Folder | What it is | Status |
 |---|---|---|
-| `eda/` | Explore the data: what we have, how much, how clean | Partner samples and synthetic dataset analysed |
-| `preprocessing/` | Clean and prepare data for models | Empty; PDF text extraction currently lives in `inference/` |
-| `model_training/` | Choose, train and evaluate models | Search and summarization models chosen by cross-validation; fine-tuning tested; see its README |
-| `inference/` | Serve results: the FastAPI application the site calls | Built and tested |
-| `data/` | Partner samples, synthetic dataset, country outlines, uploaded files | In use by `inference/` and `model_training/` |
-| `db/` | Docker image for PostgreSQL with PostGIS and pgvector | Used by `docker-compose.yml` |
+| `api/` | The FastAPI application the site calls: projects, search, uploads, AI helpers, admin routes | Built and tested (see `api/README.md`) |
+| `ml/` | How every model was chosen: exploratory data analysis, model comparison, fine-tuning, search evaluation | Search and summarization models chosen by cross-validation (see `ml/README.md`) |
+| `load_testing/` | Load test of the search API and its results | Run on 2 CPUs / 2 GB (see `load_testing/README.md`) |
+| `data/` | Partner samples, synthetic dataset, country outlines, uploaded files (`uploads/`, git-ignored) | Used by `api/` and `ml/` |
+| `db/` | Docker image for PostgreSQL 16 with PostGIS and pgvector | Used by `docker-compose.yml` at the repo root |
 
-Run the API from `inference/`. See the main README for install steps.
+Run the API from `api/`. See the main README for install steps.

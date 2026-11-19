@@ -10,22 +10,22 @@ COMP 385 AI Capstone Project, Centennial College. Built for an external partner.
 
 | Folder | What it is | Run it |
 |---|---|---|
-| `backend/eda/` | Exploratory data analysis of the partner samples and the synthetic dataset (script, summary and figures). | `cd backend/eda && ..\.venv\Scripts\python eda_sample_projects.py` |
-| `backend/preprocessing/` | Cleaning and preparing data for models. Empty for now; PDF text extraction currently lives in the API (`inference/app/services/text.py`). | |
-| `backend/model_training/` | How every AI model was chosen: search model comparison and summarizer comparison with 5-fold cross-validation, and a fine-tuning experiment. Results and figures are committed. See its README. | `cd backend/model_training && ..\.venv\Scripts\python compare_models.py` |
-| `backend/inference/` | The FastAPI application that serves results. Projects with filters (category, SDG, year, keyword, map bounding box), nearby search, authors, admin upload and verification, photo and PDF uploads with file storage, keyword, semantic and hybrid search (`GET /api/projects/search`), local Ollama AI summarization with a TF-IDF fallback, keyword extraction, and the location check. Runs on SQLite with no setup, or PostgreSQL with PostGIS and pgvector. Tested with pytest. Admin auth is a shared token for now (JWT planned). | `cd backend/inference && python -m app.scripts.seed && uvicorn app.main:app --reload --port 8000` (after install, see below) |
-| `backend/data/` | `samples/`: 7 sample projects loaded by the seed script. `geo/`: country outlines (Natural Earth 1:50m) used by the location check. `uploads/`: uploaded photographs and PDFs (git-ignored). | |
-| `frontend/` | **The site the team is building on.** A 3D globe (D3, no API key, no build step). Passport-style sign-in (demo: any institutional email is accepted until accounts exist), field-passport profile, pin previews, project pages with a full-screen photo viewer and narration, filters, UN SDG colours, news layer, researcher mode, projection toggle, live latitude/longitude and country name under the cursor, and the admin upload. On localhost it loads from the backend; without it, it falls back to built-in sample data. With the backend running, "By meaning" is real semantic search and shows the passage that matched; without it, it falls back to a labelled placeholder with prepared examples. | `cd frontend && python -m http.server 8080`, then open http://localhost:8080 |
+| `backend/api/` | The FastAPI application that serves results. Projects with filters (category, SDG, year, keyword, map bounding box), nearby search, authors, admin upload and verification, photo and PDF uploads with file storage, keyword, semantic and hybrid search (`GET /api/projects/search`), local Ollama AI summarization with a TF-IDF fallback, keyword extraction, and the location check. Public and admin routes are separate (`app/routes/public/`, `app/routes/admin/`). Runs on SQLite with no setup, or PostgreSQL with PostGIS and pgvector. Unit, integration and load tests with pytest. Admin auth is a shared token for now (JWT planned). See its README. | `cd backend/api && python -m app.scripts.seed && uvicorn app.main:app --reload --port 8000` (after install, see below) |
+| `backend/ml/` | How every AI model was chosen: exploratory data analysis (`eda/`), search model and summarizer comparison with 5-fold cross-validation and a fine-tuning experiment (`experiments/`), and an end-to-end search check (`evaluation/search/`). Results and figures are committed. See its README. | `cd backend/ml && python experiments/compare_embedding_models.py` |
+| `backend/load_testing/` | Load test of the search API, with results and the fixes it led to. | See its README |
+| `backend/data/` | `samples/`: 7 sample projects loaded by the seed script. `synthetic/`: 30 synthetic projects for training and evaluation. `geo/`: country outlines (Natural Earth 1:50m) used by the location check. `uploads/`: uploaded photographs and PDFs (git-ignored). | |
+| `frontend/` | **The site the team is building on.** A 3D globe (D3, no API key, no build step), split into `css/` and `js/` files (see its README). Passport-style sign-in (demo: any institutional email is accepted until accounts exist), field-passport profile, pin previews, project pages with a full-screen photo viewer and narration, filters, UN SDG colours, news layer, researcher mode, projection toggle, live latitude/longitude and country name under the cursor, and the admin upload. On localhost it loads from the backend; without it, it falls back to Supabase and then to built-in sample data. With the backend running, "By meaning" is real semantic search and shows the passage that matched; without it, it runs in the browser. | `cd frontend && python -m http.server 8080`, then open http://localhost:8080 |
+| `supabase/` | SQL for the hosted database the deployed site uses (projects, events, sponsors, admin accounts, storage), numbered in run order. | Paste each file in `migrations/` into the Supabase SQL editor, in order |
 | `docs/requirements/` | Partner requirement documents: interactive map, admin and security, project summary. | |
-| `docs/diagrams/` | Architecture, class and component diagrams, drawn in draw.io. Empty for now. | |
-| `docs/reference/figma-app/` | The partner's original Figma Make prototype (React + Vite, mock data). Kept for reference; not the product. | `cd docs/reference/figma-app && npm install && npm run dev` |
-| `docker-compose.yml` | PostgreSQL 16 with PostGIS 3.4 for the backend. | `docker compose up -d` |
+| `docs/architecture/` | draw.io diagrams (use case, AI architecture and components, both database ERDs) with PNG/SVG exports, and decision records. | |
+| `docs/reports/`, `docs/demo-uploads/`, `docs/security/` | Technical report, ready-made test uploads for demos, PostgreSQL/Supabase security guide. | |
+| `docker-compose.yml` | PostgreSQL 16 with PostGIS 3.4 and pgvector for the backend. | `docker compose up -d` |
 
-Semantic search and abstractive summarization are built (`backend/inference/app/ai/embeddings/` and `backend/inference/app/ai/summarization/`). Tagging, image search, news, JWT auth and Alembic migrations are not built yet.
+Semantic search and abstractive summarization are built (`backend/api/app/ai/embeddings/` and `backend/api/app/ai/summarization/`). Tagging, image search, news, JWT auth and Alembic migrations are not built yet.
 
 The backend sends summarization prompts to Ollama on the same machine by default. Install Ollama, start it, and download the default model once with `ollama pull llama3.2:3b`. The PDF text stays local; if Ollama is unavailable, the backend uses its TF-IDF extractive fallback.
 
-Project photographs in `frontend/img/` and `docs/reference/figma-app/src/assets/` belong to their authors and are included for development only (converted to JPEG to keep the repository small).
+Project photographs in `frontend/assets/projects/` belong to their authors and are included for development only (converted to JPEG to keep the repository small).
 
 ## Table of contents
 
@@ -95,7 +95,7 @@ Models: transformer text classifier for tagging, BART or PEGASUS for summarizati
 
 Search by meaning rather than exact keywords. A query such as "grief rituals in rural communities" returns relevant projects even when none of those words appear in the text.
 
-**Built: text.** Each project's title, description, summary, photo narration and PDF text is cut into short passages. A pretrained sentence model (`BAAI/bge-small-en-v1.5`, 66 MB, open source, runs on the server with ONNX Runtime, no API key and no cost) turns every passage into a 384-number vector. It was chosen over two other models and two lexical baselines by 5-fold cross-validation, which also set the passage length (40 words) and the cut-offs (`backend/model_training/compare_models.py`). A query is embedded the same way and compared with the passages by cosine similarity; the project's best passage is returned with the result, so the user can see why it matched. Vectors are stored in PostgreSQL with pgvector (HNSW index), or compared in Python on SQLite.
+**Built: text.** Each project's title, description, summary, photo narration and PDF text is cut into short passages. A pretrained sentence model (`BAAI/bge-small-en-v1.5`, 66 MB, open source, runs on the server with ONNX Runtime, no API key and no cost) turns every passage into a 384-number vector. It was chosen over two other models and two lexical baselines by 5-fold cross-validation, which also set the passage length (40 words) and the cut-offs (`backend/ml/experiments/compare_embedding_models.py`). A query is embedded the same way and compared with the passages by cosine similarity; the project's best passage is returned with the result, so the user can see why it matched. Vectors are stored in PostgreSQL with pgvector (HNSW index), or compared in Python on SQLite.
 
 Three modes are served by `GET /api/projects/search?q=...&mode=keyword|semantic|hybrid`:
 
@@ -103,7 +103,7 @@ Three modes are served by `GET /api/projects/search?q=...&mode=keyword|semantic|
 - `semantic`: ranked by meaning as described above.
 - `hybrid` (default): both lists merged with reciprocal rank fusion, so exact names still rank first and paraphrases are still found.
 
-The model comparison, the fine-tuning experiment and the end-to-end check are in `backend/model_training/` (see Evaluation).
+The model comparison, the fine-tuning experiment and the end-to-end check are in `backend/ml/` (see Evaluation).
 
 **Planned: images.** Images embedded with CLIP alongside the text vectors, which also powers the **View similar** feature on each project page. CLIP has a short text context window, so it handles images and short captions while the sentence model handles descriptions and documents.
 
@@ -123,7 +123,7 @@ A retrieval-augmented research assistant. A student asks a question in natural l
 
 | Layer | Technology |
 |---|---|
-| Frontend | React, Google Maps JavaScript API |
+| Frontend | Plain HTML, CSS and JavaScript with a D3 globe (no build step). The partner's original Figma prototype used React. |
 | Backend | FastAPI (Python) |
 | Relational database | PostgreSQL with PostGIS |
 | Vector search | pgvector inside PostgreSQL (no separate vector database) |
@@ -136,44 +136,61 @@ PostGIS handles bounding-box queries so the map can request only the projects in
 
 ## Repository structure
 
-The backend follows the stages of the work: explore the data, prepare it, train models, serve results.
+Each folder has its own README with the detail. Each layer of the API has one job: routes handle HTTP, services hold the logic, `ai/` holds the models, `db/` holds storage.
 
 ```
 .
+├── README.md
+├── CONTRIBUTING.md              Branches, pull requests, tests, code style
+├── docker-compose.yml           PostgreSQL 16 + PostGIS + pgvector
+├── .github/                     CI (tests on every pull request), CODEOWNERS, PR and issue templates
 ├── backend/
-│   ├── eda/                     Exploratory data analysis script, summary and figures
-│   ├── preprocessing/           Cleaning and preparing data for models
-│   ├── model_training/          Model comparison, fine-tuning and summarizer evaluation (results/, figures/)
-│   ├── inference/               The FastAPI application
+│   ├── api/                     The FastAPI application
 │   │   ├── app/
-│   │   │   ├── main.py          Application and router setup
-│   │   │   ├── api/             Route handlers (projects, documents, authors, ai, geo today; auth planned)
-│   │   │   ├── core/            Config and security (admin token today, JWT planned)
-│   │   │   ├── db/              SQLAlchemy models, session, table and PostGIS setup (migrations planned)
-│   │   │   ├── scripts/         Seed the sample dataset, build the country outlines
-│   │   │   ├── ai/              Sentence embeddings for semantic search; placeholders for the other modules (tagging, summarization, geo, news)
-│   │   │   └── services/        Search (keyword, semantic, hybrid) and its indexes, file storage, upload checks, text, geo, countries
-│   │   ├── tests/               Unit and integration tests
-│   │   └── requirements.txt
-│   └── data/
-│       ├── samples/             The partner's sample projects
-│       ├── synthetic/           30 synthetic projects with reports and reference summaries, for training and evaluation only
-│       ├── geo/                 Country outlines for the location check
-│       └── uploads/             Uploaded photographs and PDFs (git-ignored, created on first run)
-├── frontend/                    The 3D globe site (static: index.html, outlines, images)
-├── docs/
-│   ├── requirements/            Partner requirement documents
-│   ├── diagrams/                draw.io diagrams
-│   └── reference/figma-app/     The partner's original Figma prototype
-└── docker-compose.yml           PostgreSQL + PostGIS
+│   │   │   ├── main.py          Creates the app, mounts the public and admin routers
+│   │   │   ├── core/            config.py, security.py (admin token today, JWT planned), deps.py
+│   │   │   ├── db/              session, init_db (PostGIS, pgvector), models/ one file per table
+│   │   │   ├── schemas/         Pydantic request/response models, one file per resource
+│   │   │   ├── routes/public/   Projects, search, authors, documents, geo, keywords
+│   │   │   ├── routes/admin/    Create, edit, verify, uploads, AI helpers: all behind require_admin
+│   │   │   ├── services/        projects, documents, authors, files/, search/ (keyword, semantic, fusion, hybrid, indexing), geo/
+│   │   │   ├── ai/              embeddings/, summarization/ (abstractive + TF-IDF fallback), keywords.py
+│   │   │   ├── text/            normalize.py, pdf.py
+│   │   │   └── scripts/         seed, reindex, build_countries
+│   │   ├── tests/               unit/ (no database), integration/ (HTTP, incl. admin/), load/
+│   │   ├── requirements.txt, requirements-dev.txt, pytest.ini, ruff.toml, Dockerfile
+│   ├── ml/                      eda/, experiments/, evaluation/search/, results/, figures/, common.py
+│   ├── load_testing/            loadtest.py, make_dataset.py, results/
+│   ├── data/
+│   │   ├── samples/             The partner's sample projects
+│   │   ├── synthetic/           30 synthetic projects with reports and reference summaries, for training and evaluation only
+│   │   ├── geo/                 Country outlines for the location check
+│   │   └── uploads/             Uploaded photographs and PDFs (git-ignored, created on first run)
+│   └── db/                      Dockerfile for PostgreSQL + PostGIS + pgvector
+├── frontend/
+│   ├── index.html               Markup; loads css/ and js/ in order
+│   ├── config.js, vercel.json
+│   ├── css/                     One file per part of the page
+│   ├── js/                      api/, data/, state.js, globe/, features/ (incl. admin/), main.js
+│   ├── data/                    Country outlines and cities for the globe
+│   └── assets/                  logo/, projects/thumbs + full/, pdfs/
+├── supabase/
+│   └── migrations/              001_schema.sql, 002_pages.sql, 003_security.sql
+└── docs/
+    ├── requirements/            Partner requirement documents
+    ├── architecture/            diagrams/ (.drawio, exports/), decisions/
+    ├── reports/                 Technical reports
+    ├── security/                PostgreSQL and Supabase security guide
+    └── demo-uploads/            Ready-made projects to upload in demos
 ```
+
+The partner's original Figma Make prototype (React + Vite, mock data) is no longer in this repository. It is kept on the `main` branch history; see `docs/README.md`.
 
 ## Getting started
 
 ### Prerequisites
 
 - Python 3.11 or later
-- Node.js 20 or later (only for the Figma reference app)
 - Docker and Docker Compose (for PostgreSQL with PostGIS and pgvector)
 - A Google Maps API key (see below)
 
@@ -189,11 +206,12 @@ docker compose up -d
 # Local summarization model (install Ollama separately, then pull the model once)
 ollama pull llama3.2:3b
 
-# Backend API
-cd backend/inference
+# Backend API (one virtual environment in backend/, shared by api/ and ml/)
+cd backend
 python -m venv .venv
 source .venv/bin/activate        # Windows PowerShell: .venv\Scripts\Activate.ps1   Git Bash: source .venv/Scripts/activate
-pip install -r requirements.txt
+pip install -r api/requirements-dev.txt   # the app, plus pytest and ruff (no PyTorch needed)
+cd api
 cp .env.example .env             # then edit; delete the DATABASE_URL line to use SQLite
 python -m app.scripts.seed       # create tables and load the sample dataset (safe to rerun)
 
@@ -208,9 +226,9 @@ Restrict the key to your development and deployment domains before committing an
 
 ## Environment variables
 
-Copy `backend/inference/.env.example` to `backend/inference/.env`, then fill in the values. The frontend has no environment file yet.
+Copy `backend/api/.env.example` to `backend/api/.env`, then fill in the values. The frontend has no environment file yet.
 
-**backend/inference/.env**
+**backend/api/.env**
 
 Used today:
 
@@ -247,7 +265,7 @@ GDELT_POLL_INTERVAL_HOURS=6
 ## Running the application
 
 ```bash
-# Backend (from backend/inference/)
+# Backend (from backend/api/)
 uvicorn app.main:app --reload --port 8000
 
 # Frontend (from frontend/)
@@ -284,8 +302,9 @@ The first run downloads the sentence model. If the model cannot be loaded, savin
 ## Testing
 
 ```bash
-# Backend unit and integration tests (temporary SQLite database)
-cd backend/inference && pytest
+# Backend (from backend/api/, temporary SQLite database, no model downloads)
+pytest tests/unit                # fast: pure functions, under a second
+pytest                           # everything: unit + integration + load
 
 # Same suite against PostGIS, including the postgres-marked test. Use a throwaway database: tables are recreated.
 docker exec thecharter-db-1 createdb -U charter charter_test
@@ -297,8 +316,9 @@ pytest --cov=app --cov-report=term-missing
 
 Test layers:
 
-- **Unit tests** cover individual functions and AI pipeline stages
-- **Integration tests** cover API endpoints against a test database, including upload, search and auth flows
+- **Unit tests** (`tests/unit/`) cover individual functions and AI pipeline stages with no database or model: reciprocal rank fusion, hybrid wiring, semantic cut-offs, chunking, text, keywords, summaries and their fallback, upload validation, storage, security and settings, geography
+- **Integration tests** (`tests/integration/`) cover API endpoints against a test database, including upload, search and admin flows (`tests/integration/admin/`)
+- **Load tests** (`tests/load/`) check that a full connection pool answers 503 and that several server processes start together
 - **End-user testing** is run with a small group of students before the final demonstration, with findings recorded in `docs/user-testing.md`
 
 ## Evaluation metrics
@@ -308,8 +328,8 @@ Each AI component is measured rather than assumed to work.
 | Component | Metric | Target |
 |---|---|---|
 | Category and SDG tagging | Macro F1 on a held-out set | To be set after baseline |
-| Summarization | ROUGE-1, ROUGE-2, ROUGE-L against reference summaries, 5-fold cross-validated | TF-IDF fallback: ROUGE-L 0.231; DistilBART: 0.217 (30 synthetic reports; `backend/model_training/results/summarization.md`) |
-| Semantic search | Hit@1, Recall@3, MRR and list F1 on 122 judged queries, 5-fold cross-validated, against keyword search and TF-IDF | bge-small-en-v1.5: Hit@1 0.95, MRR 0.96; keyword search 0.89 and 0.93 (37 projects, 30 synthetic; `backend/model_training/results/model_comparison.md`). Rerun on partner data. |
+| Summarization | ROUGE-1, ROUGE-2, ROUGE-L against reference summaries, 5-fold cross-validated | TF-IDF fallback: ROUGE-L 0.231; DistilBART: 0.217 (30 synthetic reports; `backend/ml/results/summarization.md`) |
+| Semantic search | Hit@1, Recall@3, MRR and list F1 on 122 judged queries, 5-fold cross-validated, against keyword search and TF-IDF | bge-small-en-v1.5: Hit@1 0.95, MRR 0.96; keyword search 0.89 and 0.93 (37 projects, 30 synthetic; `backend/ml/results/model_comparison.md`). Rerun on partner data. |
 | Location extraction | Percentage of pins placed correctly without edit | To be set after baseline |
 | News shading | Agreement with curator-selected regions | To be set after baseline |
 | Curation time | Minutes per project, before and after | Reduction against the manual baseline |

@@ -1,0 +1,68 @@
+/* Sign-in gate: the passport cover over the turning globe. */
+/* ---------- sign-in gate: the globe turns behind a passport cover ---------- */
+body.locked .top,body.locked .panel,body.locked .panel-toggle,body.locked .tools,body.locked .hint,
+body.locked .coords,body.locked #pins,body.locked .routechip{visibility:hidden}
+body.locked .stage{inset:0}
+.gate{position:fixed;inset:0;z-index:100;display:grid;grid-template-columns:minmax(0,1fr) 420px;align-items:center;gap:32px;
+  padding:32px clamp(16px,5vw,72px);color:#f3efe8;overflow-y:auto;
+  background:linear-gradient(90deg,rgba(12,19,24,0) 0%,rgba(12,19,24,.25) 45%,rgba(12,19,24,.82) 100%);transition:opacity .5s ease}
+.gate.leaving{opacity:0;pointer-events:none}
+.gate-lede{align-self:end;padding-bottom:6vh;max-width:520px;pointer-events:none}
+.gate-lede .mark{font-family:var(--serif);font-size:13.5px;letter-spacing:.3em;color:var(--gold)}
+.gate-lede h1{font-family:var(--serif);font-weight:500;font-size:clamp(40px,5.4vw,76px);line-height:.98;margin:10px 0 14px;text-wrap:balance;text-shadow:0 2px 24px rgba(0,0,0,.45)}
+.gate-lede p{font-size:16px;line-height:1.5;color:#d9d2c6;margin:0;max-width:40ch;text-shadow:0 1px 12px rgba(0,0,0,.6)}
+.pass{width:100%;max-width:420px;border-radius:18px;overflow:hidden;box-shadow:0 30px 80px -20px rgba(0,0,0,.7);color-scheme:light;position:relative}
+.pass-cover{background:#1f3b44;padding:26px 28px 22px;text-align:center;position:relative;
+  background-image:radial-gradient(circle at 50% 0,rgba(255,255,255,.08),transparent 60%)}
+.pass-cover img{width:min(290px,86%);height:auto;display:block;margin:6px auto 14px}
+.pass-cover b{display:block;font-family:var(--serif);font-weight:500;font-size:23.4px;letter-spacing:.2em;color:#e3c98f}
+.pass-cover span{display:block;font-size:9.5px;letter-spacing:.2em;color:#b9c6c9;margin-top:6px}
+.pass-card{background:#f4efe3;color:var(--text);padding:24px 28px 26px;position:relative}
+.pass-card h2{font-family:var(--serif);font-weight:500;font-size:23.4px;margin:0;color:#1f3b44}
+.pass-card .sub{margin:4px 0 16px;font-size:13.5px;color:#6f675f;line-height:1.45}
+.gfld{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--label);font-weight:600}
+.gfld input{font:inherit;font-size:15px;letter-spacing:0;text-transform:none;font-weight:400;color:var(--text);background:#fffdf8;border:1px solid #cfc3a8;border-radius:6px;padding:11px 12px}
+.gfld input:focus{outline:2px solid #1f3b44;outline-offset:1px;border-color:#1f3b44}
+.gfld input[aria-invalid="true"]{border-color:#b3261e}
+.gerr{min-height:18px;margin:-4px 0 8px;font-size:12.5px;color:#b3261e}
+.grole{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;margin:0 0 14px;background:#e8e0cd;border-radius:8px}
+.grole button{border:0;border-radius:6px;background:none;padding:9px 8px;font-size:13.5px;font-weight:600;color:#4a443d}
+.grole button[aria-checked="true"]{background:#fffdf8;color:#1f3b44;box-shadow:0 1px 3px rgba(31,59,68,.18)}
+.upload-btn[hidden]{display:none}
+.gkeep{display:flex;align-items:center;gap:8px;font-size:13px;color:#4a443d;margin-bottom:14px}
+.gkeep input{width:16px;height:16px;accent-color:#1f3b44}
+.gbtn{width:100%;border:0;border-radius:6px;background:var(--red-strong);color:#fff;font-weight:700;font-size:15px;padding:12px;letter-spacing:.02em}
+.gbtn:hover{background:#cf3a1c}
+.gbtn:disabled{opacity:.6}
+.glinks{display:flex;justify-content:space-between;gap:12px;margin-top:14px}
+.glinks button{border:0;background:none;padding:0;font-size:13px;color:#1f3b44;text-decoration:underline;text-underline-offset:3px}
+.gnote{margin:16px 0 0;padding-top:12px;border-top:1px dashed #cfc3a8;font-size:11.5px;line-height:1.45;color:var(--label)}
+.gok{font-size:13.5px;line-height:1.5;color:#2f5d1c;background:#edf5e4;border:1px solid #b9d7a0;border-radius:6px;padding:10px 12px;margin:0 0 12px}
+/* entry stamp lands on the card when the sign-in is accepted */
+.gstamp{position:absolute;right:14px;top:8px;width:150px;pointer-events:none;mix-blend-mode:multiply;opacity:0;transform:rotate(-11deg) scale(2.2)}
+.gate.stamped .gstamp{opacity:.9;transform:rotate(-11deg) scale(1);transition:transform .22s cubic-bezier(.2,1.4,.4,1),opacity .12s}
+@media (max-width:860px){
+  /* phones: the card is a sheet rising from the bottom; the globe shows above it like a horizon */
+  .gate{display:flex;flex-direction:column;gap:0;padding:max(150px,24vh) 0 0;
+    background:linear-gradient(180deg,rgba(12,19,24,0) 0%,rgba(12,19,24,.3) 60%,rgba(12,19,24,.8) 100%)}
+  .gate-lede{display:none}
+  .pass{max-width:none;flex-shrink:0;margin-top:auto;border-radius:22px 22px 0 0;box-shadow:0 -18px 50px -18px rgba(0,0,0,.7)}
+  .pass-cover{padding:24px 24px 20px}
+  .pass-cover img{width:min(236px,72%);margin:0 auto}
+  .pass-cover span{display:none}
+  .pass-card{padding:28px 24px calc(28px + env(safe-area-inset-bottom,0px))}
+  .pass-card h2{font-size:28px}
+  .pass-card .sub{margin:6px 0 24px;font-size:14.5px}
+  .gfld{gap:8px;margin-bottom:20px;font-size:11px}
+  .gfld input{font-size:16px;padding:12px 14px}
+  .gerr{min-height:0;margin:-8px 0 16px}
+  .gerr:empty{display:none}
+  .gkeep{margin:2px 0 22px;font-size:14.5px;gap:10px}
+  .gbtn{padding:15px;font-size:16px}
+  .glinks{margin-top:10px}
+  .glinks button{font-size:14px}
+  .gnote{margin-top:12px;padding-top:16px;font-size:12px}
+  .gstamp{top:14px;right:18px}
+}
+@media (prefers-reduced-motion:reduce){.gate.stamped .gstamp{transform:rotate(-11deg)}}
+

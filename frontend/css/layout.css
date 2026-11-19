@@ -1,0 +1,59 @@
+/* Header, breadcrumb and the full-screen map stage. */
+/* ---------- header ---------- */
+.top{height:56px;display:flex;align-items:center;gap:24px;padding-inline:20px;position:fixed;top:0;left:0;right:0;z-index:30;
+  background:linear-gradient(180deg,rgba(9,13,17,.62),rgba(9,13,17,.28));
+  -webkit-backdrop-filter:blur(16px) saturate(1.5);backdrop-filter:blur(16px) saturate(1.5);
+  border-bottom:1px solid rgba(255,255,255,.07);box-shadow:0 1px 0 rgba(0,0,0,.18)}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.top{background:rgba(12,16,20,.9)}}
+.logo{display:flex;flex-direction:column;line-height:1;color:#f3efe8;text-decoration:none;flex-shrink:0}
+.logo b{font-family:var(--serif);font-weight:500;font-size:19.8px;letter-spacing:.14em}
+.logo img{height:36px;width:auto;display:block}
+.logo small{font-family:var(--serif);font-size:8.1px;letter-spacing:.2em;color:var(--orange);margin-top:3px;text-align:center}
+.nav{display:flex;gap:2px;margin-left:auto;margin-right:auto;padding:4px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07)}
+.nav a{color:rgba(255,255,255,.72);text-decoration:none;font-size:13.5px;font-weight:500;letter-spacing:.005em;padding:6px 14px;border-radius:999px;transition:background .15s,color .15s}
+.nav a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.nav a[aria-current]{color:#14191e;background:#f3efe8}
+.nav button{font:inherit;background:none;border:0;color:rgba(255,255,255,.72);font-size:13.5px;font-weight:500;letter-spacing:.005em;padding:6px 14px;border-radius:999px;transition:background .15s,color .15s}
+.nav button:hover{color:#fff;background:rgba(255,255,255,.08)}
+.nav button[aria-current]{color:#14191e;background:#f3efe8}
+.menu-btn{display:none;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;border-radius:999px;width:40px;height:40px;place-items:center;padding:0}
+.nav span{color:rgba(255,255,255,.38);font-size:13.5px;font-weight:500;padding:6px 14px;cursor:default}
+.user:hover{background:var(--red-ink)}
+.user[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink),0 0 0 4px #fff}
+.upload-btn[aria-pressed="true"]{background:var(--orange);color:#fff}
+.logo{border-radius:4px}
+/* where you are, top left of every page: Map / Page name */
+.crumbs{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.crumbs button.home{border:0;background:none;padding:0;font-weight:600;color:#1f3b44;text-decoration:underline;text-underline-offset:3px}
+.crumbs .end{margin-left:auto;display:flex;gap:8px;align-items:center}
+.page-h{font-family:var(--serif);font-weight:500;font-size:28.8px;line-height:1.1;margin:2px 0 4px;color:#1f3b44;text-wrap:balance}
+.story .crumbs{position:absolute;top:14px;left:20px;z-index:2;color:#e6dfd3;background:rgba(20,18,16,.62);padding:6px 12px;border-radius:999px}
+.story .crumbs button.home{color:#fff}
+.user{background:var(--red-strong);color:#fff;border:0;border-radius:999px;padding:7px 16px;font-size:12.5px;font-weight:600;letter-spacing:.06em}
+
+/* ---------- map stage ---------- */
+/* the globe is a fixed full-screen layer, so it runs under the see-through header; the controls stay in the stage */
+.stage{position:absolute;inset:56px 0 0 0;overflow:hidden}
+.stage::before{content:"";position:fixed;inset:0;
+  background:radial-gradient(1200px 800px at 60% 45%, #22384a 0%, #16222b 55%, #0f171d 100%)}
+#globe{position:fixed;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}
+#globe:active{cursor:grabbing}
+#pins{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.pin{pointer-events:auto;cursor:pointer;transition:opacity .2s}
+.pin .body{transition:transform .2s cubic-bezier(.3,1.4,.5,1)}
+.pin:hover .body,.pin:focus-visible .body{transform:scale(1.15)}
+.pin.active .body{transform:scale(1.32)}
+.pin:focus{outline:none}
+.pin:focus-visible .frame{stroke:#fff;stroke-width:3}
+.pin text{font-family:var(--sans);font-weight:700;font-size:8.5px;pointer-events:none}
+.pin .photo-ph{transition:opacity .2s}
+.pin .halo{opacity:0;transform-box:fill-box;transform-origin:center}
+.pin.active .halo{animation:pinpulse 1.8s ease-out infinite}
+@keyframes pinpulse{0%{opacity:.75;transform:scale(1)}100%{opacity:0;transform:scale(1.9)}}
+@media (prefers-reduced-motion:reduce){.pin.active .halo{animation:none;opacity:.5}}
+.pin .tip{opacity:0;transition:opacity .15s;pointer-events:none}
+.pin:hover .tip,.pin:focus-visible .tip{opacity:1}
+.pin.active .tip{opacity:0}
+.pin .tip rect{fill:rgba(20,26,31,.92)}
+.pin .tip text{fill:#fff;font-size:10.5px;font-weight:600;letter-spacing:.01em}
+
