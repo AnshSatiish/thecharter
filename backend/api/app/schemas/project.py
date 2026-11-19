@@ -69,7 +69,10 @@ class ProjectIn(BaseModel):
     lng: Lng
     date: dt.date
     keywords: list[str] = []
-    sdgs: list[Sdg] = Field(default=[], description='UN SDG codes such as "SDG10"')
+    sdgs: list[Sdg] = Field(
+    default=[],
+    description='UN SDG codes such as "SDG10"',
+)
     images: list[str] = []
     captions: list[str] = Field(default=[], description="Photo narration written by the admin, one per image")
     summary: str | None = None
