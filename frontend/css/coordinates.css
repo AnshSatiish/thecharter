@@ -40,5 +40,6 @@
   .stage.has-card .tools{opacity:0;pointer-events:none}
   .tools{transition:opacity .15s}
   .grid{grid-template-columns:1fr}
+  .drawer{width:100%}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

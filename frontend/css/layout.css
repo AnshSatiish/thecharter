@@ -4,7 +4,7 @@
   background:linear-gradient(180deg,rgba(9,13,17,.62),rgba(9,13,17,.28));
   -webkit-backdrop-filter:blur(16px) saturate(1.5);backdrop-filter:blur(16px) saturate(1.5);
   border-bottom:1px solid rgba(255,255,255,.07);box-shadow:0 1px 0 rgba(0,0,0,.18)}
-@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.top{background:rgba(12,16,20,.9)}}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.top,.tool-group,.proj,.mode,.results-btn{background:rgba(12,16,20,.92)}}
 .logo{display:flex;flex-direction:column;line-height:1;color:#f3efe8;text-decoration:none;flex-shrink:0}
 .logo b{font-family:var(--serif);font-weight:500;font-size:19.8px;letter-spacing:.14em}
 .logo img{height:36px;width:auto;display:block}

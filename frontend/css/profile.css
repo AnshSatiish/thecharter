@@ -75,5 +75,7 @@
   .pp-stats{grid-template-columns:1fr 1fr}
   .feat-row{grid-template-columns:1fr 1fr}
   .sig .hand{font-size:17px}
+  .mrz{overflow:hidden}
+  .mrz p{font-size:min(13px,2.7vw);letter-spacing:.05em}
 }
 

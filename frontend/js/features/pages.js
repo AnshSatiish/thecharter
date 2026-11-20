@@ -33,9 +33,18 @@ menuBtn.onclick=e=>{ e.stopPropagation(); setMenu(!navList.classList.contains("o
 document.addEventListener("click", e=>{ if (navList.classList.contains("open") && !e.target.closest("#navList")) setMenu(false); });
 navList.querySelectorAll("a,button").forEach(el=>el.addEventListener("click", ()=>setMenu(false)));
 
-function pageShell(name, body){
-  return `<div class="sp-in"><nav class="crumbs" aria-label="You are here"><button type="button" class="home" data-sp-home>Map</button><span aria-hidden="true">/</span><span aria-current="page">${PAGES[name].title}</span></nav>
-    <header class="sp-head"><h1 class="page-h" tabindex="-1">${PAGES[name].title}</h1><p class="lede2">${PAGES[name].lede}</p></header>${body}</div>`;
+// each site page opens on a passport-cover band: teal, gold title, the same guilloche as the profile passport
+function bandRosette(){
+  const a=Array.from({length:40},(_,i)=>`<ellipse rx="300" ry="34" transform="rotate(${i*4.5})"/>`).join("");
+  const b=Array.from({length:30},(_,i)=>`<ellipse rx="190" ry="20" transform="rotate(${i*6})"/>`).join("");
+  return `<svg class="band-rosette" viewBox="0 0 600 600" aria-hidden="true">
+    <g fill="none" stroke="#e3c98f" stroke-opacity=".16" stroke-width=".8" transform="translate(560 540)">${a}</g>
+    <g fill="none" stroke="#e3c98f" stroke-opacity=".1" stroke-width=".7" transform="translate(560 540)">${b}</g></svg>`;
+}
+function pageShell(name, body, band=""){
+  return `<div class="sp-band">${bandRosette()}<div class="sp-band-in"><nav class="crumbs" aria-label="You are here"><button type="button" class="home" data-sp-home>Map</button><span aria-hidden="true">/</span><span aria-current="page">${PAGES[name].title}</span></nav>
+    <header class="sp-head"><h1 class="page-h" tabindex="-1">${PAGES[name].title}</h1><p class="lede2">${PAGES[name].lede}</p></header>${band}</div></div>
+    <div class="sp-in">${body}</div>`;
 }
 const emptyBox = (title, text) => `<div class="sp-emptybox"><p class="t">${title}</p><p>${text}</p></div>`;
 function renderSitePage(){
@@ -91,10 +100,10 @@ function communityHTML(){
       <ul class="plist">${person.projects.map(x=>`<li><button type="button" data-open="${esc(x.id)}">${esc(x.title)}</button><span>${esc(stampInfo(x).country)} · ${x.year}${x.verified ? "" : " · curation pending"}</span></li>`).join("")}</ul>
       <div class="acts"><button type="button" class="btn" data-map="${esc(person.projects[0].id)}">Show on map</button>${web ? `<a class="btn" href="${esc(web)}" target="_blank" rel="noopener">Website</a>` : ""}</div></article>`;
   };
-  return pageShell("community", `<dl class="sp-stats"><div><dt>Contributors</dt><dd>${ppl.length}</dd></div><div><dt>Institutions</dt><dd>${insts.length}</dd></div>
-      <div><dt>Countries</dt><dd>${countries.size}</dd></div><div><dt>Projects</dt><dd>${PROJECTS.length}</dd></div></dl>
-    <section><h2 class="sp-h2">Photographers and researchers</h2><div class="ppl-grid">${ppl.map(card).join("")}</div></section>
-    <section><h2 class="sp-h2">Institutions</h2><ol class="insts">${insts.map(i=>`<li><span>${esc(i.name)}</span><small>${i.people} ${i.people===1?"person":"people"} · ${i.projects} project${i.projects===1?"":"s"}</small><span class="bar"><i style="width:${Math.round(i.projects/top*100)}%"></i></span></li>`).join("")}</ol></section>`);
+  const stats=`<dl class="sp-stats"><div><dt>Contributors</dt><dd>${ppl.length}</dd></div><div><dt>Institutions</dt><dd>${insts.length}</dd></div>
+      <div><dt>Countries</dt><dd>${countries.size}</dd></div><div><dt>Projects</dt><dd>${PROJECTS.length}</dd></div></dl>`;
+  return pageShell("community", `<section><h2 class="sp-h2">Photographers and researchers</h2><div class="ppl-grid">${ppl.map(card).join("")}</div></section>
+    <section><h2 class="sp-h2">Institutions</h2><ol class="insts">${insts.map(i=>`<li><span>${esc(i.name)}</span><small>${i.people} ${i.people===1?"person":"people"} · ${i.projects} project${i.projects===1?"":"s"}</small><span class="bar"><i style="width:${Math.round(i.projects/top*100)}%"></i></span></li>`).join("")}</ol></section>`, stats);
 }
 
 // --- Events and Sponsors: lists kept in Supabase

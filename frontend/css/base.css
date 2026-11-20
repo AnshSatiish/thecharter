@@ -27,6 +27,7 @@ body{margin:0;background:var(--space);color:var(--text);font-family:var(--sans);
 h1,h2,h3,.page-h,.lede{font-optical-sizing:auto;letter-spacing:-.01em}
 button{font:inherit;cursor:pointer}
 :focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+[tabindex="-1"]:focus{outline:none}
 /* the parts the browser draws: selection, caret, checkbox tint, scrollbars, link underlines */
 ::selection{background:#e3c98f;color:#1f1d1b}
 :root{caret-color:var(--red-ink);accent-color:#1f3b44;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.28) transparent}
