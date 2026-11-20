@@ -6,8 +6,9 @@ function loop(now){
   const dt=now-prev; prev=now;
   const covered = !story.hidden || !adminEl.hidden || !profileEl.hidden || !sitePg.hidden || !lbEl.hidden || document.hidden;
   if (covered) { /* the globe is not visible */ }
-  else if (state.auto && !reduce && !picking && state.proj==="globe"){ state.rot[0]+=dt*0.006; lastMove=now; draw(); }
-  else if (geoHi && hiAllowed && !drawnHi && state.k>=HI_ZOOM && now-lastMove>240) draw();   // view settled: sharpen once  requestAnimationFrame(loop);
+  else if (state.auto && !reduce && !picking && state.proj==="globe"){ state.rot[0]+=dt*0.004; lastMove=now; draw(); }
+  else if (geoHi && hiAllowed && !drawnHi && state.k>=HI_ZOOM && now-lastMove>240) draw();   // view settled: sharpen once
+  requestAnimationFrame(loop);
 }
 
 // ---------- boot ----------
