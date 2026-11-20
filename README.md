@@ -1,390 +1,180 @@
 # The Charter
 
-**Mapping the new world.** A curated, map-based library of verified photojournalism and social science research, built for university students in international relations, political science, journalism and anthropology.
+**Mapping the new world.** The Charter is a map-based research and photojournalism discovery platform developed as a COMP 385 AI Capstone Project at Centennial College for an external partner. It brings projects, locations, authors, photographs, and documents together for students and researchers.
 
-COMP 385 AI Capstone Project, Centennial College. Built for an external partner.
+> **Status:** In development. This README distinguishes implemented components from work that is not yet available. See the component READMEs for implementation details.
 
-> **Status: in development.** Sections marked *Planned* are not implemented yet. See the [Roadmap](#roadmap) for what lands when.
+## What is implemented
 
-## What is in this repository today
+- **Interactive globe frontend:** A static HTML, CSS, and JavaScript application using D3. It includes project pins, previews, filtering, project pages, and a photo viewer. It requires no React build or Google Maps API key.
+- **FastAPI backend:** Project and author endpoints, filtering and nearby lookup, admin project management and verification routes, photo/PDF uploads, PDF text extraction, and keyword suggestions.
+- **Project search:** Keyword, semantic, and hybrid search through `GET /api/projects/search`. Hybrid search combines keyword and semantic rankings using reciprocal rank fusion. Semantic results can identify the matching passage.
+- **Text summarization:** Local Ollama integration using `llama3.2:3b`, with a TF-IDF extractive fallback when the model is unavailable.
+- **Database:** SQLite for local development or PostgreSQL 16 with PostGIS and pgvector using Docker. Supabase SQL migrations are maintained separately for hosted data.
+- **Evaluation and tests:** Model comparison, search evaluation, unit and integration tests, and search API load testing.
 
-| Folder | What it is | Run it |
-|---|---|---|
-| `backend/api/` | The FastAPI application that serves results. Projects with filters (category, SDG, year, keyword, map bounding box), nearby search, authors, admin upload and verification, photo and PDF uploads with file storage, keyword, semantic and hybrid search (`GET /api/projects/search`), local Ollama AI summarization with a TF-IDF fallback, keyword extraction, and the location check. Public and admin routes are separate (`app/routes/public/`, `app/routes/admin/`). Runs on SQLite with no setup, or PostgreSQL with PostGIS and pgvector. Unit, integration and load tests with pytest. Admin auth is a shared token for now (JWT planned). See its README. | `cd backend/api && python -m app.scripts.seed && uvicorn app.main:app --reload --port 8000` (after install, see below) |
-| `backend/ml/` | How every AI model was chosen: exploratory data analysis (`eda/`), search model and summarizer comparison with 5-fold cross-validation and a fine-tuning experiment (`experiments/`), and an end-to-end search check (`evaluation/search/`). Results and figures are committed. See its README. | `cd backend/ml && python experiments/compare_embedding_models.py` |
-| `backend/load_testing/` | Load test of the search API, with results and the fixes it led to. | See its README |
-| `backend/data/` | `samples/`: 7 sample projects loaded by the seed script. `synthetic/`: 30 synthetic projects for training and evaluation. `geo/`: country outlines (Natural Earth 1:50m) used by the location check. `uploads/`: uploaded photographs and PDFs (git-ignored). | |
-| `frontend/` | **The site the team is building on.** A 3D globe (D3, no API key, no build step), split into `css/` and `js/` files (see its README). Passport-style sign-in (demo: any institutional email is accepted until accounts exist), field-passport profile, pin previews, project pages with a full-screen photo viewer and narration, filters, UN SDG colours, news layer, researcher mode, projection toggle, live latitude/longitude and country name under the cursor, and the admin upload. On localhost it loads from the backend; without it, it falls back to Supabase and then to built-in sample data. With the backend running, "By meaning" is real semantic search and shows the passage that matched; without it, it runs in the browser. | `cd frontend && python -m http.server 8080`, then open http://localhost:8080 |
-| `supabase/` | SQL for the hosted database the deployed site uses (projects, events, sponsors, admin accounts, storage), numbered in run order. | Paste each file in `migrations/` into the Supabase SQL editor, in order |
-| `docs/requirements/` | Partner requirement documents: interactive map, admin and security, project summary. | |
-| `docs/architecture/` | draw.io diagrams (use case, AI architecture and components, both database ERDs) with PNG/SVG exports, and decision records. | |
-| `docs/reports/`, `docs/demo-uploads/`, `docs/security/` | Technical report, ready-made test uploads for demos, PostgreSQL/Supabase security guide. | |
-| `docker-compose.yml` | PostgreSQL 16 with PostGIS 3.4 and pgvector for the backend. | `docker compose up -d` |
+Some frontend screens and workflows are demonstration-oriented. In particular, the current passport-style email gate is **not production authentication**.
 
-Semantic search and abstractive summarization are built (`backend/api/app/ai/embeddings/` and `backend/api/app/ai/summarization/`). Tagging, image search, news, JWT auth and Alembic migrations are not built yet.
-
-The backend sends summarization prompts to Ollama on the same machine by default. Install Ollama, start it, and download the default model once with `ollama pull llama3.2:3b`. The PDF text stays local; if Ollama is unavailable, the backend uses its TF-IDF extractive fallback.
-
-Project photographs in `frontend/assets/projects/` belong to their authors and are included for development only (converted to JPEG to keep the repository small).
-
-## Table of contents
-
-- [The problem](#the-problem)
-- [What the platform does](#what-the-platform-does)
-- [AI capabilities](#ai-capabilities)
-- [Tech stack](#tech-stack)
-- [Repository structure](#repository-structure)
-- [Getting started](#getting-started)
-- [Environment variables](#environment-variables)
-- [Running the application](#running-the-application)
-- [Testing](#testing)
-- [Evaluation metrics](#evaluation-metrics)
-- [Ethical and regulatory considerations](#ethical-and-regulatory-considerations)
-- [Roadmap](#roadmap)
-- [Team](#team)
-- [References](#references)
-- [License and data rights](#license-and-data-rights)
-
-## The problem
-
-Students increasingly form their understanding of world events from social media, where sourcing is unclear and verification is rare. Meanwhile, rigorous photojournalism and field research sits in scattered archives, university repositories and personal portfolios, hard to discover and harder to browse.
-
-The Charter puts verified work on a world map so it is as easy to explore as a social feed, but every project carries an identified author, an institutional affiliation and a curation check.
-
-The curation itself is the bottleneck. Every incoming project needs a category, UN Sustainable Development Goal tags, keywords, a location and a reliability check before it can be published. Done by hand, this does not scale past a few hundred projects. The AI work in this repository exists to make that curation fast without removing the human from the decision.
-
-## What the platform does
-
-- **Interactive world map.** Each pin is a photojournalism or research project. Clicking a pin opens a preview with the thumbnail, title, location, author and affiliation, plus a link to the full project.
-- **Verification mark.** A blue mark indicates a project has been curated and its information checked.
-- **Multi-parameter filtering.** By study category (wildlife and human interaction, anthropology, urban life, cross-border interactions, news), by UN SDG, by year and by keyword.
-- **Results drawer.** A collapsible side panel listing projects matching the current filters.
-- **News layer.** Regions with significant ongoing events are shaded, drawing attention to where news is happening now.
-- **Researcher mode.** Toggles the map from projects to the academics and journalists working in each region, so students can find people as well as work.
-- **Map controls.** Zoom, country border highlighting and a projection toggle between Mercator and an equal-area view.
-- **Admin tools.** Upload and edit projects, manage author profiles, moderate the community forum, and control institutional access.
-
-## AI capabilities
-
-Four AI components, each serving curation or discovery. Every one keeps a human in the decision loop.
-
-### Partner decisions
-
-Agreed with the partner, and reflected in the backend:
-
-- **Photo narration is written by the admin.** Each photograph carries a narration text typed by the admin at upload. It is never generated by AI.
-- **Projects are uploaded as PDF files**, not links. The backend stores the PDF, extracts its text and keeps it searchable.
-- **Keyword search and project text summarization are the AI priorities.** Search covers titles, descriptions, keywords, narration, summaries and uploaded PDF text. PDF keywords are suggested automatically; the admin chooses whether to request an AI summary or write one.
-- **English only.** The site and its content are in English; this is a course requirement. Machine translation was dropped from scope.
-- **The administrator chooses how to handle the summary before PDF processing.** They can request an AI draft (DistilBART) and review/edit it, or write the summary themselves. If the requested model is unavailable, TF-IDF sentence scoring provides an extractive fallback.
-
-### 1. Curation assistant
-
-When an admin uploads a project, the system proposes:
-
-- **Category and SDG labels** from a multi-label text classifier trained on the OSDG Community Dataset and fine-tuned on partner data
-- **Keywords** extracted from the description
-- **Map location** via named entity recognition over the text, followed by geocoding
-- **Preview summary**, a short blurb for the map popup, plus a longer key-findings summary for the project page
-
-The admin confirms or corrects every suggestion. Corrections are logged as training data, so the classifier improves as the library grows.
-
-Models: transformer text classifier for tagging, BART or PEGASUS for summarization.
-
-### 2. Multimodal semantic search
-
-Search by meaning rather than exact keywords. A query such as "grief rituals in rural communities" returns relevant projects even when none of those words appear in the text.
-
-**Built: text.** Each project's title, description, summary, photo narration and PDF text is cut into short passages. A pretrained sentence model (`BAAI/bge-small-en-v1.5`, 66 MB, open source, runs on the server with ONNX Runtime, no API key and no cost) turns every passage into a 384-number vector. It was chosen over two other models and two lexical baselines by 5-fold cross-validation, which also set the passage length (40 words) and the cut-offs (`backend/ml/experiments/compare_embedding_models.py`). A query is embedded the same way and compared with the passages by cosine similarity; the project's best passage is returned with the result, so the user can see why it matched. Vectors are stored in PostgreSQL with pgvector (HNSW index), or compared in Python on SQLite.
-
-Three modes are served by `GET /api/projects/search?q=...&mode=keyword|semantic|hybrid`:
-
-- `keyword`: PostgreSQL full-text search with stemming, field weights (title, then keywords and place, then text, then PDFs) and ranking.
-- `semantic`: ranked by meaning as described above.
-- `hybrid` (default): both lists merged with reciprocal rank fusion, so exact names still rank first and paraphrases are still found.
-
-The model comparison, the fine-tuning experiment and the end-to-end check are in `backend/ml/` (see Evaluation).
-
-**Planned: images.** Images embedded with CLIP alongside the text vectors, which also powers the **View similar** feature on each project page. CLIP has a short text context window, so it handles images and short captions while the sentence model handles descriptions and documents.
-
-### 3. News hotspot layer
-
-A scheduled job pulls geolocated news signals from GDELT, scores regional activity, and proposes which regions to shade. An admin approves or overrides before anything appears on the public map.
-
-### 4. Provenance assistant *(Planned)*
-
-Before a project receives the blue mark, the system produces a provenance report for the curator: image metadata consistency, evidence of prior publication elsewhere, and an AI-generated image likelihood score. The curator still makes the verification decision.
-
-### Stretch goal: Ask The Charter *(Planned)*
-
-A retrieval-augmented research assistant. A student asks a question in natural language and receives an answer composed only from projects in the library, with every claim linked to its source project. If no verified sources cover the question, it says so rather than answering from general knowledge.
-
-## Tech stack
+## Technology stack
 
 | Layer | Technology |
-|---|---|
-| Frontend | Plain HTML, CSS and JavaScript with a D3 globe (no build step). The partner's original Figma prototype used React. |
-| Backend | FastAPI (Python) |
-| Relational database | PostgreSQL with PostGIS |
-| Vector search | pgvector inside PostgreSQL (no separate vector database) |
-| File storage | Local filesystem in development, object storage in production |
-| Auth | JWT sessions, bcrypt password hashing, institutional email allowlist |
-| AI | sentence-transformers model on ONNX Runtime (fastembed) for search today; PyTorch, Hugging Face Transformers and OpenCLIP planned for the other pipelines |
-| Testing | pytest (backend). The frontend is checked with headless-browser scripts; a test runner is planned. |
+| --- | --- |
+| Frontend | HTML, CSS, JavaScript, D3 |
+| API | Python, FastAPI |
+| Local database | SQLite |
+| Containerized database | PostgreSQL 16, PostGIS, pgvector |
+| Hosted data configuration | Supabase SQL migrations |
+| Semantic retrieval | `BAAI/bge-small-en-v1.5` |
+| AI summarization | Ollama (`llama3.2:3b`) and TF-IDF fallback |
+| Testing | pytest, API load tests |
+| Development infrastructure | Docker Compose |
 
-PostGIS handles bounding-box queries so the map can request only the projects inside the current viewport. pgvector keeps the passage vectors next to the projects they belong to, so one database answers map, keyword and meaning queries.
+## Repository layout
 
-## Repository structure
-
-Each folder has its own README with the detail. Each layer of the API has one job: routes handle HTTP, services hold the logic, `ai/` holds the models, `db/` holds storage.
-
-```
+```text
 .
-├── README.md
-├── CONTRIBUTING.md              Branches, pull requests, tests, code style
-├── docker-compose.yml           PostgreSQL 16 + PostGIS + pgvector
-├── .github/                     CI (tests on every pull request), CODEOWNERS, PR and issue templates
 ├── backend/
-│   ├── api/                     The FastAPI application
-│   │   ├── app/
-│   │   │   ├── main.py          Creates the app, mounts the public and admin routers
-│   │   │   ├── core/            config.py, security.py (admin token today, JWT planned), deps.py
-│   │   │   ├── db/              session, init_db (PostGIS, pgvector), models/ one file per table
-│   │   │   ├── schemas/         Pydantic request/response models, one file per resource
-│   │   │   ├── routes/public/   Projects, search, authors, documents, geo, keywords
-│   │   │   ├── routes/admin/    Create, edit, verify, uploads, AI helpers: all behind require_admin
-│   │   │   ├── services/        projects, documents, authors, files/, search/ (keyword, semantic, fusion, hybrid, indexing), geo/
-│   │   │   ├── ai/              embeddings/, summarization/ (abstractive + TF-IDF fallback), keywords.py
-│   │   │   ├── text/            normalize.py, pdf.py
-│   │   │   └── scripts/         seed, reindex, build_countries
-│   │   ├── tests/               unit/ (no database), integration/ (HTTP, incl. admin/), load/
-│   │   ├── requirements.txt, requirements-dev.txt, pytest.ini, ruff.toml, Dockerfile
-│   ├── ml/                      eda/, experiments/, evaluation/search/, results/, figures/, common.py
-│   ├── load_testing/            loadtest.py, make_dataset.py, results/
-│   ├── data/
-│   │   ├── samples/             The partner's sample projects
-│   │   ├── synthetic/           30 synthetic projects with reports and reference summaries, for training and evaluation only
-│   │   ├── geo/                 Country outlines for the location check
-│   │   └── uploads/             Uploaded photographs and PDFs (git-ignored, created on first run)
-│   └── db/                      Dockerfile for PostgreSQL + PostGIS + pgvector
-├── frontend/
-│   ├── index.html               Markup; loads css/ and js/ in order
-│   ├── config.js, vercel.json
-│   ├── css/                     One file per part of the page
-│   ├── js/                      api/, data/, state.js, globe/, features/ (incl. admin/), main.js
-│   ├── data/                    Country outlines and cities for the globe
-│   └── assets/                  logo/, projects/thumbs + full/, pdfs/
-├── supabase/
-│   └── migrations/              001_schema.sql, 002_pages.sql, 003_security.sql
-└── docs/
-    ├── requirements/            Partner requirement documents
-    ├── architecture/            diagrams/ (.drawio, exports/), decisions/
-    ├── reports/                 Technical reports
-    ├── security/                PostgreSQL and Supabase security guide
-    └── demo-uploads/            Ready-made projects to upload in demos
+│   ├── api/             FastAPI application and tests
+│   ├── data/            Partner samples, synthetic evaluation data, geography
+│   ├── db/              PostgreSQL/PostGIS/pgvector Docker image
+│   ├── eda/             Data analysis resources
+│   ├── ml/              Model comparison, experiments, evaluation
+│   └── load_testing/    Search API load tests and results
+├── frontend/            Static D3 globe website
+├── supabase/            Hosted database SQL migrations
+├── docs/                Requirements, architecture, reports, security
+├── docker-compose.yml  Database services
+└── README.md
 ```
 
-The partner's original Figma Make prototype (React + Vite, mock data) is no longer in this repository. It is kept on the `main` branch history; see `docs/README.md`.
+See [backend/README.md](backend/README.md), [backend/api/README.md](backend/api/README.md), [backend/ml/README.md](backend/ml/README.md), and [frontend/README.md](frontend/README.md) for detailed structure.
 
 ## Getting started
 
 ### Prerequisites
 
 - Python 3.11 or later
-- Docker and Docker Compose (for PostgreSQL with PostGIS and pgvector)
-- A Google Maps API key (see below)
+- Docker and Docker Compose **only if using PostgreSQL**
+- Ollama **optional**, for local abstractive summarization
 
-### Installation
+### Clone and set up the API
 
 ```bash
-git clone <repository-url>
-cd the-charter
-
-# Optional: start PostgreSQL + PostGIS (without it the backend uses a local SQLite file)
-docker compose up -d
-
-# Local summarization model (install Ollama separately, then pull the model once)
-ollama pull llama3.2:3b
-
-# Backend API (one virtual environment in backend/, shared by api/ and ml/)
+git clone https://github.com/AnshSatiish/thecharter.git
+cd thecharter
 cd backend
 python -m venv .venv
-source .venv/bin/activate        # Windows PowerShell: .venv\Scripts\Activate.ps1   Git Bash: source .venv/Scripts/activate
-pip install -r api/requirements-dev.txt   # the app, plus pytest and ruff (no PyTorch needed)
-cd api
-cp .env.example .env             # then edit; delete the DATABASE_URL line to use SQLite
-python -m app.scripts.seed       # create tables and load the sample dataset (safe to rerun)
-
-# Frontend: nothing to install, it is a static site
 ```
 
-### Google Maps API key
-
-Create a key in the Google Cloud Console. The key itself is free, and the Dynamic Maps SKU includes 10,000 free map loads per month, which comfortably covers development and demos. A billing-enabled Google Cloud project is still required.
-
-Restrict the key to your development and deployment domains before committing anything, and never commit the key itself.
-
-## Environment variables
-
-Copy `backend/api/.env.example` to `backend/api/.env`, then fill in the values. The frontend has no environment file yet.
-
-**backend/api/.env**
-
-Used today:
-
-```
-DATABASE_URL=postgresql+psycopg://charter:charter@localhost:5432/charter   # unset: sqlite:///./charter.db
-ENV=development                  # development | production
-ADMIN_TOKEN=dev-admin-token      # sent as the X-Admin-Token header; required when ENV=production
-CORS_ORIGINS=http://localhost:5173,http://localhost:3031,http://localhost:8080
-UPLOAD_DIR=../data/uploads       # unset: backend/data/uploads; served by the API at /files
-MAX_IMAGE_MB=25                  # per photograph (JPEG, PNG or WebP)
-MAX_PDF_MB=50                    # per project PDF
-SEMANTIC_SEARCH=true             # false: keyword search only, the model is never loaded
-EMBEDDING_MODEL=BAAI/bge-small-en-v1.5
-EMBEDDING_CACHE_DIR=~/.cache/charter-models   # where the model is downloaded once (about 66 MB)
-EMBEDDING_CHUNK_WORDS=40         # passage length, chosen by cross-validation
-SEMANTIC_MIN_SCORE=0.575         # passages below this cosine similarity are treated as unrelated (cross-validated)
-SEMANTIC_RELATIVE_CUT=0.95       # and passages below 95% of the best result's similarity
-AI_SUMMARY=true                  # false: summary requests use the TF-IDF extractive method
-SUMMARY_MODEL=llama3.2:3b        # local Ollama model; download once with `ollama pull`
-SUMMARY_OLLAMA_URL=http://localhost:11434
-SUMMARY_TIMEOUT_SECONDS=300
-SUMMARY_MAX_NEW_TOKENS=160
-```
-
-Planned, not read by the code yet:
-
-```
-JWT_SECRET=<generate a long random string>
-JWT_EXPIRY_MINUTES=60
-ALLOWED_EMAIL_DOMAINS=example.edu,partner.org
-GDELT_POLL_INTERVAL_HOURS=6
-```
-
-## Running the application
+Activate the environment:
 
 ```bash
-# Backend (from backend/api/)
-uvicorn app.main:app --reload --port 8000
+# macOS/Linux
+source .venv/bin/activate
 
-# Frontend (from frontend/)
+# Windows PowerShell
+# .venv\Scripts\Activate.ps1
+```
+
+Install dependencies and configure the API:
+
+```bash
+pip install -r api/requirements-dev.txt
+cd api
+```
+
+Copy `.env.example` to `.env` and review the settings. Without `DATABASE_URL`, the API can use SQLite for local development. To use PostgreSQL, start the Docker services from the repository root with `docker compose up -d` and set the database URL accordingly.
+
+Initialize sample data and start the API:
+
+```bash
+python -m app.scripts.seed
+uvicorn app.main:app --reload --port 8000
+```
+
+API documentation: http://localhost:8000/docs  
+Health endpoint: http://localhost:8000/health
+
+### Run the frontend
+
+In another terminal:
+
+```bash
+cd frontend
 python -m http.server 8080
 ```
 
-The site runs at http://localhost:8080. To use that port, add `http://localhost:8080` to `CORS_ORIGINS` if it is not already there. Interactive API documentation is at http://localhost:8000/docs, and http://localhost:8000/health reports which database is in use.
+Open http://localhost:8080. On localhost, the frontend attempts to use the FastAPI backend; its documented fallback paths use Supabase and then built-in sample data. No npm install or map API key is required.
 
-Main endpoints: `GET /api/projects` (filters `category`, `sdg`, `year_from`, `year_to`, `q`, `bbox=minLng,minLat,maxLng,maxLat`), `GET /api/projects/near?lat=&lng=&km=`, `GET /api/projects/{id}`, `GET /api/authors`, `GET /api/authors/{id}`. Admin only, with the `X-Admin-Token` header: `POST /api/projects` and `PATCH /api/projects/{id}/verify`.
+### Optional local summarization
 
-Uploads and text (admin only unless noted):
-
-- `POST /api/projects/{id}/images`: multipart `files` plus one `captions` field per file, in the same order. The captions are the admin's narration.
-- `POST /api/projects/{id}/documents`: multipart `file` (PDF), optional `title` and optional reviewed `summary`. This endpoint saves the supplied summary; it does not generate one.
-- `GET /api/projects/{id}/documents` (public) and `DELETE /api/documents/{id}`.
-- `PATCH /api/projects/{id}`: edit `title`, `description`, `summary`, `captions`, `keywords`.
-- `POST /api/ai/extract-pdf`: multipart `file` and optional `generate_summary` (defaults to `false`). Extracts text and keywords; drafts a summary only when requested. Does not save the PDF.
-- `POST /api/ai/summarize` (admin only) and `POST /api/ai/keywords`: summarize text or extract keywords.
-
-Uploaded files are served at `/files/...`. The `q` filter on `GET /api/projects` also searches narration, summaries and the text of uploaded PDFs.
-
-Search:
-
-- `GET /api/projects/search?q=...&mode=hybrid&limit=20` (public): best matches first. Each result has the project, how it was found (`matched_by`), and for a match by meaning the `passage` that matched and its `similarity`.
-
-The search indexes are updated whenever a project or one of its PDFs is saved, and by the seed script. To rebuild them for every project (after changing `EMBEDDING_MODEL`, or on a database filled before search existed):
+Install and start Ollama separately, then download the model:
 
 ```bash
-python -m app.scripts.reindex
+ollama pull llama3.2:3b
 ```
 
-The first run downloads the sentence model. If the model cannot be loaded, saving still works and hybrid search returns keyword results.
+When Ollama is unavailable, the API documentation describes a TF-IDF extractive fallback.
+
+## Search and machine learning
+
+The API provides three search modes:
+
+| Mode | Description |
+| --- | --- |
+| `keyword` | Lexical/full-text ranking |
+| `semantic` | Embedding-based passage similarity |
+| `hybrid` | Combines both ranked lists using reciprocal rank fusion |
+
+Example:
+
+```text
+GET /api/projects/search?q=climate%20migration&mode=hybrid&limit=20
+```
+
+The model experiments selected `BAAI/bge-small-en-v1.5`, with 40-word passages and evaluated similarity thresholds. The ML directory documents five-fold cross-validation, fine-tuning experiments, summarizer comparisons, and end-to-end search evaluation.
+
+**Evaluation limitation:** The reported experiments use seven partner sample projects and 30 synthetic projects. The synthetic projects are for experimentation and evaluation, not for loading into the public site. Results should not be presented as independently validated performance on a large real-world collection.
 
 ## Testing
 
+From `backend/api/` with dependencies installed:
+
 ```bash
-# Backend (from backend/api/, temporary SQLite database, no model downloads)
-pytest tests/unit                # fast: pure functions, under a second
-pytest                           # everything: unit + integration + load
-
-# Same suite against PostGIS, including the postgres-marked test. Use a throwaway database: tables are recreated.
-docker exec thecharter-db-1 createdb -U charter charter_test
-DATABASE_URL=postgresql://charter:charter@localhost:5432/charter_test pytest
-
-# With coverage
+pytest tests/unit
+pytest
 pytest --cov=app --cov-report=term-missing
+ruff check .
 ```
 
-Test layers:
+The API tests cover unit and integration behavior; PostgreSQL-specific tests require a disposable PostgreSQL test database. See [backend/api/README.md](backend/api/README.md) and [backend/load_testing/](backend/load_testing/) for details.
 
-- **Unit tests** (`tests/unit/`) cover individual functions and AI pipeline stages with no database or model: reciprocal rank fusion, hybrid wiring, semantic cut-offs, chunking, text, keywords, summaries and their fallback, upload validation, storage, security and settings, geography
-- **Integration tests** (`tests/integration/`) cover API endpoints against a test database, including upload, search and admin flows (`tests/integration/admin/`)
-- **Load tests** (`tests/load/`) check that a full connection pool answers 503 and that several server processes start together
-- **End-user testing** is run with a small group of students before the final demonstration, with findings recorded in `docs/user-testing.md`
+## Current limitations and future work
 
-## Evaluation metrics
+The following should **not** be described as completed production features:
 
-Each AI component is measured rather than assumed to work.
+- Production user authentication and JWT-based sessions
+- Automated category/SDG tagging pipeline
+- CLIP-based image similarity search
+- Automated news hotspot ingestion and approval
+- Automated provenance or AI-image credibility scoring
+- Retrieval-augmented research chatbot
+- Database migrations through Alembic
 
-| Component | Metric | Target |
-|---|---|---|
-| Category and SDG tagging | Macro F1 on a held-out set | To be set after baseline |
-| Summarization | ROUGE-1, ROUGE-2, ROUGE-L against reference summaries, 5-fold cross-validated | TF-IDF fallback: ROUGE-L 0.231; DistilBART: 0.217 (30 synthetic reports; `backend/ml/results/summarization.md`) |
-| Semantic search | Hit@1, Recall@3, MRR and list F1 on 122 judged queries, 5-fold cross-validated, against keyword search and TF-IDF | bge-small-en-v1.5: Hit@1 0.95, MRR 0.96; keyword search 0.89 and 0.93 (37 projects, 30 synthetic; `backend/ml/results/model_comparison.md`). Rerun on partner data. |
-| Location extraction | Percentage of pins placed correctly without edit | To be set after baseline |
-| News shading | Agreement with curator-selected regions | To be set after baseline |
-| Curation time | Minutes per project, before and after | Reduction against the manual baseline |
+Administrative verification is a human-controlled workflow, **not** an automated credibility guarantee. The current admin API uses a shared token; use appropriate secrets and security controls before any public deployment.
 
-Baselines are established once partner data arrives. Cross-validation is used for the classifier, and all reported figures come from data the model has not seen during training.
+## Data, ethics, and rights
 
-## Ethical and regulatory considerations
+The Charter is designed to help users discover and examine research material, not to replace source evaluation or human editorial judgment. Project locations, author information, and photographs require careful handling. Demo imagery and partner materials may have rights or privacy restrictions; do not assume that inclusion in this repository grants reuse permission.
 
-**Consent and representation.** Projects frequently document communities, including Indigenous communities. Photographer submissions record whether consent was obtained from the people pictured.
+## Documentation
 
-**Researcher safety.** Researcher mode shows journalists and academics on a map. Precise locations can put people reporting on conflict or organized crime at risk, so researcher locations are opt-in and shown at region rather than street level.
+- [Backend overview](backend/README.md)
+- [FastAPI application](backend/api/README.md)
+- [Machine learning experiments](backend/ml/README.md)
+- [Frontend](frontend/README.md)
+- [Project documentation](docs/)
 
-**Data bias.** The news layer derives from news coverage volume, which reflects media attention rather than the severity of an event. Regions with little English-language coverage will be under-represented. This limitation is measured and stated in the interface rather than hidden.
+## Project context
 
-Training data carries its own bias. Category and SDG classifiers trained largely on English-language academic text will handle some regions and vocabularies better than others, and per-group performance is reported rather than only an overall average.
-
-**Human oversight.** No AI output is published without a human decision. Tags, summaries, locations, verification marks and news shading are all proposals until a curator or admin accepts them.
-
-**Privacy and regulation.** The platform stores institutional user profiles, so handling follows PIPEDA in Canada, and GDPR where European users are involved. Passwords are hashed with bcrypt, access is restricted by an admin-controlled email allowlist, and personal data is never placed in URL parameters.
-
-**Copyright.** Photographs remain the property of their authors. Licensing terms for institutional use are defined with the partner, and the platform stores rights metadata per project.
-
-## Roadmap
-
-**Iteration 1 (week 6).** AI capability first pass: tagging classifier, summarization, embeddings and search working end to end on sample data. Exploratory data analysis complete. Use cases, requirements and stakeholder register documented.
-
-**Iteration 2 (week 10).** AI code refactored across all AI use cases with unit tests. Full architecture, class and component diagrams. Project plan, test plan and UI/UX design complete.
-
-**Final (week 14).** Full stack complete with integration tests, provenance assistant, news layer live, and end-user testing findings incorporated.
-
-## Team
-
-| Name | Responsibility |
-|---|---|
-| (name) | Summarization and tagging models |
-| (name) | Semantic search and news layer |
-| (name) | Provenance, moderation, ethics documentation |
-| (name) | Backend, databases, authentication |
-| (name) | Frontend, map integration, admin interface |
-
-Course: COMP 385 AI Capstone, Centennial College.
-
-## References
-
-- Radford, A., et al. (2021). Learning transferable visual models from natural language supervision. https://arxiv.org/abs/2103.00020
-- Cherti, M., et al. (2023). Reproducible scaling laws for contrastive language-image learning. https://arxiv.org/abs/2212.07143
-- Lewis, M., et al. (2020). BART: Denoising sequence-to-sequence pre-training for natural language generation, translation, and comprehension. https://arxiv.org/abs/1910.13461
-- Zhang, J., et al. (2020). PEGASUS: Pre-training with extracted gap-sentences for abstractive summarization. https://arxiv.org/abs/1912.08777
-- Reimers, N., & Gurevych, I. (2019). Sentence-BERT: Sentence embeddings using Siamese BERT-networks. https://arxiv.org/abs/1908.10084
-- Leetaru, K., & Schrodt, P. (2013). GDELT: Global data on events, location and tone. http://data.gdeltproject.org/documentation/ISA.2013.GDELT.pdf
-- Chroma. (2026). Multimodal embeddings. https://docs.trychroma.com/docs/embeddings/multimodal
-- Google. (2026). Google Maps Platform pricing overview. https://developers.google.com/maps/billing-and-pricing/overview
-
-## License and data rights
-
-Code in this repository is coursework produced for COMP 385 at Centennial College in collaboration with an external partner. Ownership and licensing are governed by the agreement with the partner.
-
-Photographs, project descriptions and research documents belong to their respective authors and are not covered by any code license in this repository. The sample dataset in `backend/data/samples/` is for development only and must not be redistributed.
+**COMP 385 — AI Capstone Project, Centennial College.** Developed by the project team for an external partner. The repository remains under active development.
