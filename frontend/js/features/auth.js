@@ -34,7 +34,7 @@ async function adminSignIn(email, pass){
 }
 function lock(){
   document.body.classList.add("locked"); gate.hidden=false; gate.classList.remove("leaving","stamped");
-  showGateView("gSignin"); $("gPass").value=""; $("gErr").textContent=""; $("gSubmit").disabled=false;
+  showGateView("gSignin"); $("gPass").value=""; $("gPass").type="password"; $("gEye").setAttribute("aria-pressed", false); $("gErr").textContent=""; $("gSubmit").disabled=false;
   closeCard(); state.auto=true; state.k=1; syncZoom(); resize(); $("gEmail").focus();
 }
 function unlock(animate){
@@ -42,9 +42,11 @@ function unlock(animate){
   if (!animate) return finish();
   $("gstampDate").textContent=pdate(new Date().toISOString().slice(0,10));
   gate.classList.add("stamped");
-  setTimeout(()=>gate.classList.add("leaving"), reduce ? 0 : 750);
-  setTimeout(finish, reduce ? 0 : 1250);
+  setTimeout(()=>gate.classList.add("leaving"), reduce ? 0 : 1050);
+  setTimeout(finish, reduce ? 0 : 1550);
 }
+$("gEye").onclick=()=>{ const show=$("gPass").type==="password"; $("gPass").type=show ? "text" : "password";
+  $("gEye").setAttribute("aria-pressed", show); $("gEye").setAttribute("aria-label", show ? "Hide password" : "Show password"); };
 function showGateView(id){ const first=$(id).querySelector("input"); if (first && !gate.hidden) first.focus(); }
 $("gSignin").addEventListener("submit",async e=>{
   e.preventDefault();

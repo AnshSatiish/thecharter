@@ -79,3 +79,9 @@
   .mrz p{font-size:min(13px,2.7vw);letter-spacing:.05em}
 }
 
+/* the profile passport opens: the entries page turns onto the spread */
+.spread{perspective:2200px}
+.pg.entries{transform-origin:left center;animation:pageturn .9s .2s cubic-bezier(.16,1,.3,1) both}
+@keyframes pageturn{from{transform:rotateY(-75deg);opacity:0}}
+@media (max-width:760px){ .pg.entries{transform-origin:center top;animation-name:pageflip} }
+@keyframes pageflip{from{transform:rotateX(75deg);opacity:0}}

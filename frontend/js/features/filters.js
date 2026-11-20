@@ -12,7 +12,8 @@ document.querySelectorAll(".smode button").forEach(b=>b.onclick=()=>{ setSmode(b
 // Start fetching the model as soon as someone points at "By meaning", so it is ready by the time they type.
 document.querySelector('.smode [data-smode="meaning"]').addEventListener("pointerenter", ()=>{ if (!apiLive && AI_OK) aiLoad(); }, { once:true });
 function renderQStatus(){
-  const el=document.getElementById("qstatus");
+  const el=document.getElementById("qstatus"), qc=document.getElementById("qcount");
+  qc.textContent = state.q.trim() ? `${items.length} ${items.length===1 ? "match" : "matches"}` : "";
   if (!state.q.trim()) { el.innerHTML = state.semantic ? "Describe a topic in your own words, for example one of these:" : "Searches titles, places, authors, keywords, photo narration and project documents."; return; }
   const byMeaning=Object.values(lastWhy).filter(w=>w.meaning).length, total=items.length, res=lastRes;
   if (!state.semantic) el.innerHTML = `${total} keyword match${total===1?"":"es"}`;
