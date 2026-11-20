@@ -9,7 +9,7 @@
 - **Interactive globe frontend:** A static HTML, CSS, and JavaScript application using D3. It includes project pins, previews, filtering, project pages, and a photo viewer. It requires no React build or Google Maps API key.
 - **FastAPI backend:** Project and author endpoints, filtering and nearby lookup, admin project management and verification routes, photo/PDF uploads, PDF text extraction, and keyword suggestions.
 - **Project search:** Keyword, semantic, and hybrid search through `GET /api/projects/search`. Hybrid search combines keyword and semantic rankings using reciprocal rank fusion. Semantic results can identify the matching passage.
-- **Text summarization:** Local Ollama integration using `llama3.2:3b`, with a TF-IDF extractive fallback when the model is unavailable.
+- **Text summarization:** Local Ollama integration using `llama3.2:3b`, with an extractive fallback (TF-IDF + cosine similarity) when the model is unavailable; on the live site, which has no backend, the same fallback runs in the browser.
 - **Database:** SQLite for local development or PostgreSQL 16 with PostGIS and pgvector using Docker. Supabase SQL migrations are maintained separately for hosted data.
 - **Evaluation and tests:** Model comparison, search evaluation, unit and integration tests, and search API load testing.
 
@@ -25,7 +25,7 @@ Some frontend screens and workflows are demonstration-oriented. In particular, t
 | Containerized database | PostgreSQL 16, PostGIS, pgvector |
 | Hosted data configuration | Supabase SQL migrations |
 | Semantic retrieval | `BAAI/bge-small-en-v1.5` |
-| AI summarization | Ollama (`llama3.2:3b`) and TF-IDF fallback |
+| AI summarization | Ollama (`llama3.2:3b`) and TF-IDF + cosine similarity fallback (also in the browser) |
 | Testing | pytest, API load tests |
 | Development infrastructure | Docker Compose |
 
@@ -113,7 +113,7 @@ Install and start Ollama separately, then download the model:
 ollama pull llama3.2:3b
 ```
 
-When Ollama is unavailable, the API documentation describes a TF-IDF extractive fallback.
+When Ollama is unavailable, the API uses its extractive fallback (TF-IDF + cosine similarity).
 
 ## Search and machine learning
 

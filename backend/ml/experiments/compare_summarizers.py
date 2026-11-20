@@ -2,6 +2,7 @@
 
 AI generation settings are selected by five-fold cross-validation using ROUGE-L.
 Writes JSON, Markdown and chart results under this folder.
+--baselines-only re-scores the two extractive methods and keeps the AI models' stored results (seconds, not half an hour).
 """
 import gc
 import itertools
@@ -63,16 +64,17 @@ def cross_validate(per_setting: dict, n: int) -> dict:
     return out
 
 
-def main() -> None:
+def main(baselines_only: bool = False) -> None:
     RESULTS.mkdir(exist_ok=True)
     FIGURES.mkdir(exist_ok=True)
     docs = json.loads(SYNTHETIC.read_text(encoding="utf-8"))
     n = len(docs)
     report = {"documents": n, "methods": {}}
+    previous = json.loads((RESULTS / "summarization.json").read_text(encoding="utf-8")) if baselines_only else None
 
     baselines = {
         "Lead-2 (first two sentences)": lambda text: " ".join(split_sentences(text)[:2]),
-        "TF-IDF extractive (current fallback)": lambda text: summarize(text, max_sentences=2),
+        "TF-IDF + cosine extractive (current fallback)": lambda text: summarize(text, max_sentences=2),
     }
     for label, fn in baselines.items():
         t0 = time.perf_counter()
@@ -83,32 +85,36 @@ def main() -> None:
         report["methods"][label] = result
         print(label, {m: round(result[m]["mean"], 3) for m in ("rouge1", "rouge2", "rougeL")})
 
-    for label, (name, prefix) in AI_MODELS.items():
-        per_setting, seconds = {}, []
-        try:
-            for beams, tokens in GRID:
-                summarizer = TransformersSummarizer(name, max_new_tokens=tokens, num_beams=beams, prefix=prefix)
-                if per_setting:  # reuse the loaded weights
-                    summarizer._model, summarizer._tokenizer = model, tokenizer
-                t0 = time.perf_counter()
-                outputs = [summarizer.summarize(d["document_text"]) for d in docs]
-                seconds.append((time.perf_counter() - t0) / n)
-                tokenizer, model = summarizer._tokenizer, summarizer._model
-                per_setting[(beams, tokens)] = [rouge(o, d["reference_summary"]) for o, d in zip(outputs, docs)]
-                if (beams, tokens) == GRID[-1]:
-                    example = outputs[0]
-        except Exception as exc:  # out of memory or download failure: record and continue
-            report["methods"][label] = {"error": str(exc)[:200]}
-            print(label, "failed:", exc)
-            continue
-        result = cross_validate(per_setting, n)
-        size = sum(p.numel() for p in model.parameters()) / 1e6
-        result.update(kind="pretrained AI model", model=name, parameters_m=round(size), seconds_per_doc=round(float(np.mean(seconds)), 2),
-                      example=example)
-        report["methods"][label] = result
-        print(label, {m: round(result[m]["mean"], 3) for m in ("rouge1", "rouge2", "rougeL")}, "chosen", result["chosen"])
-        del model, tokenizer, summarizer
-        gc.collect()
+    if previous:  # keep the AI models' stored results
+        for label in AI_MODELS:
+            report["methods"][label] = previous["methods"][label]
+    else:
+        for label, (name, prefix) in AI_MODELS.items():
+            per_setting, seconds = {}, []
+            try:
+                for beams, tokens in GRID:
+                    summarizer = TransformersSummarizer(name, max_new_tokens=tokens, num_beams=beams, prefix=prefix)
+                    if per_setting:  # reuse the loaded weights
+                        summarizer._model, summarizer._tokenizer = model, tokenizer
+                    t0 = time.perf_counter()
+                    outputs = [summarizer.summarize(d["document_text"]) for d in docs]
+                    seconds.append((time.perf_counter() - t0) / n)
+                    tokenizer, model = summarizer._tokenizer, summarizer._model
+                    per_setting[(beams, tokens)] = [rouge(o, d["reference_summary"]) for o, d in zip(outputs, docs)]
+                    if (beams, tokens) == GRID[-1]:
+                        example = outputs[0]
+            except Exception as exc:  # out of memory or download failure: record and continue
+                report["methods"][label] = {"error": str(exc)[:200]}
+                print(label, "failed:", exc)
+                continue
+            result = cross_validate(per_setting, n)
+            size = sum(p.numel() for p in model.parameters()) / 1e6
+            result.update(kind="pretrained AI model", model=name, parameters_m=round(size), seconds_per_doc=round(float(np.mean(seconds)), 2),
+                          example=example)
+            report["methods"][label] = result
+            print(label, {m: round(result[m]["mean"], 3) for m in ("rouge1", "rouge2", "rougeL")}, "chosen", result["chosen"])
+            del model, tokenizer, summarizer
+            gc.collect()
 
     (RESULTS / "summarization.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     lines = ["# Summarizer comparison", "",
@@ -132,7 +138,7 @@ def main() -> None:
 
 SHORT_NAMES = {
     "Lead-2 (first two sentences)": "Lead-2",
-    "TF-IDF extractive (current fallback)": "TF-IDF\nextractive",
+    "TF-IDF + cosine extractive (current fallback)": "TF-IDF + cosine\nextractive",
     "flan-t5-small": "flan-t5\nsmall",
     "t5-small (summarization)": "t5-small\nsummarizer",
     "distilbart-cnn-6-6": "distilbart\ncnn-6-6",
@@ -175,4 +181,4 @@ if __name__ == "__main__":
     if "--plot-only" in sys.argv:
         plot(json.loads((RESULTS / "summarization.json").read_text(encoding="utf-8")))
     else:
-        main()
+        main(baselines_only="--baselines-only" in sys.argv)

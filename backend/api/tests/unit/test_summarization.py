@@ -42,6 +42,36 @@ def test_summarize_short_and_empty_text():
     assert summarize(EN, max_sentences=0) == ""
 
 
+def test_summarize_keeps_the_sentences_closest_to_the_whole_document():
+    # TF-IDF vectors compared by cosine similarity: the off-topic sentence shares no words with the document's topic
+    text = (
+        "Herders in Mongolia lose their animals in a harsh winter. "
+        "The harsh winter kills animals and leaves herders without income. "
+        "A new phone was released in another country. "
+        "Herders who lose their animals often move to the city."
+    )
+    summary = summarize(text, max_sentences=2)
+    assert "phone" not in summary
+    assert len(split_sentences(summary)) == 2
+
+
+def test_summarize_does_not_glue_a_pdf_title_to_the_first_sentence():
+    text = (
+        "After the White Winter\n"
+        "Field report · Arkhangai Province, Mongolia\n"
+        "In Mongolia a dzud is a harsh winter. Herders lose animals. The families dig through snow to reach grass. "
+        "Some move to the city for work. Others rebuild their herds slowly."
+    )
+    summary = summarize(text, max_sentences=3)
+    assert "After the White Winter" not in summary and "Field report" not in summary
+    assert summary.startswith("In Mongolia")
+
+
+def test_summarize_notes_without_full_stops_still_get_a_summary():
+    text = "- herders lose animals\n- hay arrives late\n- families move to the city\n- some rebuild herds"
+    assert summarize(text, max_sentences=2) != ""
+
+
 # ---------- the Ollama summarizer (no server needed: urlopen is replaced) ----------
 
 def test_ollama_summarizer_posts_to_local_generate_api(monkeypatch):

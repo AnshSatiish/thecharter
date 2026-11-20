@@ -50,7 +50,7 @@ app/
 │   ├── files/          storage.py (LocalStorage), validation.py (size and type checks on the bytes)
 │   ├── search/         keyword.py, semantic.py, fusion.py (reciprocal rank fusion), hybrid.py, indexing.py
 │   └── geo/            distance.py, countries.py, location_check.py
-├── ai/                 embeddings/ (model + chunking), summarization/ (Ollama + TF-IDF fallback), keywords.py
+├── ai/                 embeddings/ (model + chunking), summarization/ (Ollama + TF-IDF cosine fallback), keywords.py
 ├── text/               normalize.py (fold, stopwords, sentences), pdf.py (text extraction)
 └── scripts/            seed.py, reindex.py, build_countries.py   →  python -m app.scripts.<name>
 

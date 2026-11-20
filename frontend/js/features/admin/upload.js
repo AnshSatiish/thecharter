@@ -27,13 +27,14 @@ function setPdf(f){
   if (!f) return;
   if (f.type!=="application/pdf" && !/\.pdf$/i.test(f.name)) { $("pdfInfo").textContent="That file is not a PDF."; return; }
   pdfFile=f; $("pdfInfo").innerHTML=`<strong>${esc(f.name)}</strong> · ${fmtSize(f.size)}`; $("publish").disabled=false;
-  if (apiLive) showPdfSummaryChoice();
+  if (apiLive || sb) showPdfSummaryChoice();   // live site without the backend: the draft is made in the browser
   else analysePdf(false);
 }
 function showPdfSummaryChoice(){
   $("pdfOut").innerHTML=`<form id="pdfSummaryChoice" class="pdfres">
     <fieldset><legend>How should the summary be prepared?</legend>
-      <label><input type="radio" name="summaryChoice" value="ai" required> Draft one with AI (you can review and edit it)</label>
+      <label><input type="radio" name="summaryChoice" value="ai" required> ${apiLive ? "Draft one with AI (you can review and edit it)"
+        : "Draft one automatically from the PDF: the sentences closest to the whole document (TF-IDF and cosine similarity), made in your browser; you can review and edit it"}</label>
       <label><input type="radio" name="summaryChoice" value="manual" required> I’ll write it myself</label>
     </fieldset>
     <button class="btn" type="submit">Continue</button>
@@ -46,8 +47,20 @@ function showPdfSummaryChoice(){
 }
 async function analysePdf(generateSummary){
   const box=$("pdfOut");
-  if (!apiLive && sb) { box.innerHTML=`<div class="pdfres"><p class="meta">The PDF is stored with the project when you publish. Reading its text and drafting an AI summary need the backend, so write the summary here.</p>
-      <label class="fld" for="pdfSummary">Summary<textarea id="pdfSummary" style="min-height:96px;line-height:1.45"></textarea></label></div>`; return; }
+  if (!apiLive && sb) {   // live site: no backend, so the PDF is read and summarized in this browser (summarize-local.js)
+    const manual=note=>`<div class="pdfres"><p class="meta">${note}The PDF is stored with the project when you publish.</p>
+      <label class="fld" for="pdfSummary">Summary<textarea id="pdfSummary" style="min-height:96px;line-height:1.45"></textarea></label></div>`;
+    if (!generateSummary) { box.innerHTML=manual(""); return; }
+    box.innerHTML='<p class="meta" style="margin-top:12px">Reading the PDF and drafting a summary in your browser…</p>';
+    try {
+      const { text, pages }=await localPdfText(pdfFile);
+      const summary=localSummarize(text, 3);
+      box.innerHTML=`<div class="pdfres"><p class="meta">${pages} page${pages===1?"":"s"} · ${text.length.toLocaleString()} characters of text</p>
+        ${text.trim() ? "" : '<p class="pubmsg" style="margin:0">This PDF has no selectable text (it looks scanned), so there is nothing to summarize.</p>'}
+        <label class="fld" for="pdfSummary"><span id="pdfSumLabel">Extractive draft (TF-IDF and cosine similarity, made in your browser), review and edit before publishing</span><textarea id="pdfSummary" style="min-height:96px;line-height:1.45">${esc(summary)}</textarea></label></div>`;
+    } catch(err) { box.innerHTML=manual(`The PDF could not be read in this browser (${esc(String(err.message))}), so write the summary here. `); }
+    return;
+  }
   if (!apiLive) { box.innerHTML='<p class="placeholder-note" style="margin-top:12px">The backend is not running, so the PDF cannot be read or stored yet. Start it to get a summary and keywords.</p>'; return; }
   box.innerHTML=`<p class="meta" style="margin-top:12px">${generateSummary?"Reading the PDF and drafting a summary…":"Reading the PDF and extracting keywords…"}</p>`;
   try {

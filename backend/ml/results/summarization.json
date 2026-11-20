@@ -16,26 +16,26 @@
       },
       "chosen": null,
       "kind": "baseline",
-      "seconds_per_doc": 0.001,
+      "seconds_per_doc": 0.003,
       "example": "Every monsoon season, herds of Asian elephants move between forest patches that are now separated by tea estates, rice fields and highways. The animals follow corridors their herds have used for generations, and those corridors now run through villages."
     },
-    "TF-IDF extractive (current fallback)": {
+    "TF-IDF + cosine extractive (current fallback)": {
       "rouge1": {
-        "mean": 0.35680482919840284,
-        "sd": 0.03340668235523444
+        "mean": 0.3675326749075594,
+        "sd": 0.034968191916481976
       },
       "rouge2": {
-        "mean": 0.07829720907065195,
-        "sd": 0.011159252977354614
+        "mean": 0.0887708125406852,
+        "sd": 0.007924372528572572
       },
       "rougeL": {
-        "mean": 0.23127428987683452,
-        "sd": 0.018061353665175625
+        "mean": 0.2381508403365779,
+        "sd": 0.013212494206471342
       },
       "chosen": null,
       "kind": "baseline",
-      "seconds_per_doc": 0.002,
-      "example": "Every monsoon season, herds of Asian elephants move between forest patches that are now separated by tea estates, rice fields and highways. When a herd enters, families lose a season of rice in a single night, and houses built close to the forest are damaged."
+      "seconds_per_doc": 0.006,
+      "example": "Every monsoon season, herds of Asian elephants move between forest patches that are now separated by tea estates, rice fields and highways. The photographs show the watchers, the damaged homes and the herds moving at dusk, and ask whether people and elephants can share a landscape that both need."
     },
     "flan-t5-small": {
       "rouge1": {
