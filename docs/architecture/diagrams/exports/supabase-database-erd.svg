@@ -10,7 +10,7 @@
 <title>Supabase</title>
 <polygon fill="white" stroke="transparent" points="-25.2,25.2 -25.2,-597.2 1350.2,-597.2 1350.2,25.2 -25.2,25.2"/>
 <text text-anchor="middle" x="662.5" y="-550.4" font-family="Arial" font-size="22.00">The Charter — Supabase database schema</text>
-<text text-anchor="middle" x="662.5" y="-526.4" font-family="Arial" font-size="22.00">Derived from supabase/schema.sql, pages.sql and security.sql</text>
+<text text-anchor="middle" x="662.5" y="-526.4" font-family="Arial" font-size="22.00">Derived from supabase/migrations: 001_schema.sql, 002_pages.sql, 003_security.sql</text>
 <!-- auth -->
 <g id="node1" class="node">
 <title>auth</title>

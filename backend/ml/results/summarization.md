@@ -1,6 +1,6 @@
 # Summarizer comparison
 
-30 synthetic field reports with reference summaries. ROUGE F1, mean ± standard deviation over 5 held-out folds; AI models' beam width and length tuned on the training folds. Produced by `evaluate_summarizers.py`.
+30 synthetic field reports with reference summaries. ROUGE F1, mean ± standard deviation over 5 held-out folds; AI models' beam width and length tuned on the training folds. Produced by `experiments/compare_summarizers.py`.
 
 | Method | ROUGE-1 | ROUGE-2 | ROUGE-L | Parameters (M) | Seconds per report | Settings chosen (beams, max tokens) |
 |---|---|---|---|---|---|---|

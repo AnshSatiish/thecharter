@@ -26,7 +26,7 @@
 <text x="322.5" y="285.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Semantic research search</text>
 <ellipse cx="322.5" cy="434.0" rx="107.5" ry="39.0" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4"/>
 <text x="322.5" y="431.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC3</text>
-<text x="322.5" y="445.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Community and dashboard</text>
+<text x="322.5" y="445.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Community and profile</text>
 <ellipse cx="577.5" cy="94.0" rx="107.5" ry="39.0" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4"/>
 <text x="577.5" y="91.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC4</text>
 <text x="577.5" y="105.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Manage and curate content</text>
@@ -38,5 +38,5 @@
 <text x="577.5" y="341.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Verify a project</text>
 <ellipse cx="577.5" cy="448.0" rx="107.5" ry="39.0" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4"/>
 <text x="577.5" y="445.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC7</text>
-<text x="577.5" y="459.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Manage News regions</text>
+<text x="577.5" y="459.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Manage News regions (planned)</text>
 </svg>

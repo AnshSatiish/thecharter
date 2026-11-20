@@ -1,6 +1,6 @@
 # Search model comparison
 
-37 projects (7 partner samples, 30 synthetic), 122 queries (113 with an answer; types: exact 38, off-topic 9, paraphrase 70, topic 5). Every method's settings were tuned by 5-fold cross-validation over the queries; figures are the mean ± standard deviation over the five held-out folds. Produced by `compare_models.py`.
+37 projects (7 partner samples, 30 synthetic), 122 queries (113 with an answer; types: exact 38, off-topic 9, paraphrase 70, topic 5). Every method's settings were tuned by 5-fold cross-validation over the queries; figures are the mean ± standard deviation over the five held-out folds. Produced by `experiments/compare_embedding_models.py`.
 
 | Method | Hit@1 | Recall@3 | MRR | List F1 | Off-topic rejected | Size (MB) | Query (ms) |
 |---|---|---|---|---|---|---|---|

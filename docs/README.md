@@ -11,4 +11,4 @@
 
 ## The Figma prototype
 
-The partner's original Figma Make prototype (React + Vite, mock data, about 140 files) used to live in `docs/reference/figma-app/`. It is not the product, so it was taken out of this branch to keep the repository focused. It is still on `main` before this restructure. To keep it permanently, move it into its own repository (for example `thecharter-figma-prototype`) or attach it as a zip to a GitHub release, and link it here.
+The partner's original Figma Make prototype (React + Vite, mock data, about 140 files) used to live in `docs/reference/figma-app/`. It is not the product, so it was removed in the restructure (commit bb31e8c, 19 Nov 2026) to keep the repository focused. It is still in the history before that commit (`git show bb31e8c^:docs/reference/figma-app/README.md`). To keep it permanently, move it into its own repository (for example `thecharter-figma-prototype`) or attach it as a zip to a GitHub release, and link it here.

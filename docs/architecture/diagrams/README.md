@@ -5,8 +5,8 @@ Diagrams for the report. Each one has an editable `.drawio` file here (open it a
 | Diagram | Files |
 |---|---|
 | Use case diagram | `use-case-diagram.*` |
-| Architecture of the AI capability (semantic search) | `ai-capability-architecture.*` |
-| Component diagram of the AI capability | `ai-component-diagram.*` |
+| Architecture of AI capability 1, semantic search | `ai-capability-architecture.*` |
+| Component diagram of both AI capabilities (semantic search, AI summarization) | `ai-component-diagram.*` |
 | Backend database diagram | `backend-database-erd.*` |
 | Supabase database diagram | `supabase-database-erd.*` |
 

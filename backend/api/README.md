@@ -22,7 +22,7 @@ Interactive API docs: http://localhost:8000/docs. Admin routes need the header `
 ## Test it
 
 ```bash
-pytest tests/unit          # pure functions, under a second, no database or model
+pytest tests/unit          # pure functions, a few seconds, no database or model
 pytest                     # everything (unit + integration + load)
 pytest --cov=app --cov-report=term-missing
 ruff check .               # lint

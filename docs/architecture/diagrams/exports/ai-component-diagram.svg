@@ -67,7 +67,7 @@
 <rect x="260" y="275" width="150" height="70" rx="5" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4"/>
 <text x="335.0" y="300.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">Project and document</text>
 <text x="335.0" y="314.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">routers</text>
-<text x="335.0" y="328.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">routes/: projects, documents</text>
+<text x="335.0" y="328.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">routes/admin/: projects.py, documents.py</text>
 <rect x="440" y="285" width="150" height="60" rx="5" fill="#fdece4" stroke="#eb6834" stroke-width="1.4"/>
 <text x="515.0" y="305.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">Index service</text>
 <text x="515.0" y="319.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">services/search/indexing.py</text>
@@ -82,7 +82,7 @@
 <text x="515.0" y="503.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">chunking.py</text>
 <rect x="780" y="60" width="160" height="70" rx="5" fill="#f5f4f1" stroke="#52514e" stroke-width="1.4"/>
 <text x="860.0" y="85.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">Evaluation</text>
-<text x="860.0" y="99.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">ml/evaluation/search</text>
+<text x="860.0" y="99.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">backend/ml/evaluation/search</text>
 <text x="860.0" y="113.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">queries.json, results.md</text>
 <path d="M780,174 A80.0,9 0 0 1 940,174 V276 A80.0,9 0 0 1 780,276 Z" fill="#e9f7f1" stroke="#1baf7a" stroke-width="1.4"/>
 <path d="M780,174 A80.0,9 0 0 0 940,174" fill="none" stroke="#1baf7a" stroke-width="1.4"/>

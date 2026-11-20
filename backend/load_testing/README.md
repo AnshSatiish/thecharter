@@ -8,12 +8,12 @@ A user gives up after 10 seconds. Results are written to `results/`.
 
 ```bash
 docker compose up -d                                   # PostgreSQL + PostGIS + pgvector (repo root)
-cd backend/api && python -m app.scripts.seed          # sample projects and search index
+(cd backend/api && python -m app.scripts.seed)        # sample projects and search index
 docker build -t thecharter-api backend/api
 docker run -d --name charter-api --network thecharter_default --cpus=2 --memory=2g -p 127.0.0.1:8000:8000 \
   -e DATABASE_URL=postgresql+psycopg://charter:charter@db:5432/charter -e WORKERS=2 -e EMBEDDING_THREADS=1 \
   -v charter-models:/models thecharter-api
-cd backend && python load_testing/loadtest.py --levels 1 10 25 50 100 --seconds 20 --label my_run
+(cd backend && python load_testing/loadtest.py --levels 1 10 25 50 100 --seconds 20 --label my_run)
 ```
 
 For a bigger library: `python load_testing/make_dataset.py 1000 load_testing/results/projects_1000.json`, then seed
@@ -23,7 +23,7 @@ that file. Delete the copies afterwards (`id >= 100000`).
 
 The API ran in a Linux container limited to **2 CPUs and 2 GB** (about a small cloud server), 2 worker processes,
 the database in a second container. The load generator ran on the same laptop (Intel i5-1235U, 8 GB), so the
-rows above 50 users are limited by the laptop as much as by the API and are left out below.
+rows above 100 users are limited by the laptop as much as by the API and are left out below.
 
 **Sample library (9 projects)**, `linux_2cpu_2workers_9projects.json`:
 

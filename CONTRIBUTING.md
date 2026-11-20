@@ -19,11 +19,11 @@ Never push directly to `main`. Repository admins: protect `main` under Settings 
 ```bash
 # backend/api/
 ruff check .
-pytest tests/unit      # under a second
+pytest tests/unit      # a few seconds, no database or model
 pytest                 # everything
 ```
 
-For frontend changes, run `python -m http.server 8080` in `frontend/` and click through what you changed. With the API running on port 8000 the site uses it; without it, the site falls back to Supabase and then the built-in sample.
+For frontend changes, run `python -m http.server 8080` in `frontend/` and click through what you changed. With the API running on port 8000 the site uses it; without it, the site shows projects from Supabase together with the built-in sample, or the sample alone.
 
 ## Where things go
 
@@ -45,4 +45,4 @@ For frontend changes, run `python -m http.server 8080` in `frontend/` and click 
 - Python: ruff (`backend/api/ruff.toml`), type hints on function signatures, a docstring on every module saying what it is for.
 - JavaScript and CSS: follow the style of the file you are in. Two-space indentation (`.editorconfig`).
 - Names say what something is: `location_check.py`, not `utils2.py`.
-- No secrets in the repository. `.env` files are git-ignored; `.env.example` lists the variables.
+- No secrets in the repository. `.env` files are git-ignored; `.env.example` lists the main variables; every setting is in `backend/api/app/core/config.py`.

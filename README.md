@@ -37,8 +37,7 @@ Some frontend screens and workflows are demonstration-oriented. In particular, t
 │   ├── api/             FastAPI application and tests
 │   ├── data/            Partner samples, synthetic evaluation data, geography
 │   ├── db/              PostgreSQL/PostGIS/pgvector Docker image
-│   ├── eda/             Data analysis resources
-│   ├── ml/              Model comparison, experiments, evaluation
+│   ├── ml/              EDA, model comparison, experiments, evaluation
 │   └── load_testing/    Search API load tests and results
 ├── frontend/            Static D3 globe website
 ├── supabase/            Hosted database SQL migrations
@@ -83,7 +82,7 @@ pip install -r api/requirements-dev.txt
 cd api
 ```
 
-Copy `.env.example` to `.env` and review the settings. Without `DATABASE_URL`, the API can use SQLite for local development. To use PostgreSQL, start the Docker services from the repository root with `docker compose up -d` and set the database URL accordingly.
+Copy `.env.example` to `.env` and review the settings. Without `DATABASE_URL` the API uses a local SQLite file (`./charter.db`). To use PostgreSQL, start the Docker services from the repository root with `docker compose up -d` and uncomment `DATABASE_URL` in `.env`.
 
 Initialize sample data and start the API:
 
@@ -104,7 +103,7 @@ cd frontend
 python -m http.server 8080
 ```
 
-Open http://localhost:8080. On localhost, the frontend attempts to use the FastAPI backend; its documented fallback paths use Supabase and then built-in sample data. No npm install or map API key is required.
+Open http://localhost:8080. On localhost, the frontend uses the FastAPI backend; without it, the page shows projects uploaded to Supabase together with the built-in sample data, and without either, the sample data alone. No npm install or map API key is required.
 
 ### Optional local summarization
 

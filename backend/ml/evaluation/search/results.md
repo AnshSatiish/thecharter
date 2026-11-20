@@ -1,6 +1,6 @@
 # Search evaluation (application settings)
 
-Model `BAAI/bge-small-en-v1.5`, passages of up to 40 words, cut-off 0.575 and relative cut 0.95 (chosen by cross-validation in `compare_models.py`). Corpus: 37 projects (7 partner samples, 30 synthetic). 122 queries, 113 with an answer and 9 off-topic. Produced by `evaluate_search.py`.
+Model `BAAI/bge-small-en-v1.5`, passages of up to 40 words, cut-off 0.575 and relative cut 0.95 (chosen by cross-validation in `experiments/compare_embedding_models.py`). Corpus: 37 projects (7 partner samples, 30 synthetic). 122 queries, 113 with an answer and 9 off-topic. Produced by `evaluate_search.py`.
 
 | Queries | Mode | Hit@1 | Recall@3 | MRR |
 |---|---|---|---|---|

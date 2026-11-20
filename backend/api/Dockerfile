@@ -1,4 +1,4 @@
-# The Charter API on Linux, without the AI summarizer (no PyTorch): search, projects, uploads.
+# The Charter API on Linux with search, projects and uploads. AI summaries are off here (AI_SUMMARY=false): they need a local Ollama server.
 #   docker build -t thecharter-api backend/api
 #   docker run -p 8000:8000 -e DATABASE_URL=postgresql+psycopg://... -e ADMIN_TOKEN=... thecharter-api
 # The sentence model (about 66 MB) downloads on first start; mount a volume at /models to keep it.

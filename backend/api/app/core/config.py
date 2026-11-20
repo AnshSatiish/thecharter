@@ -1,4 +1,4 @@
-"""Application settings, read from environment variables and backend/.env."""
+"""Application settings, read from environment variables and a .env file in the working directory (backend/api/.env)."""
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal

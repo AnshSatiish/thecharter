@@ -1,6 +1,6 @@
 # 0001. Repository layout
 
-**Status:** proposed (on the `restructure` branch, for the team to review)
+**Status:** accepted (merged into main in bb31e8c, 2026-11-19)
 **Date:** 2026-11-16
 
 ## Context

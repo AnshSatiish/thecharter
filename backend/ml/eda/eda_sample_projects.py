@@ -5,7 +5,7 @@ Run from backend/ml with the backend's environment (needs matplotlib):
     python eda/eda_sample_projects.py
 
 Reads backend/data/samples/projects.json, prints the numbers used in the report, writes
-eda_summary.json and saves three figures in figures/.
+eda_summary.json and saves four figures in figures/.
 
 The partner has supplied 7 projects so far, so this describes the sample, not the
 final library. Rerun it when the full dataset arrives.

@@ -6,7 +6,7 @@ The 3D globe site. Plain HTML, CSS and JavaScript: no build step, no framework, 
 python -m http.server 8080      # from frontend/
 ```
 
-Then open http://localhost:8080. On localhost the page loads projects from the API at http://localhost:8000 (see `../backend/api/`). Without the API it uses Supabase (`config.js`), and without either it uses the built-in sample data.
+Then open http://localhost:8080. On localhost the page loads projects from the API at http://localhost:8000 (see `../backend/api/`). Without the API it loads uploaded projects from Supabase (`config.js`) and shows them alongside the built-in sample data; without either, the sample data alone.
 
 ## Layout
 
