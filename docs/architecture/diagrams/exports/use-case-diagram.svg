@@ -1,42 +1,58 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560" font-family="Arial, Helvetica, sans-serif" font-size="12">
-<defs><marker id="arr" markerWidth="9" markerHeight="8" refX="8" refY="4" orient="auto-start-reverse"><path d="M0,0 L9,4 L0,8 z" fill="#3d3d3a"/></marker></defs>
-<rect width="900" height="560" fill="white"/>
-<rect x="190" y="20" width="520" height="520" fill="none" stroke="#8a8a86" stroke-dasharray="6 4" rx="6"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="690" viewBox="0 0 900 690" font-family="Arial, Helvetica, sans-serif" font-size="12">
+<rect width="900" height="690" fill="white"/>
+<rect x="190" y="20" width="520" height="630" fill="none" stroke="#8a8a86" stroke-dasharray="6 4" rx="6"/>
 <text x="200" y="38" font-weight="bold" fill="#52514e">The Charter</text>
-<line x1="130.0" y1="208.0" x2="258.4" y2="145.3" stroke="#3d3d3a" stroke-width="1.2"/>
-<line x1="130.0" y1="238.3" x2="226.8" y2="256.3" stroke="#3d3d3a" stroke-width="1.2"/>
-<line x1="130.0" y1="268.7" x2="280.7" y2="398.1" stroke="#3d3d3a" stroke-width="1.2"/>
-<line x1="770.0" y1="204.2" x2="635.0" y2="126.9" stroke="#3d3d3a" stroke-width="1.2"/>
-<line x1="770.0" y1="226.6" x2="682.7" y2="220.0" stroke="#3d3d3a" stroke-width="1.2"/>
-<line x1="770.0" y1="248.9" x2="647.7" y2="300.5" stroke="#3d3d3a" stroke-width="1.2"/>
-<line x1="770.0" y1="271.3" x2="617.0" y2="411.7" stroke="#3d3d3a" stroke-width="1.2"/>
-<circle cx="85.0" cy="190" r="9" fill="white" stroke="#0b0b0b" stroke-width="1.3"/>
-<path d="M85.0,199 V224 M70.0,208 H100.0 M85.0,224 L72.0,242 M85.0,224 L98.0,242" stroke="#0b0b0b" stroke-width="1.3" fill="none"/>
-<text x="85.0" y="260" text-anchor="middle" font-weight="bold" fill="#0b0b0b">End user</text>
-<text x="85.0" y="274" text-anchor="middle" font-weight="bold" fill="#0b0b0b">(student, researcher)</text>
-<circle cx="815.0" cy="190" r="9" fill="white" stroke="#0b0b0b" stroke-width="1.3"/>
-<path d="M815.0,199 V224 M800.0,208 H830.0 M815.0,224 L802.0,242 M815.0,224 L828.0,242" stroke="#0b0b0b" stroke-width="1.3" fill="none"/>
-<text x="815.0" y="260" text-anchor="middle" font-weight="bold" fill="#0b0b0b">Administrator</text>
-<text x="815.0" y="274" text-anchor="middle" font-weight="bold" fill="#0b0b0b">(curator, editor)</text>
-<ellipse cx="322.5" cy="114.0" rx="107.5" ry="39.0" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4"/>
-<text x="322.5" y="111.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC1</text>
-<text x="322.5" y="125.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Explore and filter projects</text>
-<ellipse cx="322.5" cy="274.0" rx="107.5" ry="39.0" fill="#fdece4" stroke="#eb6834" stroke-width="1.4"/>
-<text x="322.5" y="271.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC2</text>
-<text x="322.5" y="285.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Semantic research search</text>
-<ellipse cx="322.5" cy="434.0" rx="107.5" ry="39.0" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4"/>
-<text x="322.5" y="431.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC3</text>
-<text x="322.5" y="445.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Community and profile</text>
-<ellipse cx="577.5" cy="94.0" rx="107.5" ry="39.0" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4"/>
-<text x="577.5" y="91.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC4</text>
-<text x="577.5" y="105.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Manage and curate content</text>
-<ellipse cx="577.5" cy="212.0" rx="107.5" ry="39.0" fill="#fdece4" stroke="#eb6834" stroke-width="1.4"/>
-<text x="577.5" y="209.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC5</text>
-<text x="577.5" y="223.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">AI summarization</text>
-<ellipse cx="577.5" cy="330.0" rx="107.5" ry="39.0" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4"/>
-<text x="577.5" y="327.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC6</text>
-<text x="577.5" y="341.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Verify a project</text>
-<ellipse cx="577.5" cy="448.0" rx="107.5" ry="39.0" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4"/>
-<text x="577.5" y="445.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC7</text>
-<text x="577.5" y="459.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Manage News regions (planned)</text>
+<line x1="130" y1="255" x2="212" y2="100" stroke="#3d3d3a" stroke-width="1.2"/>
+<line x1="130" y1="267" x2="212" y2="215" stroke="#3d3d3a" stroke-width="1.2"/>
+<line x1="130" y1="279" x2="212" y2="330" stroke="#3d3d3a" stroke-width="1.2"/>
+<line x1="130" y1="291" x2="340" y2="585" stroke="#3d3d3a" stroke-width="1.2"/>
+<line x1="770" y1="255" x2="688" y2="85" stroke="#3d3d3a" stroke-width="1.2"/>
+<line x1="770" y1="267" x2="688" y2="185" stroke="#3d3d3a" stroke-width="1.2"/>
+<line x1="770" y1="279" x2="688" y2="285" stroke="#3d3d3a" stroke-width="1.2"/>
+<line x1="770" y1="291" x2="688" y2="385" stroke="#3d3d3a" stroke-width="1.2"/>
+<line x1="770" y1="303" x2="688" y2="485" stroke="#3d3d3a" stroke-width="1.2"/>
+<polyline points="815,340 815,585 560,585" fill="none" stroke="#3d3d3a" stroke-width="1.2"/>
+<circle cx="85" cy="240" r="9" fill="white" stroke="#0b0b0b" stroke-width="1.3"/>
+<path d="M85,249 V274 M70,258 H100 M85,274 L72,292 M85,274 L98,292" stroke="#0b0b0b" stroke-width="1.3" fill="none"/>
+<text x="85" y="310" text-anchor="middle" font-weight="bold" fill="#0b0b0b">Member</text>
+<text x="85" y="324" text-anchor="middle" fill="#0b0b0b">(student, researcher,</text>
+<text x="85" y="338" text-anchor="middle" fill="#0b0b0b">faculty, journalist)</text>
+<circle cx="815" cy="240" r="9" fill="white" stroke="#0b0b0b" stroke-width="1.3"/>
+<path d="M815,249 V274 M800,258 H830 M815,274 L802,292 M815,274 L828,292" stroke="#0b0b0b" stroke-width="1.3" fill="none"/>
+<text x="815" y="310" text-anchor="middle" font-weight="bold" fill="#0b0b0b">Administrator</text>
+<text x="815" y="324" text-anchor="middle" fill="#0b0b0b">(curator, editor)</text>
+<ellipse cx="322" cy="100" rx="110" ry="38" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4"/>
+<text x="322" y="97" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC1</text>
+<text x="322" y="111" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Explore the map and filter projects</text>
+<ellipse cx="322" cy="215" rx="110" ry="38" fill="#fdece4" stroke="#eb6834" stroke-width="1.4"/>
+<text x="322" y="212" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC2</text>
+<text x="322" y="226" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Search projects by meaning</text>
+<ellipse cx="322" cy="330" rx="110" ry="38" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4"/>
+<text x="322" y="327" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC3</text>
+<text x="322" y="341" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Keep a profile and saved projects</text>
+<ellipse cx="578" cy="85" rx="110" ry="38" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4"/>
+<text x="578" y="82" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC4</text>
+<text x="578" y="96" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Publish and edit projects</text>
+<ellipse cx="578" cy="185" rx="110" ry="38" fill="#fdece4" stroke="#eb6834" stroke-width="1.4"/>
+<text x="578" y="182" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC5</text>
+<text x="578" y="196" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Draft a summary with AI</text>
+<ellipse cx="578" cy="285" rx="110" ry="38" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4"/>
+<text x="578" y="282" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC6</text>
+<text x="578" y="296" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Verify a project</text>
+<ellipse cx="578" cy="385" rx="110" ry="38" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text x="578" y="375" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC7</text>
+<text x="578" y="389" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Verify institutions and</text>
+<text x="578" y="402" text-anchor="middle" fill="#3d3d3a" font-size="10.5">their profiles (planned)</text>
+<ellipse cx="578" cy="485" rx="110" ry="38" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text x="578" y="475" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC8</text>
+<text x="578" y="489" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Approve and manage member</text>
+<text x="578" y="502" text-anchor="middle" fill="#3d3d3a" font-size="10.5">profiles (planned)</text>
+<ellipse cx="450" cy="585" rx="110" ry="38" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4" stroke-dasharray="6 4"/>
+<text x="450" y="575" text-anchor="middle" fill="#0b0b0b" font-weight="bold">UC9</text>
+<text x="450" y="589" text-anchor="middle" fill="#3d3d3a" font-size="10.5">Sign in with an email code</text>
+<text x="450" y="602" text-anchor="middle" fill="#3d3d3a" font-size="10.5">(planned)</text>
+<ellipse cx="225" cy="672" rx="16" ry="7" fill="#fdece4" stroke="#eb6834" stroke-width="1.4"/>
+<text x="247" y="676" fill="#3d3d3a" font-size="10.5">uses AI</text>
+<ellipse cx="335" cy="672" rx="16" ry="7" fill="#f4f7fb" stroke="#2a78d6" stroke-width="1.4" stroke-dasharray="4 3"/>
+<text x="357" y="676" fill="#3d3d3a" font-size="10.5">planned, not built yet</text>
 </svg>
