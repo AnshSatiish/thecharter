@@ -7,7 +7,6 @@
 | `architecture/decisions/` | Short records of decisions the team made and why (one file each, numbered) |
 | `reports/` | Technical reports submitted for the course |
 | `security/` | PostgreSQL and Supabase security guide and checklist |
-| `demo-uploads/` | Two ready-made synthetic projects (PDF, photos, form values) to upload when testing or demonstrating the admin form |
 
 ## The Figma prototype
 

@@ -82,8 +82,8 @@
 <text x="515.0" y="503.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">chunking.py</text>
 <rect x="780" y="60" width="160" height="70" rx="5" fill="#f5f4f1" stroke="#52514e" stroke-width="1.4"/>
 <text x="860.0" y="85.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">Evaluation</text>
-<text x="860.0" y="99.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">backend/ml/evaluation/search</text>
-<text x="860.0" y="113.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">queries.json, results.md</text>
+<text x="860.0" y="99.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">backend/ml/evaluation/real_data</text>
+<text x="860.0" y="113.0" text-anchor="middle" fill="#3d3d3a" font-size="10.5">results and figures</text>
 <path d="M780,174 A80.0,9 0 0 1 940,174 V276 A80.0,9 0 0 1 780,276 Z" fill="#e9f7f1" stroke="#1baf7a" stroke-width="1.4"/>
 <path d="M780,174 A80.0,9 0 0 0 940,174" fill="none" stroke="#1baf7a" stroke-width="1.4"/>
 <text x="860.0" y="213.0" text-anchor="middle" fill="#0b0b0b" font-weight="bold">PostgreSQL 16</text>

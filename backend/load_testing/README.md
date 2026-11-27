@@ -36,8 +36,7 @@ rows above 100 users are limited by the laptop as much as by the API and are lef
 | 50 | 21 | 6.1 s | 19 | 6.9 s | 0 |
 | 100 | 13 | 16 s | 24 | 8.2 s | 15 and 7 (mostly 503 busy) |
 
-**1,009 projects** (withdrawn): `linux_2cpu_2workers_1009projects.json` was measured on a library that repeated
-generated projects, so it is no longer reported. `make_dataset.py` now repeats only the partner's projects; rerun the
+**1,009 projects** (withdrawn): an earlier run on a library that repeated generated projects was deleted. `make_dataset.py` now repeats only the partner's projects; rerun the
 large-library test with it. With 9 projects one search takes 17 ms (keyword) and 54 ms (hybrid). The vector index (HNSW) and the full-text index (GIN)
 keep the search itself fast; most of the time per request goes into building the answer (up to 20 projects).
 

@@ -1,18 +1,14 @@
-"""Shared set-up for the scripts in experiments/ and evaluation/ (and the EDA similarity step).
+"""Shared set-up for the evaluation scripts in evaluation/real_data.
 
-Builds a temporary database with the 7 partner sample projects and the 30 synthetic projects
-(backend/data/synthetic), each synthetic project with its report text attached as a document,
-exactly as the API would store an uploaded PDF. Passages are cut by the API's own code, so the
-experiments measure what the application runs.
+Points the API at a temporary SQLite database (the scripts load the partner's projects into it), and holds the
+ranking rule and the measures, so the evaluation measures what the application runs. Only the partner's real
+projects are used; no data is generated.
 
 Import this module before anything from `app`: it points the API at the temporary database.
 """
-import json
 import os
-import random
 import sys
 import tempfile
-from collections import defaultdict
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -23,65 +19,9 @@ os.environ["SEMANTIC_SEARCH"] = "false"  # the scripts embed passages themselves
 sys.path.insert(0, str(BACKEND / "api"))
 
 import numpy as np  # noqa: E402
-from sqlalchemy import select  # noqa: E402
-from sqlalchemy.orm import Session, selectinload  # noqa: E402
 
-from app.core.config import get_settings  # noqa: E402
-from app.db.models import Document, Project  # noqa: E402
-from app.db.session import engine  # noqa: E402
-from app.scripts.seed import seed  # noqa: E402
-from app.services.search.indexing import passages  # noqa: E402
 
 SAMPLES = DATA / "samples" / "projects.json"
-SYNTHETIC = DATA / "synthetic" / "projects.json"
-QUERIES = HERE / "evaluation" / "search" / "queries.json"
-SEED = 42
-
-
-def build_corpus() -> None:
-    """Load sample and synthetic projects into the temporary database (no embeddings yet)."""
-    seed(engine, SAMPLES)
-    seed(engine, SYNTHETIC)
-    with Session(engine) as db:
-        for rec in json.loads(SYNTHETIC.read_text(encoding="utf-8")):
-            db.add(Document(project_id=rec["id"], title=f"{rec['title']} (field report)", filename=f"report-{rec['id']}.pdf",
-                            path=f"synthetic/report-{rec['id']}.pdf", size_bytes=len(rec["document_text"]), pages=1,
-                            text=rec["document_text"]))
-        db.commit()
-
-
-def corpus_passages(chunk_words: int) -> tuple[list[int], list[str]]:
-    """(project id, passage text) for every passage, cut as the API cuts them at this passage length."""
-    get_settings().embedding_chunk_words = chunk_words
-    owners, texts = [], []
-    with Session(engine) as db:
-        stmt = select(Project).options(selectinload(Project.documents).undefer(Document.text)).order_by(Project.id)
-        for project in db.scalars(stmt).unique():
-            for _, _, text in passages(project):
-                owners.append(project.id)
-                texts.append(text)
-    return owners, texts
-
-
-def load_queries() -> list[dict]:
-    return json.loads(QUERIES.read_text(encoding="utf-8"))
-
-
-def folds(queries: list[dict], k: int = 5, seed: int = SEED) -> list[list[int]]:
-    """Stratified k-fold split of query indices: every fold has the same mix of query types."""
-    by_type: dict[str, list[int]] = defaultdict(list)
-    for i, q in enumerate(queries):
-        by_type[q["type"]].append(i)
-    rng = random.Random(seed)
-    out: list[list[int]] = [[] for _ in range(k)]
-    offset = 0
-    for kind in sorted(by_type):
-        idx = by_type[kind]
-        rng.shuffle(idx)
-        for j, i in enumerate(idx):
-            out[(j + offset) % k].append(i)
-        offset += len(idx)
-    return out
 
 
 # ---------- ranking and measures ----------

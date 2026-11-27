@@ -35,7 +35,7 @@ Some frontend screens and workflows are demonstration-oriented. In particular, t
 .
 ├── backend/
 │   ├── api/             FastAPI application and tests
-│   ├── data/            Partner samples, synthetic evaluation data, geography
+│   ├── data/            Partner samples, geography
 │   ├── db/              PostgreSQL/PostGIS/pgvector Docker image
 │   ├── ml/              EDA, model comparison, experiments, evaluation
 │   └── load_testing/    Search API load tests and results
@@ -133,7 +133,7 @@ GET /api/projects/search?q=climate%20migration&mode=hybrid&limit=20
 
 The application uses `BAAI/bge-small-en-v1.5` with 40-word passages. The evaluation in `backend/ml/evaluation/real_data` uses only the partner's 9 projects, with queries and reference summaries taken from the authors' own text: hybrid search put the right project first for 44 of 45 held-out queries.
 
-**Evaluation limitation:** 9 projects and 45 queries are too few to separate the methods or to tune settings. Earlier experiments on generated projects and queries are withdrawn. Results should not be presented as validated performance on a large real-world collection.
+**Evaluation limitation:** 9 projects and 45 queries are too few to separate the methods or to tune settings. Earlier experiments on generated projects and queries were withdrawn and their data deleted. Results should not be presented as validated performance on a large real-world collection.
 
 ## Testing
 
