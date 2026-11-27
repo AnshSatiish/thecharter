@@ -1,0 +1,1313 @@
+{
+  "projects": 9,
+  "queries": 45,
+  "by_kind": {
+    "description": 9,
+    "caption": 36
+  },
+  "settings": {
+    "model": "BAAI/bge-small-en-v1.5",
+    "passage_words": 40,
+    "min_score": 0.575,
+    "relative_cut": 0.95
+  },
+  "application": {
+    "keyword": {
+      "all": {
+        "hit1": 0.9111111111111111,
+        "list_f1": 0.5087301587301587,
+        "mrr": 0.951851851851852,
+        "recall3": 1.0,
+        "n": 45,
+        "returned_nothing": 0
+      },
+      "description": {
+        "hit1": 1.0,
+        "list_f1": 0.40238095238095234,
+        "mrr": 1.0,
+        "recall3": 1.0
+      },
+      "caption": {
+        "hit1": 0.8888888888888888,
+        "list_f1": 0.5353174603174603,
+        "mrr": 0.9398148148148149,
+        "recall3": 1.0
+      }
+    },
+    "semantic": {
+      "all": {
+        "hit1": 0.9333333333333333,
+        "list_f1": 0.948148148148148,
+        "mrr": 0.9666666666666667,
+        "recall3": 1.0,
+        "n": 45,
+        "returned_nothing": 0
+      },
+      "description": {
+        "hit1": 1.0,
+        "list_f1": 1.0,
+        "mrr": 1.0,
+        "recall3": 1.0
+      },
+      "caption": {
+        "hit1": 0.9166666666666666,
+        "list_f1": 0.9351851851851851,
+        "mrr": 0.9583333333333334,
+        "recall3": 1.0
+      }
+    },
+    "hybrid": {
+      "all": {
+        "hit1": 0.9777777777777777,
+        "list_f1": 0.948148148148148,
+        "mrr": 0.9888888888888889,
+        "recall3": 1.0,
+        "n": 45,
+        "returned_nothing": 0
+      },
+      "description": {
+        "hit1": 1.0,
+        "list_f1": 1.0,
+        "mrr": 1.0,
+        "recall3": 1.0
+      },
+      "caption": {
+        "hit1": 0.9722222222222222,
+        "list_f1": 0.9351851851851851,
+        "mrr": 0.9861111111111112,
+        "recall3": 1.0
+      }
+    }
+  },
+  "ranking": {
+    "Keyword (full-text)": {
+      "all": {
+        "hit1": 0.9111111111111111,
+        "list_f1": 0.5087301587301587,
+        "mrr": 0.951851851851852,
+        "recall3": 1.0,
+        "hit3": 1.0,
+        "n": 45
+      },
+      "description": {
+        "hit1": 1.0,
+        "list_f1": 0.40238095238095234,
+        "mrr": 1.0,
+        "recall3": 1.0,
+        "hit3": 1.0
+      },
+      "caption": {
+        "hit1": 0.8888888888888888,
+        "list_f1": 0.5353174603174603,
+        "mrr": 0.9398148148148149,
+        "recall3": 1.0,
+        "hit3": 1.0
+      }
+    },
+    "TF-IDF": {
+      "all": {
+        "hit1": 0.9777777777777777,
+        "list_f1": 0.19999999999999993,
+        "mrr": 0.9851851851851853,
+        "recall3": 1.0,
+        "hit3": 1.0,
+        "n": 45
+      },
+      "description": {
+        "hit1": 1.0,
+        "list_f1": 0.19999999999999998,
+        "mrr": 1.0,
+        "recall3": 1.0,
+        "hit3": 1.0
+      },
+      "caption": {
+        "hit1": 0.9722222222222222,
+        "list_f1": 0.2,
+        "mrr": 0.9814814814814815,
+        "recall3": 1.0,
+        "hit3": 1.0
+      }
+    },
+    "all-MiniLM-L6-v2": {
+      "all": {
+        "hit1": 0.9555555555555556,
+        "list_f1": 0.19999999999999993,
+        "mrr": 0.9740740740740741,
+        "recall3": 1.0,
+        "hit3": 1.0,
+        "n": 45
+      },
+      "description": {
+        "hit1": 1.0,
+        "list_f1": 0.19999999999999998,
+        "mrr": 1.0,
+        "recall3": 1.0,
+        "hit3": 1.0
+      },
+      "caption": {
+        "hit1": 0.9444444444444444,
+        "list_f1": 0.2,
+        "mrr": 0.9675925925925927,
+        "recall3": 1.0,
+        "hit3": 1.0
+      }
+    },
+    "paraphrase-multilingual-MiniLM-L12-v2": {
+      "all": {
+        "hit1": 0.9333333333333333,
+        "list_f1": 0.20049382716049374,
+        "mrr": 0.962962962962963,
+        "recall3": 1.0,
+        "hit3": 1.0,
+        "n": 45
+      },
+      "description": {
+        "hit1": 1.0,
+        "list_f1": 0.19999999999999998,
+        "mrr": 1.0,
+        "recall3": 1.0,
+        "hit3": 1.0
+      },
+      "caption": {
+        "hit1": 0.9166666666666666,
+        "list_f1": 0.2006172839506173,
+        "mrr": 0.9537037037037037,
+        "recall3": 1.0,
+        "hit3": 1.0
+      }
+    },
+    "bge-small-en-v1.5": {
+      "all": {
+        "hit1": 0.9333333333333333,
+        "list_f1": 0.19999999999999993,
+        "mrr": 0.9666666666666667,
+        "recall3": 1.0,
+        "hit3": 1.0,
+        "n": 45
+      },
+      "description": {
+        "hit1": 1.0,
+        "list_f1": 0.19999999999999998,
+        "mrr": 1.0,
+        "recall3": 1.0,
+        "hit3": 1.0
+      },
+      "caption": {
+        "hit1": 0.9166666666666666,
+        "list_f1": 0.2,
+        "mrr": 0.9583333333333334,
+        "recall3": 1.0,
+        "hit3": 1.0
+      }
+    }
+  },
+  "confusion": {
+    "keyword": {
+      "17": {
+        "17": 3,
+        "18": 0,
+        "23": 0,
+        "25": 0,
+        "26": 0,
+        "27": 0,
+        "28": 1,
+        "29": 1,
+        "30": 0,
+        "none": 0
+      },
+      "18": {
+        "17": 0,
+        "18": 4,
+        "23": 0,
+        "25": 0,
+        "26": 0,
+        "27": 0,
+        "28": 0,
+        "29": 0,
+        "30": 1,
+        "none": 0
+      },
+      "23": {
+        "17": 0,
+        "18": 0,
+        "23": 5,
+        "25": 0,
+        "26": 0,
+        "27": 0,
+        "28": 0,
+        "29": 0,
+        "30": 0,
+        "none": 0
+      },
+      "25": {
+        "17": 0,
+        "18": 0,
+        "23": 0,
+        "25": 5,
+        "26": 0,
+        "27": 0,
+        "28": 0,
+        "29": 0,
+        "30": 0,
+        "none": 0
+      },
+      "26": {
+        "17": 0,
+        "18": 0,
+        "23": 0,
+        "25": 0,
+        "26": 5,
+        "27": 0,
+        "28": 0,
+        "29": 0,
+        "30": 0,
+        "none": 0
+      },
+      "27": {
+        "17": 0,
+        "18": 0,
+        "23": 0,
+        "25": 0,
+        "26": 0,
+        "27": 4,
+        "28": 0,
+        "29": 1,
+        "30": 0,
+        "none": 0
+      },
+      "28": {
+        "17": 0,
+        "18": 0,
+        "23": 0,
+        "25": 0,
+        "26": 0,
+        "27": 0,
+        "28": 5,
+        "29": 0,
+        "30": 0,
+        "none": 0
+      },
+      "29": {
+        "17": 0,
+        "18": 0,
+        "23": 0,
+        "25": 0,
+        "26": 0,
+        "27": 0,
+        "28": 0,
+        "29": 5,
+        "30": 0,
+        "none": 0
+      },
+      "30": {
+        "17": 0,
+        "18": 0,
+        "23": 0,
+        "25": 0,
+        "26": 0,
+        "27": 0,
+        "28": 0,
+        "29": 0,
+        "30": 5,
+        "none": 0
+      }
+    },
+    "semantic": {
+      "17": {
+        "17": 5,
+        "18": 0,
+        "23": 0,
+        "25": 0,
+        "26": 0,
+        "27": 0,
+        "28": 0,
+        "29": 0,
+        "30": 0,
+        "none": 0
+      },
+      "18": {
+        "17": 0,
+        "18": 5,
+        "23": 0,
+        "25": 0,
+        "26": 0,
+        "27": 0,
+        "28": 0,
+        "29": 0,
+        "30": 0,
+        "none": 0
+      },
+      "23": {
+        "17": 0,
+        "18": 0,
+        "23": 5,
+        "25": 0,
+        "26": 0,
+        "27": 0,
+        "28": 0,
+        "29": 0,
+        "30": 0,
+        "none": 0
+      },
+      "25": {
+        "17": 0,
+        "18": 0,
+        "23": 0,
+        "25": 5,
+        "26": 0,
+        "27": 0,
+        "28": 0,
+        "29": 0,
+        "30": 0,
+        "none": 0
+      },
+      "26": {
+        "17": 0,
+        "18": 0,
+        "23": 0,
+        "25": 0,
+        "26": 5,
+        "27": 0,
+        "28": 0,
+        "29": 0,
+        "30": 0,
+        "none": 0
+      },
+      "27": {
+        "17": 0,
+        "18": 0,
+        "23": 0,
+        "25": 0,
+        "26": 0,
+        "27": 5,
+        "28": 0,
+        "29": 0,
+        "30": 0,
+        "none": 0
+      },
+      "28": {
+        "17": 0,
+        "18": 0,
+        "23": 0,
+        "25": 0,
+        "26": 0,
+        "27": 0,
+        "28": 4,
+        "29": 0,
+        "30": 1,
+        "none": 0
+      },
+      "29": {
+        "17": 0,
+        "18": 0,
+        "23": 0,
+        "25": 0,
+        "26": 0,
+        "27": 0,
+        "28": 0,
+        "29": 5,
+        "30": 0,
+        "none": 0
+      },
+      "30": {
+        "17": 0,
+        "18": 0,
+        "23": 0,
+        "25": 0,
+        "26": 0,
+        "27": 0,
+        "28": 0,
+        "29": 2,
+        "30": 3,
+        "none": 0
+      }
+    },
+    "hybrid": {
+      "17": {
+        "17": 5,
+        "18": 0,
+        "23": 0,
+        "25": 0,
+        "26": 0,
+        "27": 0,
+        "28": 0,
+        "29": 0,
+        "30": 0,
+        "none": 0
+      },
+      "18": {
+        "17": 0,
+        "18": 5,
+        "23": 0,
+        "25": 0,
+        "26": 0,
+        "27": 0,
+        "28": 0,
+        "29": 0,
+        "30": 0,
+        "none": 0
+      },
+      "23": {
+        "17": 0,
+        "18": 0,
+        "23": 5,
+        "25": 0,
+        "26": 0,
+        "27": 0,
+        "28": 0,
+        "29": 0,
+        "30": 0,
+        "none": 0
+      },
+      "25": {
+        "17": 0,
+        "18": 0,
+        "23": 0,
+        "25": 5,
+        "26": 0,
+        "27": 0,
+        "28": 0,
+        "29": 0,
+        "30": 0,
+        "none": 0
+      },
+      "26": {
+        "17": 0,
+        "18": 0,
+        "23": 0,
+        "25": 0,
+        "26": 5,
+        "27": 0,
+        "28": 0,
+        "29": 0,
+        "30": 0,
+        "none": 0
+      },
+      "27": {
+        "17": 0,
+        "18": 0,
+        "23": 0,
+        "25": 0,
+        "26": 0,
+        "27": 5,
+        "28": 0,
+        "29": 0,
+        "30": 0,
+        "none": 0
+      },
+      "28": {
+        "17": 0,
+        "18": 0,
+        "23": 0,
+        "25": 0,
+        "26": 0,
+        "27": 0,
+        "28": 4,
+        "29": 0,
+        "30": 1,
+        "none": 0
+      },
+      "29": {
+        "17": 0,
+        "18": 0,
+        "23": 0,
+        "25": 0,
+        "26": 0,
+        "27": 0,
+        "28": 0,
+        "29": 5,
+        "30": 0,
+        "none": 0
+      },
+      "30": {
+        "17": 0,
+        "18": 0,
+        "23": 0,
+        "25": 0,
+        "26": 0,
+        "27": 0,
+        "28": 0,
+        "29": 0,
+        "30": 5,
+        "none": 0
+      }
+    }
+  },
+  "every_query": [
+    {
+      "kind": "description",
+      "project": 17,
+      "q": "The Day of the Dead celebration in the Sierra Mazateca territory is known as ·Tsui' kiee'n· or ·The Festival of the Sun·",
+      "keyword": [
+        17,
+        29,
+        28,
+        30,
+        18
+      ],
+      "semantic": [
+        17
+      ],
+      "hybrid": [
+        17
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 17,
+      "q": "The Cemetery Vigil: The Sea of Light. In the depths of the night of October 31st, the Mazatec community cemetery transforms into a sea of light. This image captures hundreds of burning candles",
+      "keyword": [
+        28,
+        17,
+        29,
+        30,
+        23
+      ],
+      "semantic": [
+        17
+      ],
+      "hybrid": [
+        17
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 17,
+      "q": "Chaxo o': The Huehuentón as Ancestral Portal. The Huehuentón (chaxo o' in Mazatec) is much more than a masked dancer: it is the physical embodiment of ancestors returning to the world of the living.",
+      "keyword": [
+        17,
+        29,
+        30,
+        18,
+        25
+      ],
+      "semantic": [
+        17
+      ],
+      "hybrid": [
+        17
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 17,
+      "q": "The Home Altar: Architecture of Reunion. The home altar is a complex cosmological construction that functions as a dimensional portal between the realm of the living (tikjandá) and that of the dead",
+      "keyword": [
+        29,
+        17,
+        30,
+        18
+      ],
+      "semantic": [
+        17,
+        29
+      ],
+      "hybrid": [
+        17,
+        29
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 17,
+      "q": "The Procession of Masks: Ritual Geography of the Town. The Huehuentones do not dance just anywhere: their route through the town traces a sacred geography that reactivates points of spiritual power.",
+      "keyword": [
+        17,
+        29,
+        30,
+        27,
+        26
+      ],
+      "semantic": [
+        17,
+        29
+      ],
+      "hybrid": [
+        17,
+        29
+      ]
+    },
+    {
+      "kind": "description",
+      "project": 26,
+      "q": "Since 2019, Mexico's immigration policies have undergone a significant shift, transforming from a nation historically open to migrants and asylum seekers at its southern border to a country that",
+      "keyword": [
+        26,
+        29,
+        30,
+        27,
+        17
+      ],
+      "semantic": [
+        26
+      ],
+      "hybrid": [
+        26
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 26,
+      "q": "Ruben Soto (right), a migrant from Venezuela, sits with Rosa Bello, a Honduran migrant, atop a freight train known as \"The Beast,\" in Samalayuca, Mexico. Ruben and Rosa met in Mexico and fell in love",
+      "keyword": [
+        26
+      ],
+      "semantic": [
+        26
+      ],
+      "hybrid": [
+        26
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 26,
+      "q": "A migrant jumps between cars on a freight train known as \"The Beast\" in Piedras Negras, Mexico. Migrants and asylum seekers lacking the financial resources to pay a smuggler often resort to using",
+      "keyword": [
+        26,
+        29,
+        30,
+        17,
+        18
+      ],
+      "semantic": [
+        26
+      ],
+      "hybrid": [
+        26
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 26,
+      "q": "The De Coto family poses for a portrait aboard \"The Beast\" while heading to Ciudad Juárez. This photo was taken in Samalayuca, Mexico, three days before the expiration of Title 42, a US COVD-19",
+      "keyword": [
+        26,
+        17,
+        18,
+        29,
+        30
+      ],
+      "semantic": [
+        26
+      ],
+      "hybrid": [
+        26
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 26,
+      "q": "Ruben Soto (right), a migrant from Venezuela, sits with Rosa Bello, a Honduran migrant, atop a freight train known as \"The Beast,\" in Samalayuca, Mexico. Ruben and Rosa met in Mexico and fell in love",
+      "keyword": [
+        26
+      ],
+      "semantic": [
+        26
+      ],
+      "hybrid": [
+        26
+      ]
+    },
+    {
+      "kind": "description",
+      "project": 23,
+      "q": "Lake Kivu, a majestic body of water at the border between Rwanda and the Democratic Republic of Congo, is a place where stories intertwine and destinies converge. Beneath the placid beauty lies",
+      "keyword": [
+        23,
+        30,
+        29,
+        27,
+        26
+      ],
+      "semantic": [
+        23
+      ],
+      "hybrid": [
+        23
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 23,
+      "q": "A fisherman repairs his nets at dawn along the shores of Lake Kivu in Goma, DRC. Against the backdrop of storm clouds and the bustling harbor, he prepares for another day on waters that have",
+      "keyword": [
+        23,
+        30,
+        17,
+        27,
+        26
+      ],
+      "semantic": [
+        23
+      ],
+      "hybrid": [
+        23
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 23,
+      "q": "Sambaza, a sardine local to the waters of Lake Kivu, are captured in a net. Several factors, including overfishing and the presence of gas extraction plants, threaten the sambaza population, in Goma,",
+      "keyword": [
+        23,
+        30,
+        29,
+        27,
+        17
+      ],
+      "semantic": [
+        23,
+        30
+      ],
+      "hybrid": [
+        23,
+        30
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 23,
+      "q": "Women selling sambaza at Rond-Point Rutshuru, a busy street in Goma, DRC.",
+      "keyword": [
+        23,
+        17,
+        30,
+        29,
+        25
+      ],
+      "semantic": [
+        23
+      ],
+      "hybrid": [
+        23
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 23,
+      "q": "A woman eats sambaza and fufu at a restaurant in Goma, DRC.",
+      "keyword": [
+        23,
+        29,
+        30
+      ],
+      "semantic": [
+        23
+      ],
+      "hybrid": [
+        23
+      ]
+    },
+    {
+      "kind": "description",
+      "project": 25,
+      "q": "Documenting the nationwide protests against the Finance Bill 2024 in Kenya, where a generation of young activists took to the streets demanding accountability and rejecting punitive taxation.",
+      "keyword": [
+        25,
+        29,
+        30,
+        17,
+        18
+      ],
+      "semantic": [
+        25
+      ],
+      "hybrid": [
+        25
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 25,
+      "q": "Protestors chant anti-government slogans while climbing a Kenya Police water cannon truck during a nationwide protest against tax hikes and the Finance Bill 2024 in Nairobi, Kenya.",
+      "keyword": [
+        25,
+        29,
+        30,
+        18,
+        23
+      ],
+      "semantic": [
+        25
+      ],
+      "hybrid": [
+        25
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 25,
+      "q": "Protestors chant slogans and push a makeshift barricade as they clash with Kenyan police officers during an anti-government demonstration in Nairobi, Kenya.",
+      "keyword": [
+        25,
+        29,
+        30
+      ],
+      "semantic": [
+        25
+      ],
+      "hybrid": [
+        25
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 25,
+      "q": "A Kenyan police officer fires a tear gas canister during a demonstration against tax hikes as Members of Parliament vote on the Finance Bill 2024 in downtown Nairobi, Kenya.",
+      "keyword": [
+        25,
+        29,
+        30,
+        17,
+        18
+      ],
+      "semantic": [
+        25
+      ],
+      "hybrid": [
+        25
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 25,
+      "q": "A tear gas canister explodes under a protestor in Nairobi, Kenya.",
+      "keyword": [
+        25,
+        29,
+        23
+      ],
+      "semantic": [
+        25
+      ],
+      "hybrid": [
+        25
+      ]
+    },
+    {
+      "kind": "description",
+      "project": 27,
+      "q": "Visual documentation of one of the most dangerous migration routes in the world: the Darién Gap, a 100-kilometre stretch of dense jungle that connects Colombia and Panama.",
+      "keyword": [
+        27,
+        29,
+        30,
+        18,
+        26
+      ],
+      "semantic": [
+        27
+      ],
+      "hybrid": [
+        27
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 27,
+      "q": "A group of Afghan, Chinese, Venezuelan, and Ecuadorian migrants wade toward a boat headed for the Darién Gap, in Capurganá, Colombia. Many of the Afghans had never seen the ocean before.",
+      "keyword": [
+        27,
+        29,
+        30,
+        17,
+        26
+      ],
+      "semantic": [
+        27
+      ],
+      "hybrid": [
+        27
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 27,
+      "q": "A final base camp before entering the Darién Gap, in Las Tecas, Colombia. A record 520,000 migrants crossed through the Darién jungle in 2023.",
+      "keyword": [
+        27,
+        29,
+        30,
+        26
+      ],
+      "semantic": [
+        27
+      ],
+      "hybrid": [
+        27
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 27,
+      "q": "Thousands of migrants wade into the Rio Muerto (\"Death River\") at the Darién Gap, where several have drowned in its treacherous waters. They assist one another to prevent drowning in the swift",
+      "keyword": [
+        27,
+        29,
+        30,
+        17,
+        23
+      ],
+      "semantic": [
+        27
+      ],
+      "hybrid": [
+        27
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 27,
+      "q": "Sarah Cuauro, (6) was separated from her mother during their trek through the jungle. Ángel Garcia, (42) took care of her for several days as they climbed through the mud to Banderas Hill, a crossing",
+      "keyword": [
+        29,
+        30,
+        27,
+        26,
+        17
+      ],
+      "semantic": [
+        27,
+        17
+      ],
+      "hybrid": [
+        27,
+        17
+      ]
+    },
+    {
+      "kind": "description",
+      "project": 28,
+      "q": "Indigenous Australians have strategically burned land to protect their environment for tens of thousands of years. In a practice known as cool burning, fires move slowly, burn only the undergrowth,",
+      "keyword": [
+        28,
+        30,
+        17,
+        29,
+        26
+      ],
+      "semantic": [
+        28
+      ],
+      "hybrid": [
+        28
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 28,
+      "q": "Nawarddeken women conducting traditional cool burning in West Arnhem Land. The controlled fires move slowly through the grasslands, burning only undergrowth while leaving trees intact, creating a",
+      "keyword": [
+        28,
+        29,
+        30,
+        17,
+        18
+      ],
+      "semantic": [
+        28
+      ],
+      "hybrid": [
+        28
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 28,
+      "q": "Nawarddeken elder Conrad Maralngurra burns grass to protect the Mamadawerre community from late-season wildfires, in Mamadawerre, Arnhem Land, Australia. The late-evening fire will die out naturally",
+      "keyword": [
+        28,
+        30,
+        29,
+        17,
+        18
+      ],
+      "semantic": [
+        28
+      ],
+      "hybrid": [
+        28
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 28,
+      "q": "Smoke from a cool-burn fire covers Djalama Valley in West Arnhem Land, at the beginning of the dry season in Australia's Northern Territory.",
+      "keyword": [
+        28,
+        30,
+        29,
+        17,
+        25
+      ],
+      "semantic": [
+        28
+      ],
+      "hybrid": [
+        28
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 28,
+      "q": "Stacey Lee (11, left) sets the bark of trees alight to produce a natural light source to help hunt for file snakes (Acrochordus arafurae), in Djulkar, Arnhem Land, Australia.",
+      "keyword": [
+        28,
+        30,
+        29,
+        17,
+        18
+      ],
+      "semantic": [
+        30,
+        28
+      ],
+      "hybrid": [
+        30,
+        28
+      ]
+    },
+    {
+      "kind": "description",
+      "project": 18,
+      "q": "A photographic exploration of China's dual railway system, where gleaming high-speed trains and aging slow trains run in parallel, revealing the stark class divisions and inequalities within the",
+      "keyword": [
+        18,
+        30,
+        29,
+        17,
+        26
+      ],
+      "semantic": [
+        18
+      ],
+      "hybrid": [
+        18
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 18,
+      "q": "At Beijing West Railway station, a migrant worker loaded with baggage, heads back to the family hometown for the New Year holiday. The Lunar New Year is the busiest time of year for train travel,",
+      "keyword": [
+        18
+      ],
+      "semantic": [
+        18
+      ],
+      "hybrid": [
+        18
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 18,
+      "q": "In the VIP waiting room of Chengdu Airport, recently opened high-speed railway station, a detail of painting shows a high-speed train riding in a mountainous landscape.",
+      "keyword": [
+        30,
+        18,
+        17,
+        29,
+        26
+      ],
+      "semantic": [
+        18
+      ],
+      "hybrid": [
+        18
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 18,
+      "q": "A crowded concourse at Beijing West railway station, a few days before the Lunar New Year. The station was the largest in Asia when it was inaugurated in the late 90s but it has struggled to keep up",
+      "keyword": [
+        18,
+        29,
+        30,
+        28,
+        17
+      ],
+      "semantic": [
+        18
+      ],
+      "hybrid": [
+        18
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 18,
+      "q": "At Beijing West Railway station, a migrant worker loaded with baggage, heads back to the family hometown for the New Year holiday. The Lunar New Year is the busiest time of year for train travel,",
+      "keyword": [
+        18
+      ],
+      "semantic": [
+        18
+      ],
+      "hybrid": [
+        18
+      ]
+    },
+    {
+      "kind": "description",
+      "project": 29,
+      "q": "Twenty months of fieldwork in Jat farming villages around Sonipat, Haryana, show how caste councils (panchayats) still settle marriage disputes, shape village elections and lead the campaign for",
+      "keyword": [
+        29
+      ],
+      "semantic": [
+        29
+      ],
+      "hybrid": [
+        29
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 29,
+      "q": "The advancing urban frontier in a village near Sonipat city.",
+      "keyword": [
+        29
+      ],
+      "semantic": [
+        29
+      ],
+      "hybrid": [
+        29
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 29,
+      "q": "A Jat village chaupal, the most common site for holding the panchayat.",
+      "keyword": [
+        29
+      ],
+      "semantic": [
+        29
+      ],
+      "hybrid": [
+        29
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 29,
+      "q": "A village Jat panchayat.",
+      "keyword": [
+        29
+      ],
+      "semantic": [
+        29
+      ],
+      "hybrid": [
+        29
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 29,
+      "q": "A Jat maha-panchayat.",
+      "keyword": [
+        29
+      ],
+      "semantic": [
+        29
+      ],
+      "hybrid": [
+        29
+      ]
+    },
+    {
+      "kind": "description",
+      "project": 30,
+      "q": "In Tamga, a village in the Kyrgyz Tian Shan, a 2009 reform made the municipality responsible for its own public pastures. This study follows the everyday work of sharing the grassland: grazing rules,",
+      "keyword": [
+        30
+      ],
+      "semantic": [
+        30
+      ],
+      "hybrid": [
+        30
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 30,
+      "q": "Rearing cattle on one of Tamga's summer pastures (djajloo), August 2015.",
+      "keyword": [
+        30
+      ],
+      "semantic": [
+        30
+      ],
+      "hybrid": [
+        30
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 30,
+      "q": "Kara Suu in the second year of the moratorium, August 2019.",
+      "keyword": [
+        30
+      ],
+      "semantic": [
+        29,
+        30
+      ],
+      "hybrid": [
+        30,
+        29
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 30,
+      "q": "A shepherd's syrt camp with one of the new cubic houses, Djaman Tam, August 2018.",
+      "keyword": [
+        30
+      ],
+      "semantic": [
+        29,
+        30
+      ],
+      "hybrid": [
+        30,
+        29
+      ]
+    },
+    {
+      "kind": "caption",
+      "project": 30,
+      "q": "The maps of Tamga's pasturage in the pasture committee's office, Tamga, July 2019.",
+      "keyword": [
+        30
+      ],
+      "semantic": [
+        30
+      ],
+      "hybrid": [
+        30
+      ]
+    }
+  ],
+  "timing": {
+    "all-MiniLM-L6-v2": {
+      "index_s": 15.7,
+      "query_ms": 20.8
+    },
+    "paraphrase-multilingual-MiniLM-L12-v2": {
+      "index_s": 27.9,
+      "query_ms": 23.0
+    },
+    "bge-small-en-v1.5": {
+      "index_s": 24.6,
+      "query_ms": 19.3
+    }
+  },
+  "app_seconds": 84.6
+}

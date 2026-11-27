@@ -1,4 +1,4 @@
-"""Make a large test library by repeating the sample and synthetic projects with new ids.
+"""Make a large test library by repeating the partner's sample projects with new ids (no generated projects).
 
     python load_testing/make_dataset.py 1000 load_testing/results/projects_1000.json
     python -m app.scripts.seed ../load_testing/results/projects_1000.json   (from backend/api)
@@ -16,8 +16,7 @@ DATA = Path(__file__).resolve().parents[1] / "data"
 def main() -> None:
     count = int(sys.argv[1]) if len(sys.argv) > 1 else 1000
     out = Path(sys.argv[2]) if len(sys.argv) > 2 else Path(__file__).parent / "results" / f"projects_{count}.json"
-    base = [*json.loads((DATA / "samples" / "projects.json").read_text(encoding="utf-8")),
-            *json.loads((DATA / "synthetic" / "projects.json").read_text(encoding="utf-8"))]
+    base = json.loads((DATA / "samples" / "projects.json").read_text(encoding="utf-8"))
     records = []
     for i in range(count):
         rec = json.loads(json.dumps(base[i % len(base)]))

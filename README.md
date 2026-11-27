@@ -131,9 +131,9 @@ Example:
 GET /api/projects/search?q=climate%20migration&mode=hybrid&limit=20
 ```
 
-The model experiments selected `BAAI/bge-small-en-v1.5`, with 40-word passages and evaluated similarity thresholds. The ML directory documents five-fold cross-validation, fine-tuning experiments, summarizer comparisons, and end-to-end search evaluation.
+The application uses `BAAI/bge-small-en-v1.5` with 40-word passages. The evaluation in `backend/ml/evaluation/real_data` uses only the partner's 9 projects, with queries and reference summaries taken from the authors' own text: hybrid search put the right project first for 44 of 45 held-out queries.
 
-**Evaluation limitation:** The reported experiments use seven partner sample projects and 30 synthetic projects. The synthetic projects are for experimentation and evaluation, not for loading into the public site. Results should not be presented as independently validated performance on a large real-world collection.
+**Evaluation limitation:** 9 projects and 45 queries are too few to separate the methods or to tune settings. Earlier experiments on generated projects and queries are withdrawn. Results should not be presented as validated performance on a large real-world collection.
 
 ## Testing
 

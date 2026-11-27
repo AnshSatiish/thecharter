@@ -1,6 +1,29 @@
 # Machine learning: data analysis, model selection and evaluation
 
-Every AI choice in the application is made here, by measurement, and every number in the progress report comes from a file in `results/`, `figures/`, `evaluation/search/` or `eda/`.
+Every AI choice in the application is measured here. **The current results use only the partner's real projects**
+(`evaluation/real_data/` and `eda/`); every number in the Progress 2 report comes from those files. No projects,
+queries or reference summaries are generated: search queries and reference summaries are text the projects' own authors
+wrote.
+
+The older experiments in `experiments/`, `evaluation/search/`, `results/` and `figures/` used 30 generated projects,
+their reference summaries and 122 generated queries. Their results are **withdrawn** and are kept only as a record.
+
+## Real-data evaluation (current)
+
+| Script | What it does | Output | Time on a laptop CPU |
+|---|---|---|---|
+| `evaluation/real_data/evaluate_search_real.py` | 45 queries from the partner's 9 projects (9 descriptions, 36 photo captions), each held out of the index while it is searched. Runs the application's keyword, semantic and hybrid search, then ranks with keyword, TF-IDF and three embedding models without a cut-off. Nothing tuned. | `evaluation/real_data/results.json`, `results.md` | about 3 minutes |
+| `evaluation/real_data/evaluate_summaries_real.py` | 9 documents: 7 photo projects (narration summarized, the author's description as reference) and 2 theses (first 2,100 words of the introduction, the author's abstract as reference). Lead-2, the TF-IDF + cosine fallback and four pretrained models, scored with ROUGE. Fixed settings. | `evaluation/real_data/results_summaries.json`, `results_summaries.md` | about 5 minutes |
+| `evaluation/real_data/figures_real.py` | Draws the search, confusion-matrix and summarizer figures from the two result files. | `evaluation/real_data/figures/` | seconds |
+
+Results (November 27, 2026): hybrid search put the right project first for 44 of 45 queries, keyword search 41,
+bge-small-en-v1.5 alone 42, TF-IDF 44; every method had the right project in its first three for all 45. Summaries:
+ROUGE-L 0.11 to 0.18 with standard deviations of 0.06 to 0.12, so no summarizer is clearly better; TF-IDF + cosine is
+best on the two theses. Nine projects are too few to tune settings or to fine-tune, so the settings in
+`../api/app/core/config.py` are kept unchanged and the pretrained weights are used. Llama 3.2 3B (the application's
+summarizer) is not scored yet because Ollama is not installed on the test machine.
+
+## Older experiments (withdrawn: generated data)
 
 ```bash
 pip install torch --index-url https://download.pytorch.org/whl/cpu
@@ -38,7 +61,7 @@ ml/
 - `../data/synthetic/projects.json`: 30 synthetic projects written by the team to the partner's record format, 6 per category, each with a field report (stored as the project's document, like an uploaded PDF) and a reference summary. Marked `"synthetic": true`; never loaded into the site.
 - `evaluation/search/queries.json`: 122 judged queries (38 exact names, 70 paraphrases, 5 topics, 9 off-topic), each with the ids of the projects a person judged relevant.
 
-## What the experiments decided
+## What the older experiments decided (withdrawn)
 
 - Search model: **bge-small-en-v1.5**, the most accurate and the smallest of the three models; passages of 40 words, minimum similarity 0.575, relative cut-off 0.95. These are the defaults in `../api/app/core/config.py`.
 - Fine-tuning did not improve the pretrained model on unseen projects (two settings tried), so the pretrained weights are used.
@@ -46,8 +69,8 @@ ml/
 
 The updated evaluation compares the current TF-IDF + cosine fallback with DistilBART and three other pretrained models. Both AI-generated and extractive summaries are drafts for the administrator to review.
 
-All results come from a corpus that is mostly synthetic and from queries written by the team. Rerun the scripts when the partner's full data arrives.
+These results came from generated data and are withdrawn; see the real-data evaluation above.
 
 ## Exploratory data analysis
 
-`eda/eda_sample_projects.py` describes the partner samples and the synthetic dataset before any modelling: size and completeness, category and SDG balance, text lengths, keywords, coverage, and how close the projects are to each other in meaning. It writes `eda/eda_summary.json` and four figures in `eda/figures/`. Run it with `python eda/eda_sample_projects.py`.
+`eda/eda_sample_projects.py` describes the partner's 9 projects before any modelling: size and completeness, category and SDG balance, text lengths, keywords, coverage, and how close the projects are to each other in meaning. It writes `eda/eda_summary.json` and three figures in `eda/figures/` (`dataset_composition.png` is from the older, withdrawn version). Run it with `python eda/eda_sample_projects.py`.

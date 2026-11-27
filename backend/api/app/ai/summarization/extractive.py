@@ -66,5 +66,13 @@ def summarize(text: str, max_sentences: int = 3) -> str:
     similarity = [_cosine(_vector(words, idf), document) if ok and len(words) >= MIN_WORDS else 0.0
                   for words, ok in zip(tokens, complete)]
 
-    best = sorted(range(n), key=lambda i: (-similarity[i], i))[:max_sentences]
+    best, seen = [], set()
+    for i in sorted(range(n), key=lambda i: (-similarity[i], i)):
+        key = " ".join(sentences[i].lower().split())
+        if key in seen:  # a sentence repeated word for word (e.g. in two photo captions) is used once
+            continue
+        seen.add(key)
+        best.append(i)
+        if len(best) == max_sentences:
+            break
     return " ".join(sentences[i] for i in sorted(best))

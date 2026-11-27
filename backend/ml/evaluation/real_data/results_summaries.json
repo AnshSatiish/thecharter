@@ -1,0 +1,238 @@
+{
+  "documents": [
+    {
+      "id": 17,
+      "kind": "photo project",
+      "input_words": 409,
+      "reference_words": 22
+    },
+    {
+      "id": 26,
+      "kind": "photo project",
+      "input_words": 240,
+      "reference_words": 33
+    },
+    {
+      "id": 23,
+      "kind": "photo project",
+      "input_words": 110,
+      "reference_words": 35
+    },
+    {
+      "id": 25,
+      "kind": "photo project",
+      "input_words": 89,
+      "reference_words": 27
+    },
+    {
+      "id": 27,
+      "kind": "photo project",
+      "input_words": 141,
+      "reference_words": 27
+    },
+    {
+      "id": 28,
+      "kind": "photo project",
+      "input_words": 123,
+      "reference_words": 40
+    },
+    {
+      "id": 18,
+      "kind": "photo project",
+      "input_words": 246,
+      "reference_words": 32
+    },
+    {
+      "id": 29,
+      "kind": "thesis",
+      "input_words": 2100,
+      "reference_words": 392
+    },
+    {
+      "id": 30,
+      "kind": "thesis",
+      "input_words": 2100,
+      "reference_words": 304
+    }
+  ],
+  "methods": {
+    "Lead-2 (first two sentences)": {
+      "kind": "extractive",
+      "seconds_per_doc": 0.0,
+      "rouge1": {
+        "mean": 0.24785716852649817,
+        "sd": 0.10361425872878627
+      },
+      "rouge2": {
+        "mean": 0.06283348730466433,
+        "sd": 0.06012963326240126
+      },
+      "rougeL": {
+        "mean": 0.1750378901334251,
+        "sd": 0.07522915245316364
+      },
+      "rougeL_photo project": 0.2008162207425921,
+      "rougeL_thesis": 0.08481373300134074,
+      "outputs": {
+        "17": "The Cemetery Vigil: The Sea of Light. In the depths of the night of October 31st, the Mazatec community cemetery transforms into a sea of light.",
+        "26": "Ruben Soto (right), a migrant from Venezuela, sits with Rosa Bello, a Honduran migrant, atop a freight train known as \"The Beast,\" in Samalayuca, Mexico. Ruben and Rosa met in Mexico and fell in love on their way to the United States.",
+        "23": "A fisherman repairs his nets at dawn along the shores of Lake Kivu in Goma, DRC. Against the backdrop of storm clouds and the bustling harbor, he prepares for another day on waters that have sustained his community for generations, even as climate change brings increasingly unpredictable weather patterns and declining fish populations.",
+        "25": "Protestors chant anti-government slogans while climbing a Kenya Police water cannon truck during a nationwide protest against tax hikes and the Finance Bill 2024 in Nairobi, Kenya. Protestors chant slogans and push a makeshift barricade as they clash with Kenyan police officers during an anti-government demonstration in Nairobi, Kenya.",
+        "27": "A group of Afghan, Chinese, Venezuelan, and Ecuadorian migrants wade toward a boat headed for the Darién Gap, in Capurganá, Colombia. Many of the Afghans had never seen the ocean before.",
+        "28": "Nawarddeken women conducting traditional cool burning in West Arnhem Land. The controlled fires move slowly through the grasslands, burning only undergrowth while leaving trees intact, creating a mosaic pattern that prevents larger wildfires during the dry season.",
+        "18": "At Beijing West Railway station, a migrant worker loaded with baggage, heads back to the family hometown for the New Year holiday. The Lunar New Year is the busiest time of year for train travel, with an estimated 190 million trips taken during the 2024 spring festival holidays.",
+        "29": "In this chapter, I trace the trajectory of Jat power across precolonial and colonial periods in the territory that comprises present-day Haryana and its neighbouring regions. The chapter starts with an ethnographic vignette outlining how I first learned ab out the founding story of Peepalvas, a Jat - dominated village in district Sonipat, Haryana.",
+        "30": "This book is about a subject vital to everyone who eats: the rights to the land on which food is grown. (Verdery 2018 [2003]: xiii) This thesis is about a certain type of land on which food is grown, or rather on which food is reared: this thesis is on pastures and on grazing cows, horses, sheep, and goats."
+      }
+    },
+    "TF-IDF + cosine (application fallback)": {
+      "kind": "extractive",
+      "seconds_per_doc": 0.001,
+      "rouge1": {
+        "mean": 0.2347487301408272,
+        "sd": 0.07471537146911793
+      },
+      "rouge2": {
+        "mean": 0.049009001767996,
+        "sd": 0.04629737447628121
+      },
+      "rougeL": {
+        "mean": 0.15992315660578924,
+        "sd": 0.057990731738834615
+      },
+      "rougeL_photo project": 0.16771895047809324,
+      "rougeL_thesis": 0.1326378780527252,
+      "outputs": {
+        "17": "This image captures hundreds of burning candles illuminating the graves, creating a sacred landscape where fire symbolizes the living presence of the deceased. This image shows a multi-level altar that replicates the vertical structure of the Mazatec universe: the upper level represents heaven decorated with cempasúchil flowers whose aroma guides the spirits; the middle level symbolizes the land of the living with photographs and favorite foods; the lower level represents the underworld with candles and copal that purify the path of ascent.",
+        "26": "Ruben Soto (right), a migrant from Venezuela, sits with Rosa Bello, a Honduran migrant, atop a freight train known as \"The Beast,\" in Samalayuca, Mexico. This photo was taken in Samalayuca, Mexico, three days before the expiration of Title 42, a US COVD-19 prevention measure that in effect allowed deportation of migrants without reviewing asylum claims.",
+        "23": "Against the backdrop of storm clouds and the bustling harbor, he prepares for another day on waters that have sustained his community for generations, even as climate change brings increasingly unpredictable weather patterns and declining fish populations. Several factors, including overfishing and the presence of gas extraction plants, threaten the sambaza population, in Goma, DRC.",
+        "25": "Protestors chant anti-government slogans while climbing a Kenya Police water cannon truck during a nationwide protest against tax hikes and the Finance Bill 2024 in Nairobi, Kenya. A Kenyan police officer fires a tear gas canister during a demonstration against tax hikes as Members of Parliament vote on the Finance Bill 2024 in downtown Nairobi, Kenya.",
+        "27": "A group of Afghan, Chinese, Venezuelan, and Ecuadorian migrants wade toward a boat headed for the Darién Gap, in Capurganá, Colombia. Thousands of migrants wade into the Rio Muerto (\"Death River\") at the Darién Gap, where several have drowned in its treacherous waters.",
+        "28": "The controlled fires move slowly through the grasslands, burning only undergrowth while leaving trees intact, creating a mosaic pattern that prevents larger wildfires during the dry season. Stacey Lee (11, left) sets the bark of trees alight to produce a natural light source to help hunt for file snakes (Acrochordus arafurae), in Djulkar, Arnhem Land, Australia.",
+        "18": "At Beijing West Railway station, a migrant worker loaded with baggage, heads back to the family hometown for the New Year holiday. The modernisation of the China Railway network has made this yearly migration a lot easier, reducing it to a few hours when it could take one or two days just a decade earlier.",
+        "29": "15 As part of this patrilineal gathering, Jai Singh, Hari Om’s 74-year-old father, lay in his cot fingering prayer beads 15 While doing fieldwork in Dalalpur, a Jat-dominated village in district Rohtak, Haryana, Tiemann (1970b) observed that male heads of Jat households belonging to the same patrilineage often gathered in the neighbourhood to smoke hookah. A thorough mastery of these topics had qualified Jai Singh to be recognized as a panch— a Jat elder who embodies the authority to call and lead panchayat to resolve village disputes.16 In fact, before having suffered a stroke in 2010, which left the right -side of his lower body paralyzed, Jai Singh’s jurisdiction as a panch was not limited to a single village but extende d to the chau -gama (a group of four villages) that Peepalvas headed.",
+        "30": "The alpine pastures on the territory that now forms the Kyrgyz republic hold a long history of people aligning with and guiding the grazing movements of herds and flocks of animals; this landscape holds a history of mobile pastoralism that goes back centuries and that continues to be a central part of this region’s present (Dienes 347ff., Farrington 2005: 171ff., Japarov 2017: 66). Not only following the seasons but also continuously adjusting and changing along the political tides. photograph 1.1: rearing cattle on one of Tamga’s summer pastures (djajloo), August 20151 Until the advent of Russian imperial presence in the Kyrgyz Tian Shan in the second half of the 19th century, the mountain range’s pastures had been used and lived on nomadically with animals and people periodically moving camps according to the availability of grass along the changing seasons (Farrington 2005: 172, Jacquesson 2010: 105)."
+      }
+    },
+    "distilbart-cnn-6-6": {
+      "kind": "pretrained model",
+      "model": "sshleifer/distilbart-cnn-6-6",
+      "seconds_per_doc": 9.95,
+      "rouge1": {
+        "mean": 0.23438126284844454,
+        "sd": 0.0702068744549378
+      },
+      "rouge2": {
+        "mean": 0.06474708088349797,
+        "sd": 0.05552437847851422
+      },
+      "rougeL": {
+        "mean": 0.16600276780919102,
+        "sd": 0.059433706754352784
+      },
+      "rougeL_photo project": 0.18762261826086749,
+      "rougeL_thesis": 0.09033329122832343,
+      "outputs": {
+        "17": "The Huehuentones perform a dance that varies according to the age and social role of the deceased. The group stops at specific houses where community members have died during the year. The masks they wear are inherited through generations, some more than 100 years old, accumulating the spiritual power of all the ancestors they have represented.",
+        "26": "Migrants and asylum seekers often use cargo trains to reach the U.S. border. Ruben and Rosa Soto met in Mexico and fell in love on their way to the U., they say. The De Coto family poses for a portrait aboard \"The Beast\" while heading to Ciudad Juárez.",
+        "23": "Sambaza, a sardine local to the waters of Lake Kivu, is captured in a net. Several factors, including overfishing and the presence of gas extraction plants, threaten the sambaza population. The sambazis have sustained their community for generations, even as climate change brings increasingly unpredictable",
+        "25": "Protestors chant anti-government slogans while climbing a Kenya Police water cannon truck during a nationwide protest against tax hikes and the Finance Bill 2024 in Nairobi, Kenya. A tear gas canister explodes under a protestor in N Cairobi, Kenyan. A Kenyan police officer fires a tear gasCanister during a demonstration against",
+        "27": "A record 520,000 migrants crossed through the Darién jungle in 2023. Many of the Afghans had never seen the ocean before. Many have drowned in the river at the Darén Gap. Many had never been to the river before. The group of migrants",
+        "28": "Nawarddeken women conduct traditional cool burning in West Arnhem Land, Australia. The controlled fires move slowly through the grasslands, burning only undergrowth while leaving trees intact. The late-evening fire will die out naturally once the temperature drops and moisture levels rise.",
+        "18": "Lunar New Year is the busiest time of year for train travel, with 190 million trips taken during the 2024 spring festival holidays. The modernisation of the China Railway network has made this yearly migration a lot easier. The Lunar New year is the biggest time of the year for trains to travel in China.",
+        "29": "oral narratives are used to explain how the centuries-old story of Jat power is bequeathed from one generation to another. Jat elders shared how their clan ancestors first brought a territory under their control. They then expanded it by establishing contiguous villages, thereby constituting a clan territory locally known by various names.",
+        "30": "Kyrgyzstan has a long history of people aligning with and guiding the grazing movements of herds and flocks of animals. The state has taken an interesting political course concerning the management of its state pastures. The aim of the study is to evoke both a grasp of the relevance and richness of pastures and mobile pastoral livelihoods in"
+      }
+    },
+    "t5-small (summarization)": {
+      "kind": "pretrained model",
+      "model": "Falconsai/text_summarization",
+      "seconds_per_doc": 3.86,
+      "rouge1": {
+        "mean": 0.2434237754439105,
+        "sd": 0.10160991244010523
+      },
+      "rouge2": {
+        "mean": 0.05291100561785046,
+        "sd": 0.05427694099400736
+      },
+      "rougeL": {
+        "mean": 0.14212794220347136,
+        "sd": 0.060658057700137616
+      },
+      "rougeL_photo project": 0.15844575547361925,
+      "rougeL_thesis": 0.08501559575795384,
+      "outputs": {
+        "17": "The Huehuentón (chaxo o' in Mazatec) is much more than a masked dancer. It is the physical embodiment of ancestors returning to the world of the living.",
+        "26": "Ruben Soto, a migrant from Venezuela, sits with Rosa Bello, migrantian. They met in Mexico and fell in love on their way to the United States. Over the years, hundreds have fallen onto the tracks and have been killed or mutilated.",
+        "23": "sardine local Sambaza captured in a net along the shores of Lake Kivu. Several factors threaten the sambaza population in Goma, DRC.",
+        "25": "Protestors chant anti-government slogans while climbing a Kenya Police water cannon truck during an anti-governmental demonstration in Nairobi, Kenya. A Kenyan police officer fires a tear gas canister during a demonstration against tax hikes.",
+        "27": "A record 520,000 migrants crossed through the Darién jungle in 2023. Many of the Afghans had never seen the ocean before. They assist one another to prevent drowning in the swift currents.",
+        "28": "Nawarddeken women conduct traditional cool burning in West Arnhem Land. The controlled fires move slowly through the grasslands, burning only undergrowth while leaving trees intact.",
+        "18": "The Lunar New Year is the busiest time of year for train travel. The modernisation of the China Railway network has made this yearly migration a lot easier. It serves both green (slow) trains, and some high speed trains.",
+        "29": "In this chapter, I trace the trajectory of Jat power across precolonial and colonial periods in present-day Haryana and its neighbouring regions. In this chapters, I examine these oral narratives to tease out how they reanimate historical linkages between caste, kinship, landownership, and power in the present. I argue that Jat Power, their clan territories, and k",
+        "30": "Tamga is a village in Kyrgyzstan, about 1,700 meters above sea level. The ethnography is based on the context of the 2009 legislation on pastures. It is hoped that the practice-based approach will be used to conceptualize commons situations."
+      }
+    },
+    "flan-t5-small": {
+      "kind": "pretrained model",
+      "model": "google/flan-t5-small",
+      "seconds_per_doc": 1.86,
+      "rouge1": {
+        "mean": 0.1564415572534693,
+        "sd": 0.09431558173407814
+      },
+      "rouge2": {
+        "mean": 0.024839743589743595,
+        "sd": 0.065974957986807
+      },
+      "rougeL": {
+        "mean": 0.11239275568581239,
+        "sd": 0.06557172850352072
+      },
+      "rougeL_photo project": 0.13282557547728913,
+      "rougeL_thesis": 0.040877886415643855,
+      "outputs": {
+        "17": "Observe the village's graves.",
+        "26": "A migrant from Venezuela has been atop a freight train known as \"The Beast\" in Mexico.",
+        "23": "A fisherman is preparing for another day of fishing in Goma, DRC.",
+        "25": "A Kenyan police officer has chanted slogans and chants anti-government slogans during a demonstration against tax hikes.",
+        "27": "The Darién Gap is a rocky river in the southern Indian Ocean.",
+        "28": "A fire in the Australian forest has killed a woman in the northern Australian town of Mamadawerre.",
+        "18": "A train is a train that is parked in a crowded concourse at Beijing West railway station.",
+        "29": "I am a Jat elder who embodied the authority to call and lead panchayat to resolve village disputes.",
+        "30": "I am a spokesman for the Kyrgyz Republic of the Republic of Kazakhstan."
+      }
+    },
+    "flan-t5-base": {
+      "kind": "pretrained model",
+      "model": "google/flan-t5-base",
+      "seconds_per_doc": 4.81,
+      "rouge1": {
+        "mean": 0.23007326799907035,
+        "sd": 0.14246198832276113
+      },
+      "rouge2": {
+        "mean": 0.06638714641604992,
+        "sd": 0.08350056749437186
+      },
+      "rougeL": {
+        "mean": 0.168034166155534,
+        "sd": 0.11645621431817378
+      },
+      "rougeL_photo project": 0.20782116747319482,
+      "rougeL_thesis": 0.028779661543721156,
+      "outputs": {
+        "17": "A group of Huehuentones perform a dance in the street in the early 1900s.",
+        "26": "Migrants and asylum seekers lacking the financial resources to pay a smuggler often resort to using cargo trains to reach the United States border.",
+        "23": "A fisherman in Goma, DRC, is preparing to fish again on the waters of Lake Kivu.",
+        "25": "Protestors clash with Kenyan police officers during a nationwide protest against tax hikes and the Finance Bill 2024 in Nairobi, Kenya.",
+        "27": "A group of migrants wade through the Darién jungle in Colombia.",
+        "28": "A traditional fire in the Northern Territory is a rare sight in the Australian desert.",
+        "18": "A train is parked in a queue at a railway station in Beijing, China, as a migrant worker carries on with his work.",
+        "29": "Visit the khap panchayat in Haryana.",
+        "30": "The rights to land and pastures in Kyrgyzstan."
+      }
+    }
+  }
+}

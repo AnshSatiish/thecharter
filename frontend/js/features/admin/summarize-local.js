@@ -54,7 +54,14 @@ function localSummarize(text, maxSentences=3){
   let complete=sentences.map(s=>LOCAL_SENTENCE_DONE.test(s));
   if (!complete.some(Boolean)) complete=complete.map(()=>true);   // notes without full stops: every line may be chosen
   const sim=tokens.map((words,i)=>complete[i] && words.length>=3 ? cosine(vector(words),doc) : 0);
-  const best=sentences.map((_,i)=>i).sort((i,j)=>sim[j]-sim[i] || i-j).slice(0,maxSentences).sort((i,j)=>i-j);
+  const best=[], seen=new Set();
+  for (const i of sentences.map((_,i)=>i).sort((i,j)=>sim[j]-sim[i] || i-j)){
+    const key=sentences[i].toLowerCase().split(/\s+/).filter(Boolean).join(" ");
+    if (seen.has(key)) continue;   // a sentence repeated word for word (e.g. in two photo captions) is used once
+    seen.add(key); best.push(i);
+    if (best.length===maxSentences) break;
+  }
+  best.sort((i,j)=>i-j);
   return best.map(i=>sentences[i]).join(" ");
 }
 

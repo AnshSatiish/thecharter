@@ -227,3 +227,13 @@ def test_fallback_with_empty_text_is_not_a_fallback():
     from app.ai.summarization import SUMMARY_METHOD, summarize_with_fallback
 
     assert summarize_with_fallback("   ") == ("", SUMMARY_METHOD, False)
+
+
+def test_tfidf_summary_uses_a_repeated_sentence_once():
+    repeated = "Ruben Soto, a migrant from Venezuela, rides a freight train north through Mexico."
+    text = " ".join([repeated, "Many migrants ride the freight train because they cannot pay a smuggler.", repeated,
+                     "The train crosses the desert near the border with the United States.",
+                     "Some riders have fallen from the train and been injured."])
+    summary = summarize(text, max_sentences=2)
+    assert summary.count(repeated) == 1
+    assert len(split_sentences(summary)) == 2
